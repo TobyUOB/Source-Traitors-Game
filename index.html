@@ -18,7 +18,7 @@ body {
     position: relative;
 }
 
-/* ---------------- TORCHLIGHT BACKGROUND ---------------- */
+/* ---------------- AMBIENT TORCHLIGHT ---------------- */
 body::before,
 body::after {
     content: "";
@@ -31,7 +31,7 @@ body::after {
 body::before {
     background: radial-gradient(
         circle at 30% 40%,
-        rgba(255,190,110,0.30),
+        rgba(255,190,110,0.35),
         transparent 55%
     );
     animation: torchA 5.5s infinite alternate ease-in-out;
@@ -40,7 +40,7 @@ body::before {
 body::after {
     background: radial-gradient(
         circle at 70% 65%,
-        rgba(255,150,70,0.26),
+        rgba(255,150,70,0.30),
         transparent 60%
     );
     animation: torchB 7s infinite alternate ease-in-out;
@@ -54,6 +54,23 @@ body::after {
 @keyframes torchB {
     from { transform: translate(3%, -3%); opacity: 0.5; }
     to   { transform: translate(-3%, 4%); opacity: 0.9; }
+}
+
+/* ---------------- CAMERA GRAIN ---------------- */
+body::after {
+    background-image: url('images/grain.png'); /* transparent PNG grain */
+    background-size: cover;
+    mix-blend-mode: overlay;
+    opacity: 0.05;
+    animation: grainMove 12s linear infinite;
+}
+
+@keyframes grainMove {
+    0% { transform: translate(0,0); }
+    25% { transform: translate(-2%,1%); }
+    50% { transform: translate(1%,-1%); }
+    75% { transform: translate(-1%,2%); }
+    100% { transform: translate(0,0); }
 }
 
 /* ---------------- SMOKE & EMBERS ---------------- */
@@ -77,15 +94,9 @@ body::after {
 }
 
 @keyframes smokeDrift {
-    from {
-        transform: translateY(100vh) translateX(0) scale(0.8);
-        opacity: 0;
-    }
-    20% { opacity: 0.4; }
-    100% {
-        transform: translateY(-200px) translateX(120px) scale(1.4);
-        opacity: 0;
-    }
+    from { transform: translateY(100vh) translateX(0) scale(0.8); opacity:0; }
+    20% { opacity:0.4; }
+    100% { transform: translateY(-200px) translateX(120px) scale(1.4); opacity:0; }
 }
 
 .ember {
@@ -99,15 +110,9 @@ body::after {
 }
 
 @keyframes emberRise {
-    from {
-        transform: translateY(100vh);
-        opacity: 0;
-    }
-    30% { opacity: 1; }
-    100% {
-        transform: translateY(-50px) translateX(-40px);
-        opacity: 0;
-    }
+    from { transform: translateY(100vh); opacity:0; }
+    30% { opacity:1; }
+    100% { transform: translateY(-50px) translateX(-40px); opacity:0; }
 }
 
 /* ---------------- CONTENT ---------------- */
@@ -158,25 +163,23 @@ body::after {
     justify-content: center;
     cursor: pointer;
     position: relative;
-
-    /* Animated parchment shadows */
-    box-shadow:
-        inset 0 0 25px rgba(0,0,0,0.45),
-        inset 0 0 60px rgba(120,60,20,0.35);
-    animation: parchmentShadow 6s infinite alternate;
+    overflow: hidden;
 }
 
-@keyframes parchmentShadow {
-    from {
-        box-shadow:
-            inset 0 0 20px rgba(0,0,0,0.35),
-            inset 0 0 50px rgba(120,60,20,0.25);
-    }
-    to {
-        box-shadow:
-            inset 0 0 35px rgba(0,0,0,0.55),
-            inset 0 0 80px rgba(180,90,40,0.45);
-    }
+/* Animated radial light on scroll edges */
+#scroll::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, rgba(255,200,150,0.2) 0%, transparent 60%);
+    pointer-events: none;
+    animation: scrollFlicker 4s infinite alternate ease-in-out;
+}
+
+@keyframes scrollFlicker {
+    0% { transform: scale(1.0); opacity: 0.4; }
+    50% { transform: scale(1.02); opacity: 0.55; }
+    100% { transform: scale(0.98); opacity: 0.45; }
 }
 
 /* Scroll text */
@@ -189,7 +192,7 @@ body::after {
         0 0 6px rgba(255,60,40,0.9),
         0 0 16px rgba(255,120,80,0.8);
     position: relative;
-    z-index: 3;
+    z-index: 2;
     pointer-events: none;
 }
 
@@ -229,6 +232,6 @@ body::after {
 
 </div>
 
-<script src="script.js?v=7.0"></script>
+<script src="script.js?v=8.0"></script>
 </body>
 </html>
