@@ -14,11 +14,16 @@
   const STORAGE_KEY = "traitors_role_" + uid;
 
   async function getRole(uid) {
-      const msgBuffer = new TextEncoder().encode(uid);
-      const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      const hashNumber = hashArray.reduce((a, b) => a + b, 0) % 100;
-      return hashNumber < IMPOSTER_PERCENTAGE ? "Imposter" : "Loyal";
+      try {
+          const msgBuffer = new TextEncoder().encode(uid);
+          const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
+          const hashArray = Array.from(new Uint8Array(hashBuffer));
+          const hashNumber = hashArray.reduce((a, b) => a + b, 0) % 100;
+          return hashNumber < IMPOSTER_PERCENTAGE ? "Imposter" : "Loyal";
+      } catch(e) {
+          // fallback if crypto.subtle fails
+          return Math.random() < IMPOSTER_PERCENTAGE / 100 ? "Imposter" : "Loyal";
+      }
   }
 
   const roleDiv = document.getElementById("role");
@@ -37,14 +42,15 @@
   // ---------------- Hide scroll if image fails ----------------
   const scrollImage = new Image();
   scrollImage.src = 'images/scroll.png';
-  scrollImage.onerror = () => { scroll.style.display = 'none'; };
+  scrollImage.onerror = () => { scroll.style.backgroundImage = 'none'; };
 
   // ---------------- Tap to reveal ----------------
   scroll.addEventListener("click", () => {
-      scroll.style.display = "none";
-      roleDiv.style.display = "block";
-      qrImg.style.display = "block";
+      scroll.style.display = "none"; // hide overlay
+      roleDiv.style.display = "block"; // show role
+      qrImg.style.display = "block";   // show QR
       qrImg.src = role === "Imposter" ? "qr/imposter.png" : "qr/loyal.png";
       roleDiv.textContent = role;
   });
+
 })();
