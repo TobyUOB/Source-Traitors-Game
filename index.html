@@ -7,76 +7,101 @@
 <link rel="stylesheet" href="style.css">
 <style>
 body {
-margin: 0;
-background-color: #111;
-color: white;
-font-family: 'Arial', sans-serif;
-text-align: center;
-overflow: hidden;
+    margin: 0;
+    background-color: #111;
+    color: white;
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+    overflow: hidden;
 }
+
 #container {
-position: relative;
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-height: 100vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
 }
+
+/* Role text with torch flicker */
 #role {
-font-size: 4em;
-font-weight: bold;
-color: red;
-text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4500, 0 0 20px #ff6347;
-display: none;
-margin-top: 20px;
-animation: flickerRole 1s infinite alternate;
+    font-size: 4em;
+    font-weight: bold;
+    color: red;
+    text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4500, 0 0 20px #ff6347;
+    display: none;
+    margin-top: 20px;
+    animation: flickerRole 1s infinite alternate;
 }
+
 @keyframes flickerRole {
-0% { text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4500, 0 0 20px #ff6347; }
-50% { text-shadow: 0 0 10px #ff6347, 0 0 20px #ff4500, 0 0 30px #ff0000; }
-100% { text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4500, 0 0 20px #ff6347; }
+    0% { text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4500, 0 0 20px #ff6347; }
+    50% { text-shadow: 0 0 10px #ff6347, 0 0 20px #ff4500, 0 0 30px #ff0000; }
+    100% { text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4500, 0 0 20px #ff6347; }
 }
+
+/* Flickering banner lights */
 #banner {
-position: absolute;
-top: 20px;
-width: 100%;
-display: flex;
-justify-content: center;
-font-size: 2em;
-font-weight: bold;
+    position: absolute;
+    top: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    font-size: 2em;
+    font-weight: bold;
 }
+
 .flicker {
-margin: 0 20px;
-animation: flickerLight 1s infinite alternate;
+    margin: 0 20px;
+    animation: flickerLight 1s infinite alternate;
 }
+
 @keyframes flickerLight {
-0% { opacity: 1; }
-50% { opacity: 0.3; }
-100% { opacity: 1; }
+    0% { opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { opacity: 1; }
 }
+
+/* QR styling */
 #qr {
-width: 200px;
-margin-top: 20px;
-border: 2px solid white;
-border-radius: 10px;
-display: none;
+    width: 200px;
+    margin-top: 20px;
+    border: 2px solid white;
+    border-radius: 10px;
+    display: none;
 }
+
+/* Scroll overlay */
 #scroll {
-position: absolute;
-top: 0; left: 0; right: 0; bottom: 0;
-background: url('images/scroll.png') no-repeat center center;
-background-size: contain;
-display: flex;
-justify-content: center;
-align-items: center;
-font-size: 2em;
-cursor: pointer;
-z-index: 10;
-color: #fff;
-user-select: none;
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: url('images/scroll.png') no-repeat center center;
+    background-size: contain;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    cursor: pointer;
+    z-index: 10;
+    color: #fff;
+    user-select: none;
 }
 </style>
 </head>
 <body>
+
 <div id="banner">
+    <div class="flicker">Loyal</div>
+    <div class="flicker">Imposter</div>
+</div>
+
+<div id="container">
+    <div id="role"></div>
+    <img id="qr" />
+    <div id="scroll">Tap to Reveal</div>
+</div>
+
+<script src="script.js"></script>
+</body>
 </html>
