@@ -5,31 +5,56 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Traitors Game</title>
 
-<!-- Ancient-style font -->
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&display=swap" rel="stylesheet">
 
 <style>
 body {
     margin: 0;
-    background: #111;
+    background: #0c0a07;
     color: white;
     font-family: Arial, sans-serif;
+    overflow: hidden;
+}
+
+/* 🔥 Ambient torch flicker background */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(circle at 30% 40%, rgba(255,180,90,0.12), transparent 55%),
+        radial-gradient(circle at 70% 60%, rgba(255,140,60,0.10), transparent 60%);
+    animation: ambientFlicker 6s infinite alternate;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes ambientFlicker {
+    0% {
+        opacity: 0.7;
+        filter: blur(0px);
+    }
+    100% {
+        opacity: 1;
+        filter: blur(1px);
+    }
 }
 
 #container {
+    position: relative;
+    z-index: 1;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
     padding-top: 20px;
 }
 
-/* LOGO */
+/* Logo */
 #logo {
     width: 80%;
     max-width: 320px;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
 /* Landing text */
@@ -37,14 +62,14 @@ body {
     font-family: 'Cinzel', serif;
     font-size: 2.4em;
     font-weight: 800;
-    margin-bottom: 10px;
-    animation: flicker 1s infinite alternate;
+    margin-bottom: 12px;
+    animation: flicker 1.2s infinite alternate;
     text-align: center;
 }
 
 @keyframes flicker {
     0% { opacity: 1; }
-    50% { opacity: 0.4; }
+    60% { opacity: 0.45; }
     100% { opacity: 1; }
 }
 
@@ -62,6 +87,39 @@ body {
     justify-content: center;
     cursor: pointer;
     position: relative;
+    overflow: hidden;
+}
+
+/* 🔦 Torch light on scroll (natural, soft) */
+#scroll::after {
+    content: "";
+    position: absolute;
+    inset: -20%;
+    background: radial-gradient(
+        circle at 30% 50%,
+        rgba(255,200,120,0.35),
+        rgba(255,150,80,0.15),
+        transparent 60%
+    );
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    pointer-events: none;
+}
+
+#scroll.revealed::after {
+    opacity: 1;
+    animation: scrollTorch 4.5s infinite alternate ease-in-out;
+}
+
+@keyframes scrollTorch {
+    0% {
+        transform: translateX(-10%) translateY(-5%);
+        opacity: 0.6;
+    }
+    100% {
+        transform: translateX(10%) translateY(5%);
+        opacity: 0.9;
+    }
 }
 
 /* Scroll text */
@@ -69,40 +127,13 @@ body {
     font-family: 'Cinzel', serif;
     font-size: 3em;
     font-weight: 800;
-    color: #ff2a2a;
+    color: #ff3b2f;
     text-shadow:
-        0 0 6px #ff2a2a,
-        0 0 14px rgba(255,60,60,0.8),
-        0 0 30px rgba(255,80,80,0.6);
+        0 0 6px rgba(255,60,40,0.8),
+        0 0 14px rgba(255,120,80,0.6);
     position: relative;
-    overflow: hidden;
+    z-index: 2;
     pointer-events: none;
-}
-
-/* Torch light sweep */
-#scroll-text::after {
-    content: "";
-    position: absolute;
-    top: -20%;
-    left: -60%;
-    width: 60%;
-    height: 140%;
-    background: linear-gradient(
-        120deg,
-        transparent,
-        rgba(255,255,255,0.7),
-        transparent
-    );
-    animation: none;
-}
-
-#scroll.revealed #scroll-text::after {
-    animation: torch 1.4s infinite;
-}
-
-@keyframes torch {
-    0% { left: -60%; }
-    100% { left: 140%; }
 }
 
 /* QR */
@@ -118,22 +149,18 @@ body {
 
 <div id="container">
 
-    <!-- LOGO -->
     <img id="logo" src="images/logo.png" alt="Game Logo">
 
-    <!-- LANDING TEXT -->
     <div id="landing-text">Loyal or Imposter</div>
 
-    <!-- SCROLL -->
     <div id="scroll">
         <div id="scroll-text">Tap to Reveal</div>
     </div>
 
-    <!-- QR -->
     <img id="qr" />
 
 </div>
 
-<script src="script.js?v=4.0"></script>
+<script src="script.js?v=5.0"></script>
 </body>
 </html>
