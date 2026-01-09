@@ -1,7 +1,8 @@
 (function () {
 
-  // UID
+  // ---------- UID ----------
   let uid = new URLSearchParams(window.location.search).get("uid");
+
   if (!uid) {
     uid = localStorage.getItem("traitors_uid");
     if (!uid) {
@@ -10,7 +11,7 @@
     }
   }
 
-  // Role
+  // ---------- ROLE ----------
   const IMPOSTER_PERCENTAGE = 20;
   const STORAGE_KEY = "traitors_role_" + uid;
 
@@ -20,42 +21,43 @@
     localStorage.setItem(STORAGE_KEY, role);
   }
 
-  // Elements
+  // ---------- ELEMENTS ----------
   const landingText = document.getElementById("landing-text");
   const scroll = document.getElementById("scroll");
   const scrollText = document.getElementById("scroll-text");
-  const roleDiv = document.getElementById("role");
   const qr = document.getElementById("qr");
 
-  // Scroll image fallback
+  if (!scroll || !scrollText || !qr) return;
+
+  // ---------- IMAGE FALLBACK ----------
   const img = new Image();
   img.src = "images/scroll.png";
-  img.onerror = () => {
+  img.onerror = function () {
     scroll.style.backgroundImage = "none";
     scroll.style.border = "2px solid white";
   };
 
-  // Tap to reveal
-  scroll.addEventListener("click", function () {
+  // ---------- REVEAL ----------
+  scroll.addEventListener("click", function reveal() {
 
-    // Update scroll
+    // Update scroll text
     scrollText.textContent = role;
 
     // Hide landing text
-    landingText.style.display = "none";
+    if (landingText) landingText.style.display = "none";
 
-    // Show role & QR
-    roleDiv.style.display = "block";
-    roleDiv.textContent = role;
+    // Torch + reveal state
+    scroll.classList.add("revealed");
 
+    // Show QR under scroll
     qr.style.display = "block";
     qr.src = role === "Imposter"
       ? "qr/imposter.png"
       : "qr/loyal.png";
 
-    // Disable further clicks
+    // Disable further interaction
     scroll.style.cursor = "default";
-    scroll.removeEventListener("click", arguments.callee);
+    scroll.removeEventListener("click", reveal);
   });
 
 })();
