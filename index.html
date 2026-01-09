@@ -120,12 +120,12 @@ body.grain::before {
     margin-bottom: 8px;
 }
 
-/* Landing text */
+/* Landing + Results text */
 #landing-text {
     font-family: 'Cinzel', serif;
     font-size: 2.4em;
     font-weight: 800;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
     animation: flicker 1.2s infinite alternate;
     text-align: center;
 }
@@ -176,7 +176,7 @@ body.grain::before {
     pointer-events: none;
 
     display: flex;
-    flex-direction: column; /* stack lines */
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     line-height: 1.1em;
@@ -194,10 +194,10 @@ body.grain::before {
     100% { text-shadow: 0 0 6px rgba(255,60,40,0.9),0 0 16px rgba(255,120,80,0.8); }
 }
 
-/* Responsive adjustment for mobile */
+/* Responsive text for mobile */
 @media (max-width: 500px) {
     #scroll-text {
-        font-size: 1.6em; /* smaller font for mobile */
+        font-size: 1.6em;
     }
 }
 
@@ -232,7 +232,6 @@ body.grain::before {
     <div class="smoke" style="left:50%; animation-delay:6s;"></div>
     <div class="smoke" style="left:80%; animation-delay:12s;"></div>
 
-    <!-- More embers -->
     <div class="ember" style="left:10%; animation-delay:0s;"></div>
     <div class="ember" style="left:15%; animation-delay:1s;"></div>
     <div class="ember" style="left:20%; animation-delay:2s;"></div>
@@ -246,7 +245,6 @@ body.grain::before {
 </div>
 
 <div id="container">
-
     <img id="logo" src="images/logo.png" alt="Game Logo">
 
     <div id="landing-text">Loyal or Imposter</div>
@@ -259,7 +257,6 @@ body.grain::before {
     </div>
 
     <img id="qr" />
-
 </div>
 
 <script src="script.js?v=12.0"></script>
