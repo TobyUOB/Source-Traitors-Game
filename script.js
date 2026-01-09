@@ -12,10 +12,10 @@ scroll.addEventListener('click', () => {
     // Random result
     const result = Math.random() < 0.5 ? "Loyal" : "Imposter";
 
-    // Update scroll text
+    // Update scroll text only
     scrollText.innerHTML = `<span>${result}</span>`;
 
-    // Show QR
+    // Show QR code below scroll
     qr.src = result === "Loyal" ? "images/loyal_qr.png" : "images/imposter_qr.png";
     qr.style.display = "block";
 });
