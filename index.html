@@ -8,7 +8,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&display=swap" rel="stylesheet">
 
 <style>
-/* ---------------- BASE ---------------- */
 body {
     margin: 0;
     background: #0a0805;
@@ -18,14 +17,14 @@ body {
     position: relative;
 }
 
-/* ---------------- AMBIENT TORCHLIGHT ---------------- */
+/* Ambient torch lighting */
 body::before,
 body::after {
-    content: "";
+    content:"";
     position: fixed;
-    inset: -30%;
-    pointer-events: none;
-    z-index: 0;
+    inset:-30%;
+    pointer-events:none;
+    z-index:0;
 }
 
 body::before {
@@ -38,195 +37,95 @@ body::after {
     animation: torchB 7s infinite alternate ease-in-out;
 }
 
-@keyframes torchA { from {transform: translate(-4%,-3%);opacity:0.6;} to{transform:translate(4%,3%);opacity:1;} }
-@keyframes torchB { from {transform: translate(3%,-3%);opacity:0.5;} to{transform:translate(-3%,4%);opacity:0.9;} }
+@keyframes torchA { from{transform:translate(-4%,-3%);opacity:0.6;} to{transform:translate(4%,3%);opacity:1;} }
+@keyframes torchB { from{transform:translate(3%,-3%);opacity:0.5;} to{transform:translate(-3%,4%);opacity:0.9;} }
 
-/* ---------------- CAMERA GRAIN ---------------- */
+/* Camera grain */
 body.grain::before {
-    background-image: url('images/grain.png');
-    background-size: cover;
-    mix-blend-mode: overlay;
-    opacity: 0.05;
+    background-image:url('images/grain.png');
+    background-size:cover;
+    mix-blend-mode:overlay;
+    opacity:0.05;
     animation: grainMove 12s linear infinite;
 }
 
 @keyframes grainMove {
-    0% { transform: translate(0,0); }
-    25% { transform: translate(-2%,1%); }
-    50% { transform: translate(1%,-1%); }
-    75% { transform: translate(-1%,2%); }
-    100% { transform: translate(0,0); }
+    0% {transform:translate(0,0);} 25% {transform:translate(-2%,1%);}
+    50% {transform:translate(1%,-1%);} 75% {transform:translate(-1%,2%);} 100% {transform:translate(0,0);}
 }
 
-/* ---------------- SMOKE & EMBERS ---------------- */
-#atmosphere {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 1;
-}
-
+/* Smoke & embers */
+#atmosphere { position:fixed; inset:0; pointer-events:none; z-index:1; }
 .smoke {
-    position: absolute;
-    width: 200px;
-    height: 200px;
+    position:absolute;
+    width:200px; height:200px;
     background: radial-gradient(circle, rgba(255,255,255,0.15), transparent 70%);
     animation: smokeDrift 18s linear infinite, smokeSwirl 6s ease-in-out infinite alternate;
 }
-
-@keyframes smokeDrift {
-    from { transform: translateY(100vh) scale(0.8); opacity:0; }
-    20% { opacity:0.4; }
-    100% { transform: translateY(-200px) scale(1.4); opacity:0; }
-}
-
-@keyframes smokeSwirl {
-    0% { transform: translateX(0); }
-    50% { transform: translateX(20px); }
-    100% { transform: translateX(0); }
-}
+@keyframes smokeDrift { from{transform:translateY(100vh) scale(0.8); opacity:0;} 20%{opacity:0.4;} 100%{transform:translateY(-200px) scale(1.4); opacity:0;} }
+@keyframes smokeSwirl { 0%{transform:translateX(0);} 50%{transform:translateX(20px);} 100%{transform:translateX(0);} }
 
 .ember {
-    position: absolute;
-    width: 4px;
-    height: 4px;
-    background: orange;
-    border-radius: 50%;
-    box-shadow: 0 0 10px orange;
+    position:absolute; width:4px; height:4px;
+    background:orange; border-radius:50%; box-shadow:0 0 10px orange;
     animation: emberRise 6s linear infinite;
 }
+@keyframes emberRise { from{transform:translateY(100vh); opacity:0;} 30%{opacity:1;} 100%{transform:translateY(-50px) translateX(-40px); opacity:0;} }
 
-@keyframes emberRise {
-    from { transform: translateY(100vh); opacity:0; }
-    30% { opacity:1; }
-    100% { transform: translateY(-50px) translateX(-40px); opacity:0; }
-}
-
-/* ---------------- CONTENT ---------------- */
+/* Content container */
 #container {
-    position: relative;
-    z-index: 2;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-top: 20px;
+    position:relative; z-index:2; min-height:100vh;
+    display:flex; flex-direction:column; align-items:center; padding-top:20px;
 }
 
 /* Logo */
-#logo {
-    width: 80%;
-    max-width: 320px;
-    margin-bottom: 8px;
-}
+#logo { width:80%; max-width:320px; margin-bottom:8px; }
 
-/* Landing + Results text */
+/* Landing text */
 #landing-text {
-    font-family: 'Cinzel', serif;
-    font-size: 2.4em;
-    font-weight: 800;
-    margin-bottom: 8px;
-    animation: flicker 1.2s infinite alternate;
-    text-align: center;
+    font-family:'Cinzel', serif; font-size:2.4em; font-weight:800;
+    margin-bottom:8px; animation:flicker 1.2s infinite alternate; text-align:center;
 }
+@keyframes flicker { 0%{opacity:1;} 60%{opacity:0.45;} 100%{opacity:1;} }
 
-@keyframes flicker {
-    0% { opacity: 1; }
-    60% { opacity: 0.45; }
-    100% { opacity: 1; }
-}
-
-/* ---------------- SCROLL ---------------- */
+/* Scroll */
 #scroll {
-    width: 90%;
-    max-width: 700px;
-    height: 380px;
+    width:90%; max-width:700px; height:380px;
     background-image: url("images/scroll.png");
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-
-    /* Glow + rotation combined */
+    background-size:contain; background-repeat:no-repeat; background-position:center;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; position:relative; overflow:hidden;
     animation: scrollGlowTilt 8s infinite alternate ease-in-out;
 }
-
-@keyframes scrollGlowTilt {
-    0% { filter: brightness(1); transform: rotate(-1.5deg); }
-    50% { filter: brightness(1.08); transform: rotate(1.5deg); }
-    100% { filter: brightness(0.98); transform: rotate(-1.5deg); }
-}
+@keyframes scrollGlowTilt { 0%{filter:brightness(1); transform:rotate(-1.5deg);} 50%{filter:brightness(1.08); transform:rotate(1.5deg);} 100%{filter:brightness(0.98); transform:rotate(-1.5deg);} }
 
 /* Scroll text */
 #scroll-text {
-    font-family: 'Cinzel', serif;
-    font-size: 2em;
-    font-weight: 800;
-    color: #ff3b2f;
-    text-shadow:
-        0 0 6px rgba(255,60,40,0.9),
-        0 0 16px rgba(255,120,80,0.8);
-    position: relative;
-    z-index: 2;
-    pointer-events: none;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    line-height: 1.1em;
-
-    animation: textGlow 3s infinite alternate ease-in-out;
+    font-family:'Cinzel', serif; font-size:2em; font-weight:800;
+    color:#ff3b2f;
+    text-shadow:0 0 6px rgba(255,60,40,0.9),0 0 16px rgba(255,120,80,0.8);
+    position:relative; z-index:2; pointer-events:none;
+    display:flex; flex-direction:column; justify-content:center; align-items:center; line-height:1.1em;
+    animation:textGlow 3s infinite alternate ease-in-out;
 }
+#scroll-text span { display:block; }
+@keyframes textGlow { 0%{text-shadow:0 0 6px rgba(255,60,40,0.9),0 0 16px rgba(255,120,80,0.8);} 50%{text-shadow:0 0 12px rgba(255,80,60,0.95),0 0 28px rgba(255,140,100,0.85);} 100%{text-shadow:0 0 6px rgba(255,60,40,0.9),0 0 16px rgba(255,120,80,0.8);} }
 
-#scroll-text span {
-    display: block;
-}
+/* Mobile */
+@media(max-width:500px) { #scroll-text{font-size:1.6em;} }
 
-@keyframes textGlow {
-    0% { text-shadow: 0 0 6px rgba(255,60,40,0.9),0 0 16px rgba(255,120,80,0.8); }
-    50% { text-shadow: 0 0 12px rgba(255,80,60,0.95),0 0 28px rgba(255,140,100,0.85); }
-    100% { text-shadow: 0 0 6px rgba(255,60,40,0.9),0 0 16px rgba(255,120,80,0.8); }
-}
-
-/* Responsive text for mobile */
-@media (max-width: 500px) {
-    #scroll-text {
-        font-size: 1.6em;
-    }
-}
-
-/* Bounce/unroll on tap */
-@keyframes bounceScroll {
-    0%   { transform: rotate(0deg) scale(1); }
-    20%  { transform: rotate(-5deg) scale(1.05); }
-    40%  { transform: rotate(3deg) scale(1.02); }
-    60%  { transform: rotate(-2deg) scale(1.03); }
-    80%  { transform: rotate(1deg) scale(1.01); }
-    100% { transform: rotate(0deg) scale(1); }
-}
-
-#scroll.bounce {
-    animation: bounceScroll 0.6s ease-in-out forwards;
-}
+/* Bounce/unroll */
+@keyframes bounceScroll { 0%{transform:rotate(0deg) scale(1);} 20%{transform:rotate(-5deg) scale(1.05);} 40%{transform:rotate(3deg) scale(1.02);} 60%{transform:rotate(-2deg) scale(1.03);} 80%{transform:rotate(1deg) scale(1.01);} 100%{transform:rotate(0deg) scale(1);} }
+#scroll.bounce { animation:bounceScroll 0.6s ease-in-out forwards; }
 
 /* QR */
-#qr {
-    margin-top: 20px;
-    width: 200px;
-    display: none;
-}
+#qr { margin-top:20px; width:200px; display:none; }
+
 </style>
 </head>
 
 <body class="grain">
 
-<!-- Smoke & embers -->
 <div id="atmosphere">
     <div class="smoke" style="left:10%; animation-delay:0s;"></div>
     <div class="smoke" style="left:50%; animation-delay:6s;"></div>
@@ -259,6 +158,6 @@ body.grain::before {
     <img id="qr" />
 </div>
 
-<script src="script.js?v=12.0"></script>
+<script src="script.js?v=13.0"></script>
 </body>
 </html>
