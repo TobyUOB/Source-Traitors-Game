@@ -76,8 +76,6 @@ body {
 #scroll {
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: url('images/scroll.png') no-repeat center center;
-    background-size: contain;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -86,6 +84,16 @@ body {
     z-index: 10;
     color: #fff;
     user-select: none;
+    background-color: rgba(0,0,0,0.4); /* fallback if image fails */
+    background-image: url('images/scroll.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+#scroll-text {
+    position: relative;
+    z-index: 20; /* ensures text is always on top */
 }
 </style>
 </head>
@@ -99,7 +107,7 @@ body {
 <div id="container">
     <div id="role"></div>
     <img id="qr" />
-    <div id="images/scroll">Tap to Reveal</div>
+    <div id="scroll"><span id="scroll-text">Tap to Reveal</span></div>
 </div>
 
 <script src="script.js"></script>
