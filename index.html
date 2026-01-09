@@ -4,13 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Traitors Game</title>
-<link rel="stylesheet" href="style.css">
 <style>
 body {
     margin: 0;
     background-color: #111;
     color: white;
-    font-family: 'Arial', sans-serif;
+    font-family: Arial, sans-serif;
     text-align: center;
     overflow: hidden;
 }
@@ -24,24 +23,7 @@ body {
     height: 100vh;
 }
 
-/* Role text with torch flicker */
-#role {
-    font-size: 4em;
-    font-weight: bold;
-    color: red;
-    text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4500, 0 0 20px #ff6347;
-    display: none;
-    margin-top: 20px;
-    animation: flickerRole 1s infinite alternate;
-}
-
-@keyframes flickerRole {
-    0% { text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4500, 0 0 20px #ff6347; }
-    50% { text-shadow: 0 0 10px #ff6347, 0 0 20px #ff4500, 0 0 30px #ff0000; }
-    100% { text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4500, 0 0 20px #ff6347; }
-}
-
-/* Flickering banner lights */
+/* Flickering banner */
 #banner {
     position: absolute;
     top: 20px;
@@ -63,7 +45,24 @@ body {
     100% { opacity: 1; }
 }
 
-/* QR styling */
+/* Role text */
+#role {
+    font-size: 4em;
+    font-weight: bold;
+    color: red;
+    text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4500, 0 0 20px #ff6347;
+    display: none;
+    margin-top: 20px;
+    animation: flickerRole 1s infinite alternate;
+}
+
+@keyframes flickerRole {
+    0% { text-shadow: 0 0 5px #ff0000,0 0 10px #ff4500,0 0 20px #ff6347; }
+    50% { text-shadow: 0 0 10px #ff6347,0 0 20px #ff4500,0 0 30px #ff0000; }
+    100% { text-shadow: 0 0 5px #ff0000,0 0 10px #ff4500,0 0 20px #ff6347; }
+}
+
+/* QR image */
 #qr {
     width: 200px;
     margin-top: 20px;
@@ -75,16 +74,15 @@ body {
 /* Scroll overlay */
 #scroll {
     position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
+    top:0; left:0; right:0; bottom:0;
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 2em;
     cursor: pointer;
     z-index: 10;
-    color: #fff;
     user-select: none;
-    background-color: rgba(0,0,0,0.4); /* fallback if image fails */
+    background-color: rgba(0,0,0,0.4);
     background-image: url('images/scroll.png');
     background-repeat: no-repeat;
     background-position: center;
@@ -92,8 +90,10 @@ body {
 }
 
 #scroll-text {
+    color: #fff;
+    text-shadow: 0 0 3px #000;
     position: relative;
-    z-index: 20; /* ensures text is always on top */
+    z-index: 20;
 }
 </style>
 </head>
@@ -106,7 +106,7 @@ body {
 
 <div id="container">
     <div id="role"></div>
-    <img id="qr" />
+    <img id="qr">
     <div id="scroll"><span id="scroll-text">Tap to Reveal</span></div>
 </div>
 
