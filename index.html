@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Traitors Game</title>
+
 <style>
 body {
     margin: 0;
@@ -16,116 +17,86 @@ body {
 
 #container {
     position: relative;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
 }
 
-/* Top text "Loyal or Imposter" */
-#top-text {
-    position: absolute;
-    top: 40%; /* adjust as needed */
-    width: 100%;
-    text-align: center;
+/* Flickering landing text */
+#landing-text {
     font-size: 2.5em;
     font-weight: bold;
-    color: #fff;
-    text-shadow: 0 0 5px #000;
-    z-index: 5;
+    margin-bottom: 20px;
+    animation: flicker 1s infinite alternate;
 }
 
-/* Flickering banner */
-#banner {
-    position: absolute;
-    top: 20px;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    font-size: 2em;
-    font-weight: bold;
-}
-
-.flicker {
-    margin: 0 20px;
-    animation: flickerLight 1s infinite alternate;
-}
-
-@keyframes flickerLight {
+@keyframes flicker {
     0% { opacity: 1; }
-    50% { opacity: 0.3; }
+    50% { opacity: 0.4; }
     100% { opacity: 1; }
 }
 
-/* Role text */
-#role {
-    font-size: 4em;
-    font-weight: bold;
-    color: red;
-    text-shadow: 0 0 5px #ff0000, 0 0 10px #ff4500, 0 0 20px #ff6347;
-    display: none;
-    margin-top: 20px;
-    animation: flickerRole 1s infinite alternate;
-}
-
-@keyframes flickerRole {
-    0% { text-shadow: 0 0 5px #ff0000,0 0 10px #ff4500,0 0 20px #ff6347; }
-    50% { text-shadow: 0 0 10px #ff6347,0 0 20px #ff4500,0 0 30px #ff0000; }
-    100% { text-shadow: 0 0 5px #ff0000,0 0 10px #ff4500,0 0 20px #ff6347; }
-}
-
-/* QR image */
-#qr {
-    width: 200px;
-    margin-top: 20px;
-    border: 2px solid white;
-    border-radius: 10px;
-    display: none;
-}
-
-/* Scroll overlay */
+/* Scroll */
 #scroll {
-    position: absolute;
-    top:0; left:0; right:0; bottom:0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 2em;
-    cursor: pointer;
-    z-index: 10;
-    user-select: none;
-    background-color: rgba(0,0,0,0.4);
-    background-image: url('images/scroll.png');
+    width: 80%;
+    max-width: 500px;
+    height: 300px;
+    background-image: url("images/scroll.png");
+    background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    background-size: contain;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
 }
 
 #scroll-text {
-    color: #fff;
-    background-color: rgba(0,0,0,0.6);
-    padding: 0.3em 0.6em;
-    border-radius: 5px;
-    text-shadow: 0 0 3px #000;
-    position: relative;
-    z-index: 20;
+    font-size: 2em;
+    font-weight: bold;
+    color: white;
+    background: rgba(0,0,0,0.6);
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-shadow: 0 0 5px black;
+}
+
+/* Role reveal */
+#role {
+    margin-top: 20px;
+    font-size: 3em;
+    color: red;
+    text-shadow: 0 0 10px red;
+    display: none;
+}
+
+/* QR */
+#qr {
+    margin-top: 20px;
+    width: 200px;
+    display: none;
 }
 </style>
 </head>
+
 <body>
 
-<div id="top-text">Loyal or Imposter</div>
-
-<div id="banner">
-    <div class="flicker">Loyal</div>
-    <div class="flicker">Imposter</div>
-</div>
-
 <div id="container">
+
+    <!-- LANDING TEXT -->
+    <div id="landing-text">Loyal or Imposter</div>
+
+    <!-- SCROLL -->
+    <div id="scroll">
+        <div id="scroll-text">Tap to Reveal</div>
+    </div>
+
+    <!-- ROLE & QR -->
     <div id="role"></div>
-    <img id="qr">
-    <div id="scroll"><span id="scroll-text">Tap to Reveal</span></div>
+    <img id="qr" />
+
 </div>
 
 <script src="script.js"></script>
