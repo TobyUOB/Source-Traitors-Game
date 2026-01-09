@@ -5,16 +5,79 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Traitors Game</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      margin: 0;
+      background-color: #111;
+      color: white;
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+      overflow: hidden;
+    }
+    #container {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    #role, #uidDisplay {
+      font-size: 2em;
+      margin: 20px 0;
+    }
+    #qr {
+      width: 200px;
+      margin-top: 20px;
+      border: 2px solid white;
+      border-radius: 10px;
+    }
+    #scroll {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: url('images/scroll.png') no-repeat center center;
+      background-size: contain;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2em;
+      cursor: pointer;
+      z-index: 10;
+      color: #fff;
+    }
+    #banner {
+      position: absolute;
+      top: 20px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      font-size: 2em;
+      font-weight: bold;
+    }
+    .flicker {
+      margin: 0 20px;
+      animation: flicker 1s infinite alternate;
+    }
+    @keyframes flicker {
+      0% { opacity: 1; }
+      50% { opacity: 0.3; }
+      100% { opacity: 1; }
+    }
+  </style>
 </head>
 <body>
-  <div id="container">
-    <h1>Your Role Is:</h1>
-    <div id="role">Loading...</div>
-    <img id="qr" alt="Role QR Code" />
-    <p>Do not refresh or share this page.</p>
+  <div id="banner">
+    <div class="flicker" id="loyalLight">Loyal</div>
+    <div class="flicker" id="imposterLight">Imposter</div>
   </div>
 
-  <!-- Include the updated script -->
+  <div id="container">
+    <div id="role" style="display:none;"></div>
+    <img id="qr" style="display:none;" />
+    <div id="uidDisplay" style="display:none;"></div>
+    <div id="scroll">Tap to Reveal</div>
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>
