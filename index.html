@@ -165,7 +165,7 @@ body.grain::before {
 /* Scroll text */
 #scroll-text {
     font-family: 'Cinzel', serif;
-    font-size: 2em; /* smaller to fit neatly */
+    font-size: 2em;
     font-weight: 800;
     color: #ff3b2f;
     text-shadow:
@@ -175,13 +175,30 @@ body.grain::before {
     z-index: 2;
     pointer-events: none;
 
+    display: flex;
+    flex-direction: column; /* stack lines */
+    justify-content: center;
+    align-items: center;
+    line-height: 1.1em;
+
     animation: textGlow 3s infinite alternate ease-in-out;
+}
+
+#scroll-text span {
+    display: block;
 }
 
 @keyframes textGlow {
     0% { text-shadow: 0 0 6px rgba(255,60,40,0.9),0 0 16px rgba(255,120,80,0.8); }
     50% { text-shadow: 0 0 12px rgba(255,80,60,0.95),0 0 28px rgba(255,140,100,0.85); }
     100% { text-shadow: 0 0 6px rgba(255,60,40,0.9),0 0 16px rgba(255,120,80,0.8); }
+}
+
+/* Responsive adjustment for mobile */
+@media (max-width: 500px) {
+    #scroll-text {
+        font-size: 1.6em; /* smaller font for mobile */
+    }
 }
 
 /* QR */
@@ -221,13 +238,16 @@ body.grain::before {
     <div id="landing-text">Loyal or Imposter</div>
 
     <div id="scroll">
-        <div id="scroll-text">Tap to Reveal</div>
+        <div id="scroll-text">
+            <span>TAP</span>
+            <span>TO REVEAL</span>
+        </div>
     </div>
 
     <img id="qr" />
 
 </div>
 
-<script src="script.js?v=11.0"></script>
+<script src="script.js?v=12.0"></script>
 </body>
 </html>
