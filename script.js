@@ -10,7 +10,7 @@
   }
 
   // ---------------- Role Assignment ----------------
-  const IMPOSTER_PERCENTAGE = 20; // chance to be Imposter
+  const IMPOSTER_PERCENTAGE = 20; // % chance to be Imposter
   const STORAGE_KEY = "traitors_role_" + uid;
 
   async function getRole(uid) {
@@ -25,7 +25,6 @@
   const roleDiv = document.getElementById("role");
   const qrImg = document.getElementById("qr");
   const scroll = document.getElementById("scroll");
-  const uidDiv = document.getElementById("uidDisplay");
 
   if (!roleDiv || !qrImg || !scroll) return;
 
@@ -35,17 +34,14 @@
       localStorage.setItem(STORAGE_KEY, role);
   }
 
-  // Optional: show UID for debugging
-  uidDiv.textContent = "UID: " + uid;
-
   scroll.addEventListener("click", () => {
       // Hide scroll overlay
       scroll.style.display = "none";
-      // Show role, QR, UID
+      // Show role & QR
       roleDiv.style.display = "block";
       qrImg.style.display = "block";
-      uidDiv.style.display = "block";
       qrImg.src = role === "Imposter" ? "qr/imposter.png" : "qr/loyal.png";
+      roleDiv.textContent = role;
   });
 
 })();
