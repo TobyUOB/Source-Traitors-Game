@@ -1,32 +1,48 @@
-const params = new URLSearchParams(window.location.search);
-const uid = params.get("uid");
+// --------------- UID Handling ---------------
+// Try to get UID from query string
+let uid = new URLSearchParams(window.location.search).get("uid");
 
+// If no UID is provided, use localStorage or generate a new random UID
 if (!uid) {
-  document.body.innerHTML = "Invalid link.";
-  throw new Error("No UID");
+    uid = localStorage.getItem("traitors_uid");
+    if (!uid) {
+        uid = crypto.randomUUID(); // random unique UID
+        localStorage.setItem("traitors_uid", uid);
+    }
 }
 
-const TRAITOR_PERCENTAGE = 20;
+// --------------- Role Assignment ---------------
+const TRAITOR_PERCENTAGE = 20; // Adjust this to change Traitor ratio
 const STORAGE_KEY = "traitors_role_" + uid;
 
-// Deterministic hash-based roll
-function hashToNumber(str) {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = ((hash << 5) - hash) + str.charCodeAt(i);
-    hash |= 0;
-  }
-  return Math.abs(hash) % 100;
+// Function: deterministic SHA-256 hash to assign role
+async function getRole(uid) {
+    // Hash the UID
+    const msgBuffer = new TextEncoder().encode(uid);
+    const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+
+    // Reduce hash to a number 0–99
+    const hashNumber = hashArray.reduce((a, b) => a + b, 0) % 100;
+
+    // Assign role based on percentage
+    return hashNumber < TRAITOR_PERCENTAGE ? "Traitor" : "Faithful";
 }
 
-let role = localStorage.getItem(STORAGE_KEY);
+// --------------- Main Execution ---------------
+(async () => {
+    // Check localStorage first for consistency
+    let role = localStorage.getItem(STORAGE_KEY);
+    if (!role) {
+        role = await getRole(uid);
+        localStorage.setItem(STORAGE_KEY, role);
+    }
 
-if (!role) {
-  const roll = hashToNumber(uid);
-  role = roll < TRAITOR_PERCENTAGE ? "Traitor" : "Faithful";
-  localStorage.setItem(STORAGE_KEY, role);
-}
+    // Display role
+    const roleDiv = document.getElementById("role");
+    roleDiv.textContent = role;
 
-document.getElementById("role").textContent = role;
-document.getElementById("qr").src =
-  role === "Traitor" ? "qr/traitor.png" : "qr/faithful.png";
+    // Show correct QR code
+    const qrImg = document.getElementById("qr");
+    qrImg.src = role === "Traitor" ? "qr/traitor.png" : "qr/faithful.png";
+})();
