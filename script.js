@@ -1,54 +1,51 @@
-(async function() {
-    // ------------------- UID -------------------
-    let uid = new URLSearchParams(window.location.search).get("uid");
+(function () {
+
+  // ---------------- UID ----------------
+  let uid = new URLSearchParams(window.location.search).get("uid");
+
+  if (!uid) {
+    uid = localStorage.getItem("traitors_uid");
     if (!uid) {
-        uid = localStorage.getItem("traitors_uid");
-        if (!uid) {
-            uid = crypto.randomUUID();
-            localStorage.setItem("traitors_uid", uid);
-        }
+      uid = Math.random().toString(36).substring(2, 12);
+      localStorage.setItem("traitors_uid", uid);
     }
+  }
 
-    // ------------------- Role Assignment -------------------
-    const IMPOSTER_PERCENTAGE = 20;
-    const STORAGE_KEY = "traitors_role_" + uid;
+  // ---------------- Role ----------------
+  const IMPOSTER_PERCENTAGE = 20;
+  const STORAGE_KEY = "traitors_role_" + uid;
 
-    async function getRole(uid) {
-        try {
-            const msgBuffer = new TextEncoder().encode(uid);
-            const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            const hashNumber = hashArray.reduce((a,b)=>a+b,0) % 100;
-            return hashNumber < IMPOSTER_PERCENTAGE ? "Imposter" : "Loyal";
-        } catch(e) {
-            return Math.random() < IMPOSTER_PERCENTAGE/100 ? "Imposter" : "Loyal";
-        }
-    }
+  let role = localStorage.getItem(STORAGE_KEY);
 
-    const roleDiv = document.getElementById("role");
-    const qrImg = document.getElementById("qr");
-    const scroll = document.getElementById("scroll");
+  if (!role) {
+    role = Math.random() * 100 < IMPOSTER_PERCENTAGE ? "Imposter" : "Loyal";
+    localStorage.setItem(STORAGE_KEY, role);
+  }
 
-    if(!roleDiv || !qrImg || !scroll) return;
+  // ---------------- Elements ----------------
+  const roleDiv = document.getElementById("role");
+  const qrImg = document.getElementById("qr");
+  const scroll = document.getElementById("scroll");
 
-    let role = localStorage.getItem(STORAGE_KEY);
-    if(!role){
-        role = await getRole(uid);
-        localStorage.setItem(STORAGE_KEY, role);
-    }
+  if (!roleDiv || !qrImg || !scroll) {
+    console.error("Required elements missing");
+    return;
+  }
 
-    // ------------------- Scroll image fallback -------------------
-    const scrollImage = new Image();
-    scrollImage.src = 'images/scroll.png';
-    scrollImage.onerror = ()=>{ scroll.style.backgroundImage = 'none'; };
+  // ---------------- Scroll image fallback ----------------
+  const imgTest = new Image();
+  imgTest.src = "images/scroll.png";
+  imgTest.onerror = function () {
+    scroll.style.backgroundImage = "none";
+  };
 
-    // ------------------- Tap to reveal -------------------
-    scroll.addEventListener("click", ()=>{
-        scroll.style.display = "none";   // hide scroll
-        roleDiv.style.display = "block";  // show role
-        qrImg.style.display = "block";    // show QR
-        qrImg.src = role === "Imposter" ? "qr/imposter.png" : "qr/loyal.png";
-        roleDiv.textContent = role;
-    });
+  // ---------------- Reveal ----------------
+  scroll.addEventListener("click", function () {
+    scroll.style.display = "none";
+    roleDiv.style.display = "block";
+    qrImg.style.display = "block";
+    roleDiv.textContent = role;
+    qrImg.src = role === "Imposter" ? "qr/imposter.png" : "qr/loyal.png";
+  });
 
 })();
