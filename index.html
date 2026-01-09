@@ -1,22 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Traitors Game</title>
 
 <style>
 body {
     margin: 0;
-    background-color: #111;
+    background: #111;
     color: white;
     font-family: Arial, sans-serif;
-    text-align: center;
     overflow: hidden;
 }
 
 #container {
-    position: relative;
     height: 100vh;
     display: flex;
     flex-direction: column;
@@ -24,11 +22,11 @@ body {
     justify-content: center;
 }
 
-/* Flickering landing text */
+/* Landing text */
 #landing-text {
-    font-size: 2.5em;
+    font-size: 2.6em;
     font-weight: bold;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     animation: flicker 1s infinite alternate;
 }
 
@@ -40,9 +38,9 @@ body {
 
 /* Scroll */
 #scroll {
-    width: 80%;
-    max-width: 500px;
-    height: 300px;
+    width: 90%;
+    max-width: 700px;
+    height: 380px;
     background-image: url("images/scroll.png");
     background-size: contain;
     background-repeat: no-repeat;
@@ -51,25 +49,52 @@ body {
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    position: relative;
+    transition: transform 0.8s ease-out;
 }
 
+/* Scroll unroll animation */
+#scroll.open {
+    transform: scaleX(1);
+}
+
+/* Scroll text */
 #scroll-text {
-    font-size: 2em;
+    font-size: 3em;
     font-weight: bold;
-    color: white;
-    background: rgba(0,0,0,0.6);
+    color: red;
     padding: 10px 20px;
+    background: rgba(0,0,0,0.6);
     border-radius: 8px;
-    text-shadow: 0 0 5px black;
+    text-shadow: 0 0 10px red;
+    position: relative;
+    overflow: hidden;
 }
 
-/* Role reveal */
-#role {
-    margin-top: 20px;
-    font-size: 3em;
-    color: red;
-    text-shadow: 0 0 10px red;
-    display: none;
+/* Torch light sweep */
+#scroll-text::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -50%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255,255,255,0.6),
+        transparent
+    );
+    animation: none;
+}
+
+#scroll.revealed #scroll-text::after {
+    animation: torch 1.2s infinite;
+}
+
+@keyframes torch {
+    0% { left: -50%; }
+    100% { left: 120%; }
 }
 
 /* QR */
@@ -84,21 +109,15 @@ body {
 <body>
 
 <div id="container">
-
-    <!-- LANDING TEXT -->
     <div id="landing-text">Loyal or Imposter</div>
 
-    <!-- SCROLL -->
     <div id="scroll">
         <div id="scroll-text">Tap to Reveal</div>
     </div>
 
-    <!-- ROLE & QR -->
-    <div id="role"></div>
     <img id="qr" />
-
 </div>
 
-<script src="script.js"></script>
+<script src="script.js?v=2.0"></script>
 </body>
 </html>
