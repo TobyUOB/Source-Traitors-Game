@@ -12,17 +12,17 @@ scroll.addEventListener('click', () => {
     // Play fire sound
     fire.play().catch(() => console.log("Autoplay prevented; will start on user tap"));
 
-    // Scroll bounce
+    // Scroll bounce animation
     scroll.classList.add('bounce');
     setTimeout(() => scroll.classList.remove('bounce'), 600);
 
-    // Random result
+    // Randomly select result
     const result = Math.random() < 0.5 ? "Loyal" : "Imposter";
 
     // Update scroll text
     scrollText.innerHTML = `<span>${result}</span>`;
 
-    // Show QR code
+    // Show corresponding QR code
     qr.src = result === "Loyal" ? "qr/loyal.png" : "qr/imposter.png";
     qr.style.display = "block";
 });
