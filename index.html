@@ -14,24 +14,32 @@ body {
     background: #111;
     color: white;
     font-family: Arial, sans-serif;
-    overflow: hidden;
 }
 
 #container {
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
+    padding-top: 20px;
+}
+
+/* LOGO */
+#logo {
+    width: 80%;
+    max-width: 320px;
+    margin-bottom: 10px;
 }
 
 /* Landing text */
 #landing-text {
     font-family: 'Cinzel', serif;
-    font-size: 2.6em;
+    font-size: 2.4em;
     font-weight: 800;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     animation: flicker 1s infinite alternate;
+    text-align: center;
 }
 
 @keyframes flicker {
@@ -54,24 +62,12 @@ body {
     justify-content: center;
     cursor: pointer;
     position: relative;
-
-    /* UNROLL SETUP */
-    transform: scaleY(0.15);
-    transform-origin: top;
-    opacity: 0.8;
-    transition: transform 0.9s ease-out, opacity 0.9s ease-out;
-}
-
-/* Unrolled state */
-#scroll.open {
-    transform: scaleY(1);
-    opacity: 1;
 }
 
 /* Scroll text */
 #scroll-text {
     font-family: 'Cinzel', serif;
-    font-size: 3.2em;
+    font-size: 3em;
     font-weight: 800;
     color: #ff2a2a;
     text-shadow:
@@ -122,16 +118,22 @@ body {
 
 <div id="container">
 
+    <!-- LOGO -->
+    <img id="logo" src="images/logo.png" alt="Game Logo">
+
+    <!-- LANDING TEXT -->
     <div id="landing-text">Loyal or Imposter</div>
 
+    <!-- SCROLL -->
     <div id="scroll">
         <div id="scroll-text">Tap to Reveal</div>
     </div>
 
+    <!-- QR -->
     <img id="qr" />
 
 </div>
 
-<script src="script.js?v=3.0"></script>
+<script src="script.js?v=4.0"></script>
 </body>
 </html>
