@@ -39,16 +39,12 @@
   // Reveal
   scroll.addEventListener("click", function reveal() {
 
-    // Hide landing text
     if (landingText) landingText.style.display = "none";
 
-    // Update scroll text
     scrollText.textContent = role;
 
-    // Enable torch sweep
     scroll.classList.add("revealed");
 
-    // Show QR
     qr.style.display = "block";
     qr.src = role === "Imposter"
       ? "qr/imposter.png"
