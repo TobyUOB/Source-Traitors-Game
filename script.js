@@ -1,6 +1,6 @@
 (function () {
 
-  // -------- UID --------
+  // UID
   let uid = new URLSearchParams(window.location.search).get("uid");
   if (!uid) {
     uid = localStorage.getItem("traitors_uid");
@@ -10,7 +10,7 @@
     }
   }
 
-  // -------- ROLE --------
+  // Role
   const IMPOSTER_PERCENTAGE = 20;
   const STORAGE_KEY = "traitors_role_" + uid;
 
@@ -20,7 +20,7 @@
     localStorage.setItem(STORAGE_KEY, role);
   }
 
-  // -------- ELEMENTS --------
+  // Elements
   const landingText = document.getElementById("landing-text");
   const scroll = document.getElementById("scroll");
   const scrollText = document.getElementById("scroll-text");
@@ -28,7 +28,7 @@
 
   if (!scroll || !scrollText || !qr) return;
 
-  // -------- Scroll image fallback --------
+  // Scroll image fallback
   const img = new Image();
   img.src = "images/scroll.png";
   img.onerror = function () {
@@ -36,28 +36,24 @@
     scroll.style.border = "2px solid white";
   };
 
-  // -------- Reveal --------
+  // Reveal
   scroll.addEventListener("click", function reveal() {
-
-    // Unroll animation
-    scroll.classList.add("open");
 
     // Hide landing text
     if (landingText) landingText.style.display = "none";
 
-    // Change scroll text
+    // Update scroll text
     scrollText.textContent = role;
 
-    // Torch sweep
+    // Enable torch sweep
     scroll.classList.add("revealed");
 
-    // Show QR under scroll
+    // Show QR
     qr.style.display = "block";
     qr.src = role === "Imposter"
       ? "qr/imposter.png"
       : "qr/loyal.png";
 
-    // Disable further clicks
     scroll.style.cursor = "default";
     scroll.removeEventListener("click", reveal);
   });
