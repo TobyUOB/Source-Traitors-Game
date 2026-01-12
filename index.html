@@ -8,186 +8,152 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&display=swap" rel="stylesheet">
 
 <style>
-/* RESET */
-* { box-sizing: border-box; }
+/* BASE */
 body {
-    margin: 0;
-    background: #0b0805;
-    color: #fff;
+    margin:0;
+    background:#0a0805;
     font-family: Arial, sans-serif;
-    overflow: hidden;
+    overflow:hidden;
+    color:#fff;
 }
 
-/* TORCH BACKGROUND */
-body::before,
-body::after {
-    content: "";
-    position: fixed;
-    inset: -25%;
-    pointer-events: none;
+/* TORCH LIGHT BACKGROUND */
+body::before, body::after {
+    content:"";
+    position:fixed;
+    inset:-30%;
+    pointer-events:none;
+    z-index:0;
 }
-body::before {
-    background: radial-gradient(circle at 30% 40%, rgba(255,180,100,0.35), transparent 60%);
-    animation: torchA 6s infinite alternate ease-in-out;
-}
-body::after {
-    background: radial-gradient(circle at 70% 60%, rgba(255,140,70,0.25), transparent 65%);
-    animation: torchB 8s infinite alternate ease-in-out;
-}
-@keyframes torchA { from{transform:translate(-3%,-2%);} to{transform:translate(3%,2%);} }
-@keyframes torchB { from{transform:translate(2%,-2%);} to{transform:translate(-2%,3%);} }
+body::before { background: radial-gradient(circle at 30% 40%, rgba(255,190,110,0.35), transparent 55%); animation: torchA 5.5s infinite alternate ease-in-out;}
+body::after { background: radial-gradient(circle at 70% 65%, rgba(255,150,70,0.3), transparent 60%); animation: torchB 7s infinite alternate ease-in-out;}
+@keyframes torchA { from{transform:translate(-4%,-3%);} to{transform:translate(4%,3%);} }
+@keyframes torchB { from{transform:translate(3%,-3%);} to{transform:translate(-3%,4%);} }
 
-/* SYMBOLS */
+/* SYMBOLS GLOWING */
 .symbols {
-    position: fixed;
-    inset: 0;
-    background: url("images/symbols.png") repeat;
-    background-size: 180px 180px;
-    opacity: 0.1;
-    pointer-events: none;
+    position:fixed;
+    inset:0;
+    background:url('images/symbols.png') repeat;
+    background-size:180px 180px;
+    opacity:0.1;
+    animation:symbolGlow 6s infinite alternate ease-in-out;
+    pointer-events:none;
+    z-index:1;
+}
+@keyframes symbolGlow {
+    0%{opacity:0.05;}
+    50%{opacity:0.12;}
+    100%{opacity:0.08;}
 }
 
 /* SMOKE */
 .smoke {
-    position: fixed;
-    inset: -20%;
+    position:fixed;
+    inset:-20%;
     background:
-      radial-gradient(circle at 40% 50%, rgba(255,255,255,0.08), transparent 60%),
-      radial-gradient(circle at 60% 60%, rgba(255,255,255,0.06), transparent 65%);
+        radial-gradient(circle at 40% 50%, rgba(255,255,255,0.08), transparent 60%),
+        radial-gradient(circle at 60% 60%, rgba(255,255,255,0.06), transparent 65%);
     filter: blur(60px);
-    animation: smokeMove 40s infinite linear;
-    pointer-events: none;
+    animation: smokeMove 40s linear infinite;
+    pointer-events:none;
+    z-index:2;
 }
-@keyframes smokeMove {
-    from { transform: rotate(0deg); }
-    to   { transform: rotate(360deg); }
-}
+@keyframes smokeMove { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
 
 /* EMBERS */
-#embers {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 20;
-}
+#embers { position:fixed; inset:0; pointer-events:none; z-index:20; }
 .ember {
-    position: absolute;
-    width: 3px;
-    height: 3px;
-    background: rgba(255,140,60,0.9);
-    border-radius: 50%;
-    box-shadow: 0 0 10px rgba(255,120,60,0.9);
+    position:absolute;
+    width:3px; height:3px;
+    border-radius:50%;
+    background:rgba(255,140,60,0.9);
+    box-shadow:0 0 10px rgba(255,120,60,0.9);
     animation: emberFloat linear infinite;
 }
 @keyframes emberFloat {
-    from { transform: translateY(0) translateX(0); opacity: 1; }
-    to   { transform: translateY(-120vh) translateX(30px); opacity: 0; }
+    from { transform:translateY(0) translateX(0); opacity:1; }
+    to { transform:translateY(-120vh) translateX(30px); opacity:0; }
 }
 
-/* LAYOUT */
+/* MAIN LAYOUT */
 #container {
-    position: relative;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-top: 16px;
-    z-index: 10;
+    position:relative;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding-top:18px;
+    z-index:10;
 }
 
 /* TITLE */
 #title {
-    font-family: 'Cinzel', serif;
-    font-size: 2.3em;
-    font-weight: 800;
-    margin-bottom: 8px;
-    animation: titleFlicker 1.3s infinite alternate;
+    font-family:'Cinzel', serif;
+    font-size:2.3em;
+    font-weight:800;
+    margin-bottom:8px;
+    animation:titleFlicker 1.3s infinite alternate;
+    text-align:center;
 }
 @keyframes titleFlicker {
-    0% { opacity: 1; }
-    60% { opacity: 0.5; }
-    100% { opacity: 1; }
+    0%{opacity:1;} 60%{opacity:0.45;} 100%{opacity:1;}
 }
 
 /* LOGO */
 #logo {
-    width: 180px;
-    max-width: 65vw;
-    margin-bottom: 10px;
-    filter:
-      drop-shadow(0 4px 8px rgba(255,160,90,0.4))
-      drop-shadow(0 16px 36px rgba(255,120,60,0.7));
+    width:180px;
+    max-width:65vw;
+    margin-bottom:10px;
+    filter: drop-shadow(0 4px 8px rgba(255,160,90,0.4))
+            drop-shadow(0 16px 36px rgba(255,120,60,0.7));
 }
 
 /* SCROLL */
 #scroll {
-    width: 90%;
-    max-width: 700px;
-    height: 380px;
-    background: url("images/scroll.png") no-repeat center / contain;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
+    width:90%;
+    max-width:700px;
+    height:380px;
+    background:url("images/scroll.png") no-repeat center / contain;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
     animation: scrollFloat 6s infinite alternate ease-in-out;
 }
 @keyframes scrollFloat {
-    from { transform: rotate(-0.6deg) translateY(0); }
-    to   { transform: rotate(0.6deg) translateY(6px); }
+    from{transform:rotate(-0.6deg) translateY(0);} 
+    to{transform:rotate(0.6deg) translateY(6px);}
 }
 
 /* SCROLL TEXT */
 #scroll-text {
-    font-family: 'Cinzel', serif;
-    font-size: 2em;
-    font-weight: 800;
-    color: #ff3b2f;
-    text-align: center;
-    text-shadow:
-        0 0 10px rgba(255,100,60,0.7),
-        0 0 24px rgba(255,80,40,0.5);
+    font-family:'Cinzel', serif;
+    font-size:2em;
+    font-weight:800;
+    color:#ff3b2f;
+    text-align:center;
+    text-shadow:0 0 10px rgba(255,100,60,0.7), 0 0 24px rgba(255,80,40,0.5);
 }
 
-/* BURN-IN */
+/* CINEMATIC BURN-IN */
 .burn {
     animation: burnIn 1.6s ease-out forwards;
 }
 @keyframes burnIn {
-    0% {
-        opacity: 0;
-        clip-path: inset(0 50% 0 50%);
-        filter: blur(6px);
-    }
-    40% {
-        opacity: 1;
-        clip-path: inset(0 15% 0 15%);
-        filter: blur(2px);
-    }
-    70% {
-        clip-path: inset(0 0 0 0);
-        filter: blur(0);
-        text-shadow:
-          0 0 28px rgba(255,140,90,0.95),
-          0 0 50px rgba(255,80,40,0.7);
-    }
-    100% {
-        text-shadow:
-          0 0 14px rgba(255,90,60,0.8),
-          0 0 26px rgba(255,120,80,0.6);
-    }
+    0% { opacity:0; clip-path:inset(0 50% 0 50%); filter:blur(6px); }
+    40% { opacity:1; clip-path:inset(0 15% 0 15%); filter:blur(2px); }
+    70% { clip-path:inset(0 0 0 0); filter:blur(0); text-shadow:0 0 28px rgba(255,140,90,0.95),0 0 50px rgba(255,80,40,0.7);}
+    100% { text-shadow:0 0 14px rgba(255,90,60,0.8),0 0 26px rgba(255,120,80,0.6);}
 }
 
 /* QR */
-#qr {
-    display: none;
-    width: 200px;
-    margin-top: 16px;
-}
+#qr { display:none; width:200px; margin-top:16px; }
 
-/* MOBILE */
 @media(max-width:500px){
-    #scroll { height: 300px; }
-    #scroll-text { font-size: 1.6em; }
+    #scroll{height:300px;}
+    #scroll-text{font-size:1.6em;}
+    #logo{width:140px;}
 }
 </style>
 </head>
@@ -199,13 +165,11 @@ body::after {
 <div id="embers"></div>
 
 <div id="container">
-    <div id="title">Loyal or Imposter?</div>
+    <div id="title">Loyal or Imposter</div>
     <img id="logo" src="images/logo.png" alt="Logo">
 
     <div id="scroll">
-        <div id="scroll-text">
-            TAP<br>TO REVEAL
-        </div>
+        <div id="scroll-text">TAP<br>TO REVEAL</div>
     </div>
 
     <img id="qr">
