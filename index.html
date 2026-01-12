@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Loyal or Imposter</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&display=swap" rel="stylesheet">
@@ -38,7 +38,7 @@ body::after {
 @keyframes torchA { from{transform:translate(-4%,-3%);opacity:0.6;} to{transform:translate(4%,3%);opacity:1;} }
 @keyframes torchB { from{transform:translate(3%,-3%);opacity:0.5;} to{transform:translate(-3%,4%);opacity:0.9;} }
 
-/* SYMBOLS */
+/* SYMBOL OVERLAY */
 .symbol-overlay {
     position: fixed;
     inset: 0;
@@ -49,127 +49,124 @@ body::after {
     z-index: 1;
 }
 
-/* CONTAINER */
+/* MAIN */
 #container {
     position: relative;
     z-index: 10;
-    min-height:100vh;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    padding-top:20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 18px;
 }
 
 /* TITLE */
 #landing-text {
-    font-family:'Cinzel', serif;
-    font-size:2.3em;
-    font-weight:800;
-    margin-bottom:10px;
-    animation:flicker 1.2s infinite alternate;
+    font-family: 'Cinzel', serif;
+    font-size: 2.3em;
+    font-weight: 800;
+    margin-bottom: 6px;
+    animation: flicker 1.2s infinite alternate;
+    text-align: center;
 }
-@keyframes flicker { 0%{opacity:1;} 60%{opacity:0.45;} 100%{opacity:1;} }
-
-/* SCROLL ROW */
-#scroll-row {
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap: 24px;
-    width:100%;
-    max-width:1200px;
-    height: 380px;
+@keyframes flicker {
+    0% { opacity: 1; }
+    60% { opacity: 0.45; }
+    100% { opacity: 1; }
 }
 
-/* SIDE LOGOS */
-.side-logo {
-    height: 75%;
-    max-height: 360px;
-    width: auto;
-    filter: drop-shadow(0 0 18px rgba(255,140,60,0.85));
-    animation: logoFlicker 4s infinite alternate ease-in-out;
-    z-index:11;
+/* LOGO */
+#logo-wrapper {
+    position: relative;
+    margin: 6px 0 10px;
 }
-.side-logo.left { transform:rotate(-3deg); }
-.side-logo.right { transform:rotate(3deg); }
 
-@keyframes logoFlicker {
-    0% { opacity:0.75; }
-    50% { opacity:1; }
-    100% { opacity:0.85; }
+#logo {
+    width: 200px;
+    max-width: 60vw;
+    filter:
+        drop-shadow(0 1px 1px rgba(255,200,160,0.25))
+        drop-shadow(0 6px 18px rgba(255,120,60,0.75))
+        drop-shadow(0 0 30px rgba(255,180,100,0.35));
+    animation: logoBreath 5s infinite alternate ease-in-out;
+}
+
+@keyframes logoBreath {
+    from { filter:
+        drop-shadow(0 2px 4px rgba(255,200,160,0.25))
+        drop-shadow(0 10px 22px rgba(255,120,60,0.7)); }
+    to { filter:
+        drop-shadow(0 4px 8px rgba(255,220,180,0.35))
+        drop-shadow(0 16px 32px rgba(255,180,100,0.95)); }
+}
+
+/* EMBERS FROM LOGO */
+.logo-embers {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 12;
+}
+.logo-ember {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: orange;
+    border-radius: 50%;
+    box-shadow: 0 0 12px rgba(255,150,60,0.9);
+    animation: emberTrail 5s linear infinite;
+}
+@keyframes emberTrail {
+    from { transform: translateY(0) translateX(0); opacity: 1; }
+    to   { transform: translateY(-120px) translateX(-40px); opacity: 0; }
 }
 
 /* SCROLL */
 #scroll {
-    width:90%;
-    max-width:700px;
-    height:380px;
-    background:url("images/scroll.png") no-repeat center / contain;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-    animation:scrollGlowTilt 8s infinite alternate ease-in-out;
-    z-index:11;
+    width: 90%;
+    max-width: 700px;
+    height: 380px;
+    background: url("images/scroll.png") no-repeat center / contain;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    animation: scrollGlow 8s infinite alternate ease-in-out;
 }
-@keyframes scrollGlowTilt {
-    0%{filter:brightness(1);transform:rotate(-1.5deg);}
-    50%{filter:brightness(1.08);transform:rotate(1.5deg);}
-    100%{filter:brightness(0.98);transform:rotate(-1.5deg);}
+@keyframes scrollGlow {
+    0% { filter: brightness(1); }
+    50% { filter: brightness(1.08); }
+    100% { filter: brightness(0.98); }
 }
 
 /* SCROLL TEXT */
 #scroll-text {
-    font-family:'Cinzel', serif;
-    font-size:2em;
-    font-weight:800;
-    color:#ff3b2f;
-    text-shadow:0 0 10px rgba(255,80,60,0.9),0 0 26px rgba(255,140,100,0.8);
-    text-align:center;
-    animation:textGlow 3s infinite alternate;
+    font-family: 'Cinzel', serif;
+    font-size: 2em;
+    font-weight: 800;
+    color: #ff3b2f;
+    text-shadow: 0 0 10px rgba(255,80,60,0.9), 0 0 28px rgba(255,140,100,0.8);
+    text-align: center;
+    animation: textGlow 3s infinite alternate;
 }
-#scroll-text span { display:block; }
+#scroll-text span { display: block; }
+
 @keyframes textGlow {
-    from { text-shadow:0 0 8px rgba(255,60,40,0.8); }
-    to   { text-shadow:0 0 22px rgba(255,150,100,0.95); }
+    from { text-shadow: 0 0 10px rgba(255,60,40,0.8); }
+    to   { text-shadow: 0 0 28px rgba(255,150,100,0.95); }
 }
 
 /* QR */
 #qr {
-    margin-top:20px;
-    width:200px;
-    display:none;
-    z-index:11;
-}
-
-/* 🔥 FOREGROUND EMBERS (IN FRONT OF LOGOS & SCROLL) */
-#foreground-embers {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 20;
-}
-.ember-front {
-    position:absolute;
-    width:5px;
-    height:5px;
-    background:orange;
-    border-radius:50%;
-    box-shadow:0 0 14px rgba(255,150,60,0.9);
-    animation: emberFloat 6s linear infinite;
-}
-@keyframes emberFloat {
-    from { transform:translateY(110vh) translateX(0); opacity:0; }
-    20%  { opacity:1; }
-    to   { transform:translateY(-20vh) translateX(-40px); opacity:0; }
+    margin-top: 20px;
+    width: 200px;
+    display: none;
 }
 
 /* MOBILE */
-@media(max-width:600px){
-    .side-logo {
-        height: 45%;
-        max-height: 180px;
-    }
+@media(max-width:500px){
+    #logo { width: 160px; }
+    #scroll-text { font-size: 1.6em; }
 }
 </style>
 </head>
@@ -178,33 +175,27 @@ body::after {
 
 <div class="symbol-overlay"></div>
 
-<!-- FOREGROUND EMBERS -->
-<div id="foreground-embers">
-    <div class="ember-front" style="left:10%;animation-delay:0s;"></div>
-    <div class="ember-front" style="left:20%;animation-delay:1s;"></div>
-    <div class="ember-front" style="left:30%;animation-delay:2s;"></div>
-    <div class="ember-front" style="left:40%;animation-delay:1.5s;"></div>
-    <div class="ember-front" style="left:50%;animation-delay:0.5s;"></div>
-    <div class="ember-front" style="left:60%;animation-delay:2.5s;"></div>
-    <div class="ember-front" style="left:70%;animation-delay:1s;"></div>
-    <div class="ember-front" style="left:80%;animation-delay:3s;"></div>
-</div>
-
 <div id="container">
     <div id="landing-text">Loyal or Imposter</div>
 
-    <div id="scroll-row">
-        <img class="side-logo left" src="images/logo.png" alt="Logo">
-        <div id="scroll">
-            <div id="scroll-text">
-                <span>TAP</span>
-                <span>TO REVEAL</span>
-            </div>
+    <div id="logo-wrapper">
+        <img id="logo" src="images/logo.png" alt="Logo">
+        <div class="logo-embers">
+            <div class="logo-ember" style="left:20%;animation-delay:0s"></div>
+            <div class="logo-ember" style="left:40%;animation-delay:1s"></div>
+            <div class="logo-ember" style="left:60%;animation-delay:2s"></div>
+            <div class="logo-ember" style="left:80%;animation-delay:1.5s"></div>
         </div>
-        <img class="side-logo right" src="images/logo.png" alt="Logo">
     </div>
 
-    <img id="qr" />
+    <div id="scroll">
+        <div id="scroll-text">
+            <span>TAP</span>
+            <span>TO REVEAL</span>
+        </div>
+    </div>
+
+    <img id="qr">
 </div>
 
 <audio id="fire-sound" loop>
