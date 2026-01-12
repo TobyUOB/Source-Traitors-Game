@@ -8,18 +8,18 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&display=swap" rel="stylesheet">
 
 <style>
-/* ================= BASE ================= */
+/* ===== BASE ===== */
 body {
     margin: 0;
     background: #0a0805;
     color: white;
     font-family: Arial, sans-serif;
     overflow-x: hidden;
-    overflow-y: auto; /* IMPORTANT: allows QR to stay visible */
+    overflow-y: auto;
     position: relative;
 }
 
-/* ================= AMBIENT TORCHLIGHT ================= */
+/* ===== TORCHLIGHT ===== */
 body::before,
 body::after {
     content: "";
@@ -36,24 +36,18 @@ body::after {
     background: radial-gradient(circle at 70% 65%, rgba(255,150,70,0.30), transparent 60%);
     animation: torchB 7s infinite alternate ease-in-out;
 }
-@keyframes torchA { from{transform:translate(-4%,-3%);opacity:0.6;} to{transform:translate(4%,3%);opacity:1;} }
-@keyframes torchB { from{transform:translate(3%,-3%);opacity:0.5;} to{transform:translate(-3%,4%);opacity:0.9;} }
+@keyframes torchA { from{opacity:0.6;} to{opacity:1;} }
+@keyframes torchB { from{opacity:0.5;} to{opacity:0.9;} }
 
-/* ================= CAMERA GRAIN ================= */
+/* ===== GRAIN ===== */
 body.grain::before {
     background-image: url('images/grain.png');
     background-size: cover;
     mix-blend-mode: overlay;
     opacity: 0.05;
-    animation: grainMove 12s linear infinite;
-}
-@keyframes grainMove {
-    0% {transform:translate(0,0);}
-    50% {transform:translate(-1%,1%);}
-    100% {transform:translate(0,0);}
 }
 
-/* ================= SYMBOL OVERLAY ================= */
+/* ===== SYMBOLS ===== */
 .symbol-overlay {
     position: fixed;
     inset: 0;
@@ -62,59 +56,47 @@ body.grain::before {
     opacity: 0.1;
     pointer-events: none;
     z-index: 1;
-    animation: symbolsGlow 8s infinite alternate ease-in-out;
-}
-@keyframes symbolsGlow {
-    0% {opacity:0.08;}
-    50% {opacity:0.15;}
-    100% {opacity:0.08;}
 }
 
-/* ================= ATMOSPHERE ================= */
-#atmosphere { position: fixed; inset:0; pointer-events:none; z-index:1; }
+/* ===== ATMOSPHERE ===== */
+#atmosphere {
+    position: fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:1;
+}
 
 .smoke {
     position:absolute;
-    width:220px; height:220px;
+    width:220px;
+    height:220px;
     background:radial-gradient(circle, rgba(255,255,255,0.18), transparent 70%);
-    animation: smokeDrift 18s linear infinite;
+    animation: smokeDrift linear infinite;
 }
 @keyframes smokeDrift {
-    from{transform:translateY(100vh) scale(0.8);opacity:0;}
+    from{transform:translateY(100vh);opacity:0;}
     20%{opacity:0.35;}
-    to{transform:translateY(-200px) scale(1.4);opacity:0;}
+    to{transform:translateY(-200px);opacity:0;}
 }
 
 .ember {
     position:absolute;
-    width:4px; height:4px;
+    width:4px;
+    height:4px;
     background:orange;
     border-radius:50%;
     box-shadow:0 0 10px orange;
-    animation: emberRise 6s linear infinite;
+    animation-name: emberRise;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
 }
 @keyframes emberRise {
-    from{transform:translateY(100vh);opacity:0;}
-    30%{opacity:1;}
-    to{transform:translateY(-60px) translateX(-30px);opacity:0;}
+    from { transform: translateY(100vh) translateX(0); opacity:0; }
+    30%  { opacity:1; }
+    to   { transform: translateY(-80px) translateX(var(--drift)); opacity:0; }
 }
 
-/* ================= EMBER BURST ================= */
-.burst-ember {
-    position: absolute;
-    width: 5px;
-    height: 5px;
-    background: #ff9b3b;
-    border-radius: 50%;
-    box-shadow: 0 0 14px rgba(255,150,80,0.9);
-    animation: burst 1.4s ease-out forwards;
-}
-@keyframes burst {
-    from { transform: scale(0.4) translate(0,0); opacity:1; }
-    to   { transform: scale(1.2) translate(var(--x), var(--y)); opacity:0; }
-}
-
-/* ================= CONTENT ================= */
+/* ===== CONTENT ===== */
 #container {
     position: relative;
     z-index: 10;
@@ -122,29 +104,29 @@ body.grain::before {
     display:flex;
     flex-direction:column;
     align-items:center;
-    padding-top:20px;
-    padding-bottom:24px; /* breathing room for QR */
+    padding-top:16px;
+    padding-bottom:28px;
 }
 
-/* ================= TEXT ================= */
+/* ===== HEADER TEXT ===== */
 #landing-text {
     font-family:'Cinzel', serif;
     font-size:2.4em;
     font-weight:800;
-    margin-bottom:4px;
+    margin-bottom:4px; /* tight */
     animation:flicker 1.2s infinite alternate;
     text-align:center;
 }
 @keyframes flicker { 0%{opacity:1;} 60%{opacity:0.45;} 100%{opacity:1;} }
 
-/* ================= LOGO ================= */
+/* ===== LOGO ===== */
 #logo {
     width:90%;
     max-width:340px;
-    margin-bottom:4px;
+    margin-bottom:4px; /* SAME spacing as scroll ↔ QR */
 }
 
-/* ================= SCROLL ================= */
+/* ===== SCROLL ===== */
 #scroll {
     width:90%;
     max-width:700px;
@@ -154,15 +136,10 @@ body.grain::before {
     align-items:center;
     justify-content:center;
     cursor:pointer;
-    animation:scrollGlowTilt 8s infinite alternate ease-in-out;
-}
-@keyframes scrollGlowTilt {
-    0%{transform:rotate(-1deg);}
-    50%{transform:rotate(1deg);}
-    100%{transform:rotate(-1deg);}
+    margin-top:-22px; /* KEY FIX: compress scroll's transparent padding */
 }
 
-/* ================= SCROLL TEXT ================= */
+/* ===== SCROLL TEXT ===== */
 #scroll-text {
     font-family:'Cinzel', serif;
     font-size:2em;
@@ -173,17 +150,16 @@ body.grain::before {
 }
 #scroll-text span { display:block; }
 
-/* ================= QR ================= */
+/* ===== QR ===== */
 #qr{
     margin-top:4px;
-    width:auto;
     max-width:80%;
     max-height:22vh;
     object-fit:contain;
     display:block;
 }
 
-/* ================= MOBILE ================= */
+/* ===== MOBILE ===== */
 @media(max-width:500px){
     #logo { max-width:300px; }
     #scroll-text { font-size:1.6em; }
@@ -197,14 +173,22 @@ body.grain::before {
 <div class="symbol-overlay"></div>
 
 <div id="atmosphere">
-    <div class="smoke" style="left:20%"></div>
-    <div class="smoke" style="left:60%; animation-delay:6s"></div>
+    <!-- SMOKE -->
+    <div class="smoke" style="left:20%; animation-duration:22s;"></div>
+    <div class="smoke" style="left:55%; animation-duration:26s;"></div>
 
-    <div class="ember" style="left:10%"></div>
-    <div class="ember" style="left:30%"></div>
-    <div class="ember" style="left:50%"></div>
-    <div class="ember" style="left:70%"></div>
-    <div class="ember" style="left:90%"></div>
+    <!-- EMBERS (RANDOMIZED) -->
+    <script>
+        for(let i=0;i<22;i++){
+            const e=document.createElement('div');
+            e.className='ember';
+            e.style.left=Math.random()*100+'%';
+            e.style.animationDuration=(4+Math.random()*4)+'s';
+            e.style.animationDelay=Math.random()*6+'s';
+            e.style.setProperty('--drift',((Math.random()-0.5)*60)+'px');
+            document.getElementById('atmosphere').appendChild(e);
+        }
+    </script>
 </div>
 
 <div id="container">
@@ -225,24 +209,6 @@ body.grain::before {
     </audio>
 </div>
 
-<script src="script.js?v=1.4"></script>
-
-<!-- EMBER BURST HOOK -->
-<script>
-document.getElementById('scroll').addEventListener('click', () => {
-    const scroll = document.getElementById('scroll');
-    for (let i = 0; i < 14; i++) {
-        const e = document.createElement('div');
-        e.className = 'burst-ember';
-        e.style.left = '50%';
-        e.style.top = '50%';
-        e.style.setProperty('--x', `${(Math.random()-0.5)*160}px`);
-        e.style.setProperty('--y', `${(Math.random()-0.5)*120}px`);
-        scroll.appendChild(e);
-        setTimeout(() => e.remove(), 1400);
-    }
-});
-</script>
-
+<script src="script.js?v=1.6"></script>
 </body>
 </html>
