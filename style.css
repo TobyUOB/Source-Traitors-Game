@@ -1,25 +1,40 @@
-body {
-  font-family: system-ui, sans-serif;
-  background: #0e0e0e;
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+const scroll = document.getElementById("scroll");
+const text = document.getElementById("scroll-text");
+const qr = document.getElementById("qr");
+const embers = document.getElementById("embers");
+const fire = document.getElementById("fire");
+
+let revealed = false;
+
+/* CREATE AMBIENT EMBERS */
+function spawnEmber(intense=false){
+    const e = document.createElement("div");
+    e.className = "ember";
+    e.style.left = Math.random()*100 + "%";
+    e.style.bottom = "-10px";
+    e.style.animationDuration = (intense ? 3 : 6 + Math.random()*6) + "s";
+    embers.appendChild(e);
+    setTimeout(()=>e.remove(), 12000);
 }
-#container {
-  text-align: center;
-}
-#role {
-  font-size: 2.5rem;
-  font-weight: bold;
-  margin: 20px 0;
-}
-img {
-  width: 300px;
-  height: 300px;
-}
-#warning {
-  margin-top: 20px;
-  opacity: 0.7;
-}
+
+setInterval(()=>spawnEmber(false), 350);
+
+/* REVEAL */
+scroll.addEventListener("click", ()=>{
+    if(revealed) return;
+    revealed = true;
+
+    fire.play().catch(()=>{});
+
+    for(let i=0;i<30;i++){
+        setTimeout(()=>spawnEmber(true), i*40);
+    }
+
+    const result = Math.random() < 0.5 ? "Loyal" : "Imposter";
+
+    text.textContent = result;
+    text.classList.add("burn");
+
+    qr.src = result === "Loyal" ? "qr/loyal.png" : "qr/imposter.png";
+    qr.style.display = "block";
+});
