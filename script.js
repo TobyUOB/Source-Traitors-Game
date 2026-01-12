@@ -1,39 +1,29 @@
-const scroll = document.getElementById("scroll");
-const scrollText = document.getElementById("scroll-text");
-const qr = document.getElementById("qr");
-const embers = document.getElementById("embers");
-const fire = document.getElementById("fire");
+const scroll = document.getElementById('scroll');
+const scrollText = document.getElementById('scroll-text');
+const qr = document.getElementById('qr');
+const fire = document.getElementById('fire-sound');
 
 let revealed = false;
 
-/* AMBIENT EMBERS */
-function spawnEmber(intense=false){
-    const e = document.createElement("div");
-    e.className = "ember";
-    e.style.left = Math.random()*100 + "%";
-    e.style.bottom = "-10px";
-    e.style.animationDuration = (intense ? 3 : 6 + Math.random()*6) + "s";
-    embers.appendChild(e);
-    setTimeout(()=>e.remove(), 12000);
-}
-setInterval(()=>spawnEmber(false), 350);
-
-/* REVEAL FUNCTION */
-scroll.addEventListener("click", ()=>{
-    if(revealed) return;
+scroll.addEventListener('click', () => {
+    if (revealed) return;
     revealed = true;
 
-    fire.play().catch(()=>{});
+    // Play fire sound
+    fire.play().catch(() => console.log("Autoplay prevented; will start on user tap"));
 
-    // Ember burst on reveal
-    for(let i=0;i<30;i++){ setTimeout(()=>spawnEmber(true), i*40); }
+    // Scroll bounce animation
+    scroll.classList.add('bounce');
+    setTimeout(() => scroll.classList.remove('bounce'), 600);
 
-    // Random result
-    const result = Math.random()<0.5 ? "Loyal" : "Imposter";
-    scrollText.textContent = result;
-    scrollText.classList.add("burn");
+    // Randomly select result
+    const result = Math.random() < 0.5 ? "Loyal" : "Imposter";
 
-    // QR code
-    qr.src = result==="Loyal"?"qr/loyal.png":"qr/imposter.png";
-    qr.style.display="block";
+    // Update scroll text with burn-in effect
+    scrollText.innerHTML = `<span>${result}</span>`;
+    scrollText.classList.add('burn');
+
+    // Show corresponding QR code
+    qr.src = result === "Loyal" ? "qr/loyal.png" : "qr/imposter.png";
+    qr.style.display = "block";
 });
