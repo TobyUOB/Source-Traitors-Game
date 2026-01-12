@@ -8,11 +8,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&display=swap" rel="stylesheet">
 
 <style>
-/* BASE */
+/* RESET */
+* { box-sizing: border-box; }
 body {
     margin: 0;
-    background: #0a0805;
-    color: white;
+    background: #0b0805;
+    color: #fff;
     font-family: Arial, sans-serif;
     overflow: hidden;
 }
@@ -22,66 +23,100 @@ body::before,
 body::after {
     content: "";
     position: fixed;
-    inset: -30%;
+    inset: -25%;
     pointer-events: none;
 }
 body::before {
-    background: radial-gradient(circle at 30% 40%, rgba(255,190,110,0.35), transparent 55%);
-    animation: torchA 5.5s infinite alternate ease-in-out;
+    background: radial-gradient(circle at 30% 40%, rgba(255,180,100,0.35), transparent 60%);
+    animation: torchA 6s infinite alternate ease-in-out;
 }
 body::after {
-    background: radial-gradient(circle at 70% 65%, rgba(255,150,70,0.30), transparent 60%);
-    animation: torchB 7s infinite alternate ease-in-out;
+    background: radial-gradient(circle at 70% 60%, rgba(255,140,70,0.25), transparent 65%);
+    animation: torchB 8s infinite alternate ease-in-out;
 }
-@keyframes torchA { from{transform:translate(-4%,-3%);} to{transform:translate(4%,3%);} }
-@keyframes torchB { from{transform:translate(3%,-3%);} to{transform:translate(-3%,4%);} }
+@keyframes torchA { from{transform:translate(-3%,-2%);} to{transform:translate(3%,2%);} }
+@keyframes torchB { from{transform:translate(2%,-2%);} to{transform:translate(-2%,3%);} }
 
 /* SYMBOLS */
-.symbol-overlay {
+.symbols {
     position: fixed;
     inset: 0;
-    background: url('images/symbols.png') repeat;
+    background: url("images/symbols.png") repeat;
     background-size: 180px 180px;
     opacity: 0.1;
     pointer-events: none;
 }
 
-/* MAIN */
+/* SMOKE */
+.smoke {
+    position: fixed;
+    inset: -20%;
+    background:
+      radial-gradient(circle at 40% 50%, rgba(255,255,255,0.08), transparent 60%),
+      radial-gradient(circle at 60% 60%, rgba(255,255,255,0.06), transparent 65%);
+    filter: blur(60px);
+    animation: smokeMove 40s infinite linear;
+    pointer-events: none;
+}
+@keyframes smokeMove {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+/* EMBERS */
+#embers {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 20;
+}
+.ember {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: rgba(255,140,60,0.9);
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(255,120,60,0.9);
+    animation: emberFloat linear infinite;
+}
+@keyframes emberFloat {
+    from { transform: translateY(0) translateX(0); opacity: 1; }
+    to   { transform: translateY(-120vh) translateX(30px); opacity: 0; }
+}
+
+/* LAYOUT */
 #container {
+    position: relative;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 18px;
-    position: relative;
+    padding-top: 16px;
+    z-index: 10;
 }
 
 /* TITLE */
-#landing-text {
+#title {
     font-family: 'Cinzel', serif;
     font-size: 2.3em;
     font-weight: 800;
-    animation: flicker 1.2s infinite alternate;
+    margin-bottom: 8px;
+    animation: titleFlicker 1.3s infinite alternate;
 }
-@keyframes flicker {
+@keyframes titleFlicker {
     0% { opacity: 1; }
-    60% { opacity: 0.45; }
+    60% { opacity: 0.5; }
     100% { opacity: 1; }
 }
 
 /* LOGO */
 #logo {
-    width: 200px;
-    max-width: 60vw;
-    margin: 8px 0 12px;
+    width: 180px;
+    max-width: 65vw;
+    margin-bottom: 10px;
     filter:
-        drop-shadow(0 2px 4px rgba(255,200,160,0.25))
-        drop-shadow(0 12px 30px rgba(255,120,60,0.75));
-    animation: logoBreath 5s infinite alternate ease-in-out;
-}
-@keyframes logoBreath {
-    from { filter: drop-shadow(0 6px 18px rgba(255,120,60,0.7)); }
-    to   { filter: drop-shadow(0 16px 36px rgba(255,180,100,0.95)); }
+      drop-shadow(0 4px 8px rgba(255,160,90,0.4))
+      drop-shadow(0 16px 36px rgba(255,120,60,0.7));
 }
 
 /* SCROLL */
@@ -94,6 +129,11 @@ body::after {
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    animation: scrollFloat 6s infinite alternate ease-in-out;
+}
+@keyframes scrollFloat {
+    from { transform: rotate(-0.6deg) translateY(0); }
+    to   { transform: rotate(0.6deg) translateY(6px); }
 }
 
 /* SCROLL TEXT */
@@ -103,51 +143,50 @@ body::after {
     font-weight: 800;
     color: #ff3b2f;
     text-align: center;
-    opacity: 1;
+    text-shadow:
+        0 0 10px rgba(255,100,60,0.7),
+        0 0 24px rgba(255,80,40,0.5);
 }
 
-/* 🔥 CINEMATIC BURN-IN */
-.burn-in {
-    animation: burnReveal 1.6s ease-out forwards;
+/* BURN-IN */
+.burn {
+    animation: burnIn 1.6s ease-out forwards;
 }
-
-@keyframes burnReveal {
+@keyframes burnIn {
     0% {
         opacity: 0;
         clip-path: inset(0 50% 0 50%);
         filter: blur(6px);
-        text-shadow: 0 0 0 rgba(255,80,40,0);
     }
-    30% {
+    40% {
         opacity: 1;
-        clip-path: inset(0 20% 0 20%);
-        filter: blur(3px);
-        text-shadow: 0 0 18px rgba(255,120,60,0.9);
+        clip-path: inset(0 15% 0 15%);
+        filter: blur(2px);
     }
     70% {
         clip-path: inset(0 0 0 0);
         filter: blur(0);
         text-shadow:
-            0 0 22px rgba(255,140,90,0.95),
-            0 0 40px rgba(255,80,40,0.6);
+          0 0 28px rgba(255,140,90,0.95),
+          0 0 50px rgba(255,80,40,0.7);
     }
     100% {
         text-shadow:
-            0 0 10px rgba(255,90,60,0.8),
-            0 0 20px rgba(255,120,80,0.6);
+          0 0 14px rgba(255,90,60,0.8),
+          0 0 26px rgba(255,120,80,0.6);
     }
 }
 
 /* QR */
 #qr {
-    margin-top: 20px;
-    width: 200px;
     display: none;
+    width: 200px;
+    margin-top: 16px;
 }
 
 /* MOBILE */
 @media(max-width:500px){
-    #logo { width: 160px; }
+    #scroll { height: 300px; }
     #scroll-text { font-size: 1.6em; }
 }
 </style>
@@ -155,23 +194,24 @@ body::after {
 
 <body>
 
-<div class="symbol-overlay"></div>
+<div class="symbols"></div>
+<div class="smoke"></div>
+<div id="embers"></div>
 
 <div id="container">
-    <div id="landing-text">Loyal or Imposter</div>
+    <div id="title">Loyal or Imposter</div>
     <img id="logo" src="images/logo.png" alt="Logo">
 
     <div id="scroll">
         <div id="scroll-text">
-            <span>TAP</span>
-            <span>TO REVEAL</span>
+            TAP<br>TO REVEAL
         </div>
     </div>
 
     <img id="qr">
 </div>
 
-<audio id="fire-sound" loop>
+<audio id="fire" loop>
     <source src="sounds/fire-crackle.mp3" type="audio/mpeg">
 </audio>
 
