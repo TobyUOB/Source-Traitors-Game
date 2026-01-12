@@ -101,18 +101,17 @@ body.grain::before {
     font-family:'Cinzel', serif;
     font-size:2.4em;
     font-weight:800;
-    margin-bottom:6px; /* reduced spacing */
+    margin-bottom:8px; /* uniform spacing */
     animation:flicker 1.2s infinite alternate;
     text-align:center;
     z-index:11;
 }
-@keyframes flicker { 0%{opacity:1;} 60%{opacity:0.45;} 100%{opacity:1;} }
 
 /* LOGO */
 #logo {
     width:90%;
     max-width:350px;
-    margin-bottom:6px; /* reduced spacing */
+    margin-bottom:8px; /* uniform spacing */
 }
 
 /* SCROLL */
@@ -170,17 +169,18 @@ body.grain::before {
 
 /* QR */
 #qr{
-    margin-top:6px; /* smaller gap */
+    margin-top:8px; /* uniform spacing */
     width:auto;
-    max-width:45%;    /* desktop scaling */
-    max-height:30vh;  /* ensures fully visible */
+    max-width:90%;
+    max-height:25vh; /* fully visible */
     display:block;
+    object-fit:contain;
 }
 
 /* MOBILE ADJUSTMENTS */
 @media(max-width:500px){
     #scroll-text { font-size:1.6em; }
-    #logo { width:90%; max-width:300px; margin-bottom:4px; } /* bigger logo on mobile */
+    #logo { width:90%; max-width:300px; margin-bottom:8px; }
     #qr { max-width:70%; max-height:25vh; }
 }
 </style>
@@ -208,7 +208,7 @@ body.grain::before {
 </div>
 
 <div id="container">
-    <div id="landing-text">Loyal or Imposter?</div>
+    <div id="landing-text">Loyal or Imposter</div>
     <img id="logo" src="images/logo.png" alt="Game Logo">
 
     <div id="scroll">
