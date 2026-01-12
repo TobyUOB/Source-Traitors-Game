@@ -1,29 +1,39 @@
-const scroll = document.getElementById('scroll');
-const scrollText = document.getElementById('scroll-text');
-const qr = document.getElementById('qr');
-const fire = document.getElementById('fire-sound');
+const scroll = document.getElementById("scroll");
+const scrollText = document.getElementById("scroll-text");
+const qr = document.getElementById("qr");
+const embers = document.getElementById("embers");
+const fire = document.getElementById("fire");
 
 let revealed = false;
 
-scroll.addEventListener('click', () => {
-    if (revealed) return;
+/* AMBIENT EMBERS */
+function spawnEmber(intense=false){
+    const e = document.createElement("div");
+    e.className = "ember";
+    e.style.left = Math.random()*100 + "%";
+    e.style.bottom = "-10px";
+    e.style.animationDuration = (intense ? 3 : 6 + Math.random()*6) + "s";
+    embers.appendChild(e);
+    setTimeout(()=>e.remove(), 12000);
+}
+setInterval(()=>spawnEmber(false), 350);
+
+/* REVEAL FUNCTION */
+scroll.addEventListener("click", ()=>{
+    if(revealed) return;
     revealed = true;
 
-    // Play fire sound
-    fire.play().catch(() => console.log("Autoplay prevented; will start on user tap"));
+    fire.play().catch(()=>{});
 
-    // Scroll bounce animation
-    scroll.classList.add('bounce');
-    setTimeout(() => scroll.classList.remove('bounce'), 600);
+    // Ember burst on reveal
+    for(let i=0;i<30;i++){ setTimeout(()=>spawnEmber(true), i*40); }
 
-    // Randomly select result
-    const result = Math.random() < 0.5 ? "Loyal" : "Imposter";
+    // Random result
+    const result = Math.random()<0.5 ? "Loyal" : "Imposter";
+    scrollText.textContent = result;
+    scrollText.classList.add("burn");
 
-    // Update scroll text
-    scrollText.innerHTML = `<span>${result}</span>`;
-    scrollText.classList.add('burn-in');
-
-    // Show corresponding QR code
-    qr.src = result === "Loyal" ? "qr/loyal.png" : "qr/imposter.png";
-    qr.style.display = "block";
+    // QR code
+    qr.src = result==="Loyal"?"qr/loyal.png":"qr/imposter.png";
+    qr.style.display="block";
 });
