@@ -21,6 +21,7 @@ scroll.addEventListener('click', () => {
 
     // Update scroll text
     scrollText.innerHTML = `<span>${result}</span>`;
+    scrollText.classList.add('burn-in');
 
     // Show corresponding QR code
     qr.src = result === "Loyal" ? "qr/loyal.png" : "qr/imposter.png";
