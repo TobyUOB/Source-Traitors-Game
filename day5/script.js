@@ -3,53 +3,47 @@ const diceNumber = document.getElementById('dice-number');
 const qr = document.getElementById('qr');
 const fire = document.getElementById('fire');
 const emberContainer = document.getElementById('embers');
-
 let rolled = false;
 
-// Start fire sound
+// Start fire
 fire.play().catch(()=>console.log("Autoplay prevented; will start on tap"));
 
-// Start pulsing glow
+// Dice glow
 dice.classList.add('glow');
 
-// Dice click event
-dice.addEventListener('click', () => {
-    if (rolled) return;
+// Dice click
+dice.addEventListener('click', ()=>{
+    if(rolled) return;
     rolled = true;
 
     dice.classList.remove('glow');
     dice.classList.add('rolling');
 
-    const roll = Math.floor(Math.random() * 20) + 1;
+    const roll = Math.floor(Math.random()*20)+1;
 
-    // Wait for dice animation to finish (1s)
-    setTimeout(() => {
+    setTimeout(()=>{
         dice.classList.remove('rolling');
         dice.classList.add('glow');
 
-        // Show number overlay
         diceNumber.textContent = roll;
         diceNumber.style.opacity = 1;
 
-        // Show QR code
-        qr.src = roll <= 10 ? 'qr/prize1.png' : 'qr/prize2.png';
+        qr.src = roll<=10?'qr/prize1.png':'qr/prize2.png';
         qr.style.display = 'block';
 
-        // Ember burst on reveal
-        createEmberBurst(diceNumber, 15);
-
-    }, 1000);
+        createEmberBurst(diceNumber,20);
+    },1000);
 });
 
-// Ember burst helper
+// Ember burst function
 function createEmberBurst(element,count=12){
     for(let i=0;i<count;i++){
         const e = document.createElement('div');
         e.className='ember';
-        const rect=element.getBoundingClientRect();
-        e.style.left=rect.left+Math.random()*rect.width+'px';
-        e.style.top=rect.top+Math.random()*rect.height+'px';
-        e.style.animationDuration=2+Math.random()*2+'s';
+        const rect = element.getBoundingClientRect();
+        e.style.left = rect.left + Math.random()*rect.width +'px';
+        e.style.top = rect.top + Math.random()*rect.height +'px';
+        e.style.animationDuration = 2+Math.random()*2 +'s';
         document.body.appendChild(e);
         setTimeout(()=>e.remove(),4000);
     }
@@ -57,9 +51,9 @@ function createEmberBurst(element,count=12){
 
 // Ambient embers
 for(let i=0;i<20;i++){
-    const e=document.createElement('div');
+    const e = document.createElement('div');
     e.className='ember';
-    e.style.left=Math.random()*100+'%';
-    e.style.animationDelay=Math.random()*6+'s';
+    e.style.left = Math.random()*100+'%';
+    e.style.animationDelay = Math.random()*6+'s';
     emberContainer.appendChild(e);
 }
