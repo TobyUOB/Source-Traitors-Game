@@ -15,7 +15,15 @@ body {
     font-family:'Cinzel', serif;
     overflow:hidden;
 }
-
+.symbol-overlay {
+    position: fixed;
+    inset: 0;
+    background: url('images/symbols.png') repeat;
+    background-size: 180px 180px;
+    opacity: 0.1;
+    pointer-events: none;
+    z-index: 1;
+}
 /* Atmosphere reused */
 body::before {
     content:"";
