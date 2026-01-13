@@ -49,53 +49,64 @@ body.grain::before { background-image:url('images/grain.png'); background-size:c
 #container { position:relative; z-index:10; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding-top:20px; }
 
 /* LOGO */
-#logo { width:100px; max-width:90%; margin-bottom:8px; }
+#logo { width:100px; max-width:90%; margin-bottom:6px; }
 
 /* HEADING */
-#heading { font-family:'Cinzel', serif; font-size:2.4em; font-weight:800; margin-bottom:8px; animation:flicker 1.2s infinite alternate; text-align:center; }
+#heading { font-family:'Cinzel', serif; font-size:2.4em; font-weight:800; margin-bottom:6px; animation:flicker 1.2s infinite alternate; text-align:center; }
 @keyframes flicker { 0%{opacity:1;}60%{opacity:0.45;}100%{opacity:1;} }
 
 /* DICE CONTAINER */
-#dice-container { position:relative; width:200px; max-width:90%; height:200px; margin-top:10px; }
+#dice-container { position:relative; width:240px; max-width:90%; height:240px; margin-top:6px; }
 
 /* DICE IMAGE */
-#dice { width:100%; cursor:pointer; display:block; margin:0 auto; }
+#dice { width:100%; height:auto; cursor:pointer; display:block; margin:0 auto; }
 
 /* Dice glow using drop-shadow */
 #dice.glow { animation: diceGlow 2s infinite alternate; filter: drop-shadow(0 0 10px rgba(255,200,0,0.7)) drop-shadow(0 0 20px rgba(255,200,0,0.4)); }
 @keyframes diceGlow { 0% { filter: drop-shadow(0 0 8px rgba(255,200,0,0.6)) drop-shadow(0 0 16px rgba(255,200,0,0.3)); } 50%{ filter: drop-shadow(0 0 16px rgba(255,220,0,0.9)) drop-shadow(0 0 32px rgba(255,220,0,0.4)); } 100%{ filter: drop-shadow(0 0 8px rgba(255,200,0,0.6)) drop-shadow(0 0 16px rgba(255,200,0,0.3)); } }
 
 /* Dice rolling with chaotic motion */
-#dice.rolling { animation: diceThrow 1s ease-in-out forwards; filter: blur(2px); }
-@keyframes diceThrow {
-    0%   { transform:translateY(0) rotate(0deg); filter:blur(0);}
-    10%  { transform:translateY(-80px) rotate(180deg) scale(1.1); filter:blur(2px);}
-    30%  { transform:translateY(-40px) rotate(450deg) scale(1.05); filter:blur(2px);}
-    50%  { transform:translateY(-60px) rotate(720deg) scale(1.1); filter:blur(2px);}
-    70%  { transform:translateY(-20px) rotate(900deg) scale(1.05); filter:blur(1px);}
-    80%  { transform:translateY(-5px) rotate(1080deg) scale(1); filter:blur(0.5px);}
-    90%  { transform:translateY(-2px) rotate(1200deg) scale(0.98); filter:blur(0.2px);}
-    100% { transform:translateY(0) rotate(1320deg) scale(1); filter:blur(0);}
+#dice.rolling {
+    animation: diceThrow3D 1.2s ease-in-out forwards;
+    transform-style: preserve-3d;
+}
+
+@keyframes diceThrow3D {
+    0%   { transform: translateY(0) rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1); filter: blur(0); }
+    10%  { transform: translateY(-100px) rotateX(180deg) rotateY(120deg) rotateZ(200deg) scale(1.15); filter: blur(3px); }
+    30%  { transform: translateY(-50px) rotateX(450deg) rotateY(270deg) rotateZ(500deg) scale(1.1); filter: blur(2px); }
+    50%  { transform: translateY(-70px) rotateX(720deg) rotateY(450deg) rotateZ(900deg) scale(1.1); filter: blur(2px); }
+    70%  { transform: translateY(-30px) rotateX(900deg) rotateY(630deg) rotateZ(1080deg) scale(1.05); filter: blur(1px); }
+    80%  { transform: translateY(-5px) rotateX(1080deg) rotateY(810deg) rotateZ(1260deg) scale(1); filter: blur(0.5px); }
+    90%  { transform: translateY(-2px) rotateX(1200deg) rotateY(900deg) rotateZ(1380deg) scale(0.98); filter: blur(0.2px); }
+    100% { transform: translateY(0) rotateX(1320deg) rotateY(1080deg) rotateZ(1500deg) scale(1); filter: blur(0); }
 }
 
 /* NUMBER OVERLAY */
 #dice-number {
     position:absolute;
-    inset:0;
+    top:50%; left:50%;
+    transform:translate(-50%,-50%);
     display:flex;
     justify-content:center;
     align-items:center;
-    font-size:2.4em;        /* slightly smaller */
+    font-size:2em;
     font-weight:800;
-    color:rgba(255,255,255,0.85); /* slightly faded white */
-    text-shadow: 0 0 6px rgba(255,255,255,0.6), 0 0 12px rgba(255,255,255,0.4);
+    color:rgba(255,255,255,0.9);
+    text-shadow:0 0 8px rgba(255,255,255,0.7), 0 0 16px rgba(255,255,255,0.5);
     pointer-events:none;
     opacity:0;
+    mix-blend-mode:multiply;
     transition: opacity 0.5s ease;
-    mix-blend-mode: multiply; /* blends the number onto dice */
 }
+
+/* QR */
+#qr { margin-top:6px; width:160px; max-width:90%; display:none; }
+
 @media(max-width:700px){
-    #dice-number { font-size:1.8em; }
+    #dice-container { width:140px; height:140px; }
+    #dice-number { font-size:1.4em; }
+    #qr { width:120px; }
 }
 </style>
 </head>
