@@ -56,47 +56,67 @@ body.grain::before { background-image:url('images/grain.png'); background-size:c
 @keyframes flicker { 0%{opacity:1;}60%{opacity:0.45;}100%{opacity:1;} }
 
 /* DICE CONTAINER */
-#dice-container { position:relative; width:240px; max-width:90%; height:240px; margin-top:6px; }
-
-/* DICE IMAGE */
-#dice { width:100%; height:auto; cursor:pointer; display:block; margin:0 auto; }
-
-/* Dice glow using drop-shadow */
-#dice.glow { animation: diceGlow 2s infinite alternate; filter: drop-shadow(0 0 10px rgba(255,200,0,0.7)) drop-shadow(0 0 20px rgba(255,200,0,0.4)); }
-@keyframes diceGlow { 0% { filter: drop-shadow(0 0 8px rgba(255,200,0,0.6)) drop-shadow(0 0 16px rgba(255,200,0,0.3)); } 50%{ filter: drop-shadow(0 0 16px rgba(255,220,0,0.9)) drop-shadow(0 0 32px rgba(255,220,0,0.4)); } 100%{ filter: drop-shadow(0 0 8px rgba(255,200,0,0.6)) drop-shadow(0 0 16px rgba(255,200,0,0.3)); } }
-
-/* Dice rolling with chaotic motion */
-#dice.rolling {
-    animation: diceThrow3D 1.2s ease-in-out forwards;
-    transform-style: preserve-3d;
+#dice-container {
+    position: relative;
+    width: 240px;
+    max-width: 90%;
+    height: 240px;
+    margin-top:6px;
 }
 
-@keyframes diceThrow3D {
-    0%   { transform: translateY(0) rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1); filter: blur(0); }
-    10%  { transform: translateY(-100px) rotateX(180deg) rotateY(120deg) rotateZ(200deg) scale(1.15); filter: blur(3px); }
-    30%  { transform: translateY(-50px) rotateX(450deg) rotateY(270deg) rotateZ(500deg) scale(1.1); filter: blur(2px); }
-    50%  { transform: translateY(-70px) rotateX(720deg) rotateY(450deg) rotateZ(900deg) scale(1.1); filter: blur(2px); }
-    70%  { transform: translateY(-30px) rotateX(900deg) rotateY(630deg) rotateZ(1080deg) scale(1.05); filter: blur(1px); }
-    80%  { transform: translateY(-5px) rotateX(1080deg) rotateY(810deg) rotateZ(1260deg) scale(1); filter: blur(0.5px); }
-    90%  { transform: translateY(-2px) rotateX(1200deg) rotateY(900deg) rotateZ(1380deg) scale(0.98); filter: blur(0.2px); }
-    100% { transform: translateY(0) rotateX(1320deg) rotateY(1080deg) rotateZ(1500deg) scale(1); filter: blur(0); }
+/* DICE IMAGE */
+#dice {
+    width:100%;
+    height:auto;
+    cursor:pointer;
+    display:block;
+    margin:0 auto;
+}
+
+/* Dice glow using drop-shadow */
+#dice.glow {
+    animation: diceGlow 2s infinite alternate;
+    filter: drop-shadow(0 0 10px rgba(255,200,0,0.7))
+            drop-shadow(0 0 20px rgba(255,200,0,0.4));
+}
+@keyframes diceGlow {
+    0%   { filter: drop-shadow(0 0 8px rgba(255,200,0,0.6)) drop-shadow(0 0 16px rgba(255,200,0,0.3)); }
+    50%  { filter: drop-shadow(0 0 16px rgba(255,220,0,0.9)) drop-shadow(0 0 32px rgba(255,220,0,0.4)); }
+    100% { filter: drop-shadow(0 0 8px rgba(255,200,0,0.6)) drop-shadow(0 0 16px rgba(255,200,0,0.3)); }
+}
+
+/* Dice rolling 2D chaotic motion */
+#dice.rolling {
+    animation: diceThrow 1s ease-in-out forwards;
+    filter: blur(2px);
+}
+@keyframes diceThrow {
+    0%   { transform: translateY(0) rotate(0deg) scale(1); filter: blur(0); }
+    10%  { transform: translateY(-100px) rotate(180deg) scale(1.15); filter: blur(3px); }
+    30%  { transform: translateY(-50px) rotate(450deg) scale(1.1); filter: blur(2px); }
+    50%  { transform: translateY(-70px) rotate(720deg) scale(1.1); filter: blur(2px); }
+    70%  { transform: translateY(-30px) rotate(900deg) scale(1.05); filter: blur(1px); }
+    80%  { transform: translateY(-5px) rotate(1080deg) scale(1); filter: blur(0.5px); }
+    90%  { transform: translateY(-2px) rotate(1200deg) scale(0.98); filter: blur(0.2px); }
+    100% { transform: translateY(0) rotate(1320deg) scale(1); filter: blur(0); }
 }
 
 /* NUMBER OVERLAY */
 #dice-number {
-    position:absolute;
-    top:50%; left:50%;
-    transform:translate(-50%,-50%);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
     display:flex;
     justify-content:center;
     align-items:center;
     font-size:2em;
     font-weight:800;
-    color:rgba(255,255,255,0.9);
-    text-shadow:0 0 8px rgba(255,255,255,0.7), 0 0 16px rgba(255,255,255,0.5);
+    color: rgba(255,255,255,0.9);
+    text-shadow:0 0 8px rgba(255,255,255,0.7),0 0 16px rgba(255,255,255,0.5);
     pointer-events:none;
     opacity:0;
-    mix-blend-mode:multiply;
+    mix-blend-mode: multiply;
     transition: opacity 0.5s ease;
 }
 
@@ -114,11 +134,19 @@ body.grain::before { background-image:url('images/grain.png'); background-size:c
 <body class="grain">
 
 <div class="symbol-overlay"></div>
-<div id="embers"></div>
+<div id="embers">
+    <!-- Example embers -->
+    <div class="ember" style="left:10%; animation-delay:0s;"></div>
+    <div class="ember" style="left:20%; animation-delay:1s;"></div>
+    <div class="ember" style="left:30%; animation-delay:2s;"></div>
+    <div class="ember" style="left:50%; animation-delay:0.5s;"></div>
+    <div class="ember" style="left:60%; animation-delay:1.5s;"></div>
+    <div class="ember" style="left:70%; animation-delay:2.5s;"></div>
+</div>
 
 <div id="container">
     <img id="logo" src="images/logo.png" alt="Logo">
-    <div id="heading">One last roll of the dice...</div>
+    <div id="heading">Is luck on your side?</div>
 
     <div id="dice-container">
         <img id="dice" src="images/dice.png" alt="Dice">
@@ -132,6 +160,43 @@ body.grain::before { background-image:url('images/grain.png'); background-size:c
     </audio>
 </div>
 
-<script src="script.js"></script>
+<script>
+const dice = document.getElementById('dice');
+const diceNumber = document.getElementById('dice-number');
+const qr = document.getElementById('qr');
+const fire = document.getElementById('fire');
+
+let rolled = false;
+
+dice.addEventListener('click', () => {
+    if(rolled) return;
+    rolled = true;
+
+    // Play fire sound
+    fire.play().catch(()=>console.log("Autoplay blocked"));
+
+    // Show dice glow and rolling
+    dice.classList.add('glow','rolling');
+
+    // Random roll
+    const result = Math.floor(Math.random()*20)+1;
+
+    // Show number after roll
+    setTimeout(()=>{
+        dice.classList.remove('rolling');
+        diceNumber.textContent = result;
+        diceNumber.style.opacity = "1";
+
+        // Show corresponding QR if needed
+        if(result<=10){
+            qr.src = "qr/prize1.png";
+        } else {
+            qr.src = "qr/prize2.png";
+        }
+        qr.style.display = "block";
+    },1000); // matches diceThrow animation
+});
+</script>
+
 </body>
 </html>
