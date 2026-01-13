@@ -73,7 +73,7 @@ body.grain::before { background-image:url('images/grain.png'); background-size:c
     margin:0 auto;
 }
 
-/* Dice glow using drop-shadow */
+/* Dice glow using drop-shadow applied from start */
 #dice.glow {
     animation: diceGlow 2s infinite alternate;
     filter: drop-shadow(0 0 10px rgba(255,200,0,0.7))
@@ -112,12 +112,12 @@ body.grain::before { background-image:url('images/grain.png'); background-size:c
     align-items:center;
     font-size:2em;
     font-weight:800;
-    color: rgba(255,255,255,0.9);
-    text-shadow:0 0 8px rgba(255,255,255,0.7),0 0 16px rgba(255,255,255,0.5);
+    color: rgba(255,255,255,1);
+    text-shadow:0 0 8px rgba(255,255,255,0.9),0 0 16px rgba(255,255,255,0.7);
     pointer-events:none;
     opacity:0;
-    z-index: 2;
-    mix-blend-mode: multiply;
+    z-index:2;
+    mix-blend-mode: normal;
     transition: opacity 0.5s ease;
 }
 
@@ -136,7 +136,6 @@ body.grain::before { background-image:url('images/grain.png'); background-size:c
 
 <div class="symbol-overlay"></div>
 <div id="embers">
-    <!-- Example embers -->
     <div class="ember" style="left:10%; animation-delay:0s;"></div>
     <div class="ember" style="left:20%; animation-delay:1s;"></div>
     <div class="ember" style="left:30%; animation-delay:2s;"></div>
@@ -150,7 +149,7 @@ body.grain::before { background-image:url('images/grain.png'); background-size:c
     <div id="heading">One last roll of the dice...</div>
 
     <div id="dice-container">
-        <img id="dice" src="images/dice.png" alt="Dice">
+        <img id="dice" src="images/dice.png" alt="Dice" class="glow">
         <div id="dice-number"></div>
     </div>
 
@@ -162,40 +161,38 @@ body.grain::before { background-image:url('images/grain.png'); background-size:c
 </div>
 
 <script>
-const dice = document.getElementById('dice');
-const diceNumber = document.getElementById('dice-number');
-const qr = document.getElementById('qr');
-const fire = document.getElementById('fire');
+document.addEventListener('DOMContentLoaded',()=>{
+    const dice = document.getElementById('dice');
+    const diceNumber = document.getElementById('dice-number');
+    const qr = document.getElementById('qr');
+    const fire = document.getElementById('fire');
 
-let rolled = false;
+    let rolled = false;
 
-dice.addEventListener('click', () => {
-    if(rolled) return;
-    rolled = true;
+    dice.addEventListener('click', () => {
+        if(rolled) return;
+        rolled = true;
 
-    // Play fire sound
-    fire.play().catch(()=>console.log("Autoplay blocked"));
+        fire.play().catch(()=>console.log("Autoplay blocked"));
 
-    // Show dice glow and rolling
-    dice.classList.add('glow','rolling');
+        // Add rolling class
+        dice.classList.add('rolling');
 
-    // Random roll
-    const result = Math.floor(Math.random()*20)+1;
+        const result = Math.floor(Math.random()*20)+1;
 
-    // Show number after roll
-    setTimeout(()=>{
-        dice.classList.remove('rolling');
-        diceNumber.textContent = result;
-        diceNumber.style.opacity = "1";
+        setTimeout(()=>{
+            dice.classList.remove('rolling');
+            diceNumber.textContent = result;
+            diceNumber.style.opacity = "1";
 
-        // Show corresponding QR if needed
-        if(result<=10){
-            qr.src = "qr/prize1.png";
-        } else {
-            qr.src = "qr/prize2.png";
-        }
-        qr.style.display = "block";
-    },1000); // matches diceThrow animation
+            if(result<=10){
+                qr.src = "qr/prize1.png";
+            } else {
+                qr.src = "qr/prize2.png";
+            }
+            qr.style.display = "block";
+        },1000);
+    });
 });
 </script>
 
