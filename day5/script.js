@@ -1,59 +1,49 @@
-const dice = document.getElementById('dice');
-const diceNumber = document.getElementById('dice-number');
-const qr = document.getElementById('qr');
-const fire = document.getElementById('fire');
-const emberContainer = document.getElementById('embers');
-let rolled = false;
+document.addEventListener('DOMContentLoaded', () => {
 
-// Start fire
-fire.play().catch(()=>console.log("Autoplay prevented; will start on tap"));
+    const dice = document.getElementById('dice');
+    const diceNumber = document.getElementById('dice-number');
+    const qr = document.getElementById('qr');
+    const fire = document.getElementById('fire');
 
-// Dice glow
-dice.classList.add('glow');
+    let rolled = false;
 
-// Dice click
-dice.addEventListener('click', ()=>{
-    if(rolled) return;
-    rolled = true;
+    dice.addEventListener('click', () => {
+        if (rolled) return;
+        rolled = true;
 
-    dice.classList.remove('glow');
-    dice.classList.add('rolling');
+        fire.play().catch(()=>{});
 
-    const roll = Math.floor(Math.random()*20)+1;
+        dice.classList.add('rolling');
 
-    setTimeout(()=>{
-        dice.classList.remove('rolling');
-        dice.classList.add('glow');
+        const roll = Math.floor(Math.random() * 20) + 1;
 
-        diceNumber.textContent = roll;
-        diceNumber.style.opacity = 1;
+        setTimeout(() => {
+            dice.classList.remove('rolling');
 
-        qr.src = roll<=10?'qr/prize1.png':'qr/prize2.png';
-        qr.style.display = 'block';
+            // SHOW NUMBER (guaranteed)
+            diceNumber.textContent = roll;
+            diceNumber.style.opacity = '1';
 
-        createEmberBurst(diceNumber,20);
-    },1000);
-});
+            // QR only (no prize text)
+            qr.src = roll <= 10 ? 'qr/prize1.png' : 'qr/prize2.png';
+            qr.style.display = 'block';
 
-// Ember burst function
-function createEmberBurst(element,count=12){
-    for(let i=0;i<count;i++){
-        const e = document.createElement('div');
-        e.className='ember';
-        const rect = element.getBoundingClientRect();
-        e.style.left = rect.left + Math.random()*rect.width +'px';
-        e.style.top = rect.top + Math.random()*rect.height +'px';
-        e.style.animationDuration = 2+Math.random()*2 +'s';
-        document.body.appendChild(e);
-        setTimeout(()=>e.remove(),4000);
+            emberBurst();
+        }, 1000);
+    });
+
+    function emberBurst(count = 14) {
+        const rect = dice.getBoundingClientRect();
+
+        for (let i = 0; i < count; i++) {
+            const e = document.createElement('div');
+            e.className = 'ember';
+            e.style.left = rect.left + rect.width / 2 + 'px';
+            e.style.top = rect.top + rect.height / 2 + 'px';
+            e.style.animationDuration = 1.5 + Math.random() * 1.5 + 's';
+            document.body.appendChild(e);
+            setTimeout(() => e.remove(), 3000);
+        }
     }
-}
 
-// Ambient embers
-for(let i=0;i<20;i++){
-    const e = document.createElement('div');
-    e.className='ember';
-    e.style.left = Math.random()*100+'%';
-    e.style.animationDelay = Math.random()*6+'s';
-    emberContainer.appendChild(e);
-}
+});
