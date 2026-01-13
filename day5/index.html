@@ -68,13 +68,19 @@ h1 {font-size:2.2em; margin-bottom:10px; text-align:center;}
     cursor:pointer;
     transition: transform 0.2s ease;
 }
-#dice.rolling { animation: diceRoll 2s ease-in-out; }
+#dice.rolling {
+    animation: diceRoll 1s ease-in-out forwards;
+    filter: blur(1.5px); /* subtle motion blur during roll */
+}
+
 @keyframes diceRoll {
-    0%{transform:rotate(0deg);}
-    25%{transform:rotate(45deg);}
-    50%{transform:rotate(-30deg);}
-    75%{transform:rotate(60deg);}
-    100%{transform:rotate(0deg);}
+    0%   { transform: rotate(0deg) translate(0,0); }
+    10%  { transform: rotate(180deg) translate(-5px,5px); }
+    25%  { transform: rotate(360deg) translate(3px,-3px); }
+    40%  { transform: rotate(540deg) translate(-2px,2px); }
+    60%  { transform: rotate(720deg) translate(1px,-1px); }
+    80%  { transform: rotate(900deg) translate(-3px,3px); }
+    100% { transform: rotate(1080deg) translate(0,0); }
 }
 
 /* NUMBER OVERLAY */
