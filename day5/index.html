@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 5 – Is luck on your side?</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&display=swap" rel="stylesheet">
+
+<style>
+/* BASE */
+body {
+    margin:0;
+    background:#0a0805;
+    color:white;
+    font-family:'Cinzel', serif;
+    overflow-y:auto;
+}
+
+/* SYMBOLS BACKGROUND */
+.symbol-overlay {
+    position: fixed;
+    inset: 0;
+    background: url('images/symbols.png') repeat;
+    background-size: 180px 180px;
+    opacity: 0.1;
+    pointer-events: none;
+    z-index: 1;
+    animation: symbolsGlow 8s infinite alternate ease-in-out;
+}
+@keyframes symbolsGlow {
+    0% {opacity:0.08; transform:rotate(0deg);}
+    50% {opacity:0.15; transform:rotate(1deg);}
+    100% {opacity:0.08; transform:rotate(-1deg);}
+}
+
+/* TORCH FLICKER */
+@keyframes flicker {0%{opacity:1;}60%{opacity:0.45;}100%{opacity:1;}}
+.flicker {animation:flicker 1.2s infinite alternate;}
+
+/* LOGO */
+#logo {
+    width:100px;
+    max-width:90%;
+    margin-bottom:10px;
+}
+
+/* HEADING */
+h1 {font-size:2.2em; margin-bottom:10px; text-align:center;}
+
+/* EMBERS */
+#embers {position:fixed; inset:0; pointer-events:none; z-index:1;}
+.ember {position:absolute; width:4px; height:4px; background:orange; border-radius:50%; box-shadow:0 0 10px orange; animation:emberRise 6s linear infinite;}
+@keyframes emberRise {from{transform:translateY(100vh);opacity:0;}30%{opacity:1;}to{transform:translateY(-50px) translateX(-40px);opacity:0;}}
+
+/* CONTAINER */
+#container {position:relative; z-index:5; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding-top:20px;}
+
+/* DICE */
+#dice-container {
+    position:relative;
+    width:250px;
+    height:250px;
+    margin-bottom:20px;
+}
+#dice {
+    width:100%;
+    cursor:pointer;
+    transition: transform 0.2s ease;
+}
+#dice.rolling { animation: diceRoll 2s ease-in-out; }
+@keyframes diceRoll {
+    0%{transform:rotate(0deg);}
+    25%{transform:rotate(45deg);}
+    50%{transform:rotate(-30deg);}
+    75%{transform:rotate(60deg);}
+    100%{transform:rotate(0deg);}
+}
+
+/* NUMBER OVERLAY */
+#dice-number {
+    position:absolute;
+    inset:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:3em;
+    color:#ff3b2f;
+    text-shadow:0 0 8px rgba(255,60,40,0.9),0 0 16px rgba(255,120,80,0.8);
+    pointer-events:none;
+    opacity:0;
+    transition: opacity 0.5s ease;
+}
+
+/* PRIZE */
+#prize {
+    font-size:1.8em;
+    margin-bottom:15px;
+    text-align:center;
+    min-height:2em;
+}
+
+/* QR */
+#qr {width:200px; display:none; margin-bottom:20px;}
+
+/* MOBILE */
+@media(max-width:700px){
+    #dice-container {width:150px; height:150px;}
+    #dice-number {font-size:2em;}
+}
+</style>
+</head>
+
+<body>
+<div class="symbol-overlay"></div>
+<div id="embers"></div>
+
+<div id="container">
+    <img id="logo" src="images/logo.png" alt="Logo">
+    <h1 class="flicker">Is luck on your side?</h1>
+
+    <div id="dice-container">
+        <img id="dice" src="images/dice.png" alt="Dice">
+        <div id="dice-number"></div>
+    </div>
+
+    <div id="prize"></div>
+    <img id="qr" src="">
+</div>
+
+<audio id="fire" loop>
+    <source src="sounds/fire-crackle.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const dice = document.getElementById('dice');
+const diceNumber = document.getElementById('dice-number');
+const prizeEl = document.getElementById('prize');
+const qr = document.getElementById('qr');
+const fire = document.getElementById('fire');
+let rolled = false;
+
+// Start fire sound
+fire.play().catch(() => {});
+
+dice.addEventListener('click', () => {
+    if (rolled) return;
+    rolled = true;
+
+    dice.classList.add('rolling');
+
+    setTimeout(() => {
+        dice.classList.remove('rolling');
+
+        // Random roll 1-20
+        const roll = Math.floor(Math.random()*20)+1;
+
+        // Show number overlay
+        diceNumber.textContent = roll;
+        diceNumber.style.opacity = 1;
+
+        // Determine prize
+        const prize = roll <= 10 ? 'Prize 1' : 'Prize 2';
+        prizeEl.textContent = prize;
+
+        // Show corresponding QR code
+        qr.src = prize === 'Prize 1' ? 'qr/prize1.png' : 'qr/prize2.png';
+        qr.style.display = 'block';
+
+        // Ember burst on prize reveal
+        createEmberBurst(prizeEl, 15);
+
+    }, 2000); // match animation duration
+});
+
+// Create small ember burst at element
+function createEmberBurst(element, count=12){
+    for(let i=0;i<count;i++){
+        const e=document.createElement('div');
+        e.className='ember';
+        const rect=element.getBoundingClientRect();
+        e.style.left=rect.left+Math.random()*rect.width+'px';
+        e.style.top=rect.top+Math.random()*rect.height+'px';
+        e.style.animationDuration=2+Math.random()*2+'s';
+        document.body.appendChild(e);
+        setTimeout(()=>e.remove(),4000);
+    }
+}
+
+// Ambient embers
+const emberContainer = document.getElementById('embers');
+for(let i=0;i<20;i++){
+    const e=document.createElement('div');
+    e.className='ember';
+    e.style.left=Math.random()*100+'%';
+    e.style.animationDelay=Math.random()*6+'s';
+    emberContainer.appendChild(e);
+}
+</script>
+</body>
+</html>
