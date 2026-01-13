@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Day 5 Dice Roll</title>
+<title>Day 5 – Dice Roll</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&display=swap" rel="stylesheet">
 
 <style>
-/* BASE */
+/* ================= BASE ================= */
 body {
     margin:0;
     background:#0a0805;
@@ -18,7 +18,7 @@ body {
     position:relative;
 }
 
-/* TORCHLIGHT */
+/* ================= TORCHLIGHT ================= */
 body::before,
 body::after {
     content:"";
@@ -27,174 +27,175 @@ body::after {
     pointer-events:none;
     z-index:0;
 }
-body::before { background: radial-gradient(circle at 30% 40%, rgba(255,190,110,0.35), transparent 55%); animation: torchA 5.5s infinite alternate ease-in-out; }
-body::after { background: radial-gradient(circle at 70% 65%, rgba(255,150,70,0.30), transparent 60%); animation: torchB 7s infinite alternate ease-in-out; }
+body::before {
+    background: radial-gradient(circle at 30% 40%, rgba(255,190,110,0.35), transparent 55%);
+    animation: torchA 5.5s infinite alternate ease-in-out;
+}
+body::after {
+    background: radial-gradient(circle at 70% 65%, rgba(255,150,70,0.30), transparent 60%);
+    animation: torchB 7s infinite alternate ease-in-out;
+}
 @keyframes torchA { from{transform:translate(-4%,-3%);opacity:0.6;} to{transform:translate(4%,3%);opacity:1;} }
 @keyframes torchB { from{transform:translate(3%,-3%);opacity:0.5;} to{transform:translate(-3%,4%);opacity:0.9;} }
 
-/* GRAIN */
-body.grain::before { background-image:url('images/grain.png'); background-size:cover; mix-blend-mode:overlay; opacity:0.05; animation: grainMove 12s linear infinite; }
-@keyframes grainMove {0%{transform:translate(0,0);}25%{transform:translate(-2%,1%);}50%{transform:translate(1%,-1%);}75%{transform:translate(-1%,2%);}100%{transform:translate(0,0);}}
-
-/* SYMBOLS */
-.symbol-overlay { position:fixed; inset:0; background: url('images/symbols.png') repeat; background-size:180px 180px; opacity:0.1; pointer-events:none; z-index:1; animation: symbolsGlow 8s infinite alternate ease-in-out; }
-@keyframes symbolsGlow { 0% {opacity:0.08; transform:rotate(0deg);} 50% {opacity:0.15; transform:rotate(1deg);} 100% {opacity:0.08; transform:rotate(-1deg);} }
-
-/* EMBERS */
-#embers { position:fixed; inset:0; pointer-events:none; z-index:1; }
-.ember { position:absolute; width:4px; height:4px; background:orange; border-radius:50%; box-shadow:0 0 10px orange; animation: emberRise 6s linear infinite; }
-@keyframes emberRise { from{transform:translateY(100vh);opacity:0;}30%{opacity:1;}100%{transform:translateY(-50px) translateX(-40px);opacity:0;} }
-
-/* CONTENT */
-#container { position:relative; z-index:10; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding-top:20px; }
-
-/* LOGO */
-#logo { width:100px; max-width:90%; margin-bottom:6px; }
-
-/* HEADING */
-#heading { font-family:'Cinzel', serif; font-size:2.4em; font-weight:800; margin-bottom:6px; animation:flicker 1.2s infinite alternate; text-align:center; }
-@keyframes flicker { 0%{opacity:1;}60%{opacity:0.45;}100%{opacity:1;} }
-
-/* DICE CONTAINER */
-#dice-container {
-    position: relative;
-    width: 240px;
-    max-width: 90%;
-    height: 240px;
-    margin-top:6px;
+/* ================= SYMBOLS ================= */
+.symbol-overlay {
+    position:fixed;
+    inset:0;
+    background:url('images/symbols.png') repeat;
+    background-size:180px 180px;
+    opacity:0.1;
+    pointer-events:none;
+    z-index:1;
 }
 
-/* DICE IMAGE */
+/* ================= EMBERS ================= */
+#embers { position:fixed; inset:0; pointer-events:none; z-index:1; }
+.ember {
+    position:absolute;
+    width:4px;
+    height:4px;
+    background:orange;
+    border-radius:50%;
+    box-shadow:0 0 10px orange;
+    animation: emberRise 6s linear infinite;
+}
+@keyframes emberRise {
+    from{transform:translateY(100vh);opacity:0;}
+    30%{opacity:1;}
+    100%{transform:translateY(-60px) translateX(-40px);opacity:0;}
+}
+
+/* ================= CONTENT ================= */
+#container {
+    position:relative;
+    z-index:10;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding-top:20px;
+}
+
+/* ================= LOGO ================= */
+#logo {
+    width:100px;
+    max-width:90%;
+    margin-bottom:8px;
+}
+
+/* ================= HEADING ================= */
+#heading {
+    font-family:'Cinzel', serif;
+    font-size:2.3em;
+    font-weight:800;
+    text-align:center;
+    margin-bottom:10px;
+    animation:flicker 1.2s infinite alternate;
+}
+@keyframes flicker { 0%{opacity:1;}60%{opacity:0.45;}100%{opacity:1;} }
+
+/* ================= DICE ================= */
+#dice-container {
+    position:relative;
+    width:260px;
+    height:260px;
+}
+
 #dice {
     width:100%;
-    height:auto;
-    cursor:pointer;
     display:block;
+    cursor:pointer;
     margin:0 auto;
 }
 
-/* Dice glow using drop-shadow applied from start */
+/* Glow around dice shape (uses transparency correctly) */
 #dice.glow {
     animation: diceGlow 2s infinite alternate;
-    filter: drop-shadow(0 0 10px rgba(255,200,0,0.7))
-            drop-shadow(0 0 20px rgba(255,200,0,0.4));
+    filter:
+        drop-shadow(0 0 12px rgba(255,200,0,0.8))
+        drop-shadow(0 0 28px rgba(255,180,60,0.6));
 }
 @keyframes diceGlow {
-    0%   { filter: drop-shadow(0 0 8px rgba(255,200,0,0.6)) drop-shadow(0 0 16px rgba(255,200,0,0.3)); }
-    50%  { filter: drop-shadow(0 0 16px rgba(255,220,0,0.9)) drop-shadow(0 0 32px rgba(255,220,0,0.4)); }
-    100% { filter: drop-shadow(0 0 8px rgba(255,200,0,0.6)) drop-shadow(0 0 16px rgba(255,200,0,0.3)); }
+    0% { filter: drop-shadow(0 0 10px rgba(255,200,0,0.6)); }
+    100% { filter: drop-shadow(0 0 26px rgba(255,220,80,0.9)); }
 }
 
-/* Dice rolling 2D chaotic motion */
+/* Roll animation */
 #dice.rolling {
-    animation: diceThrow 1s ease-in-out forwards;
-    filter: blur(2px);
+    animation: diceRoll 1s ease-in-out forwards;
 }
-@keyframes diceThrow {
+@keyframes diceRoll {
     0%   { transform: translateY(0) rotate(0deg) scale(1); filter: blur(0); }
-    10%  { transform: translateY(-100px) rotate(180deg) scale(1.15); filter: blur(3px); }
-    30%  { transform: translateY(-50px) rotate(450deg) scale(1.1); filter: blur(2px); }
-    50%  { transform: translateY(-70px) rotate(720deg) scale(1.1); filter: blur(2px); }
-    70%  { transform: translateY(-30px) rotate(900deg) scale(1.05); filter: blur(1px); }
-    80%  { transform: translateY(-5px) rotate(1080deg) scale(1); filter: blur(0.5px); }
-    90%  { transform: translateY(-2px) rotate(1200deg) scale(0.98); filter: blur(0.2px); }
-    100% { transform: translateY(0) rotate(1320deg) scale(1); filter: blur(0); }
+    15%  { transform: translateY(-120px) rotate(240deg) scale(1.15); filter: blur(3px); }
+    35%  { transform: translateY(-60px) rotate(540deg) scale(1.1); filter: blur(2px); }
+    55%  { transform: translateY(-80px) rotate(840deg) scale(1.05); filter: blur(2px); }
+    75%  { transform: translateY(-20px) rotate(1080deg) scale(1); filter: blur(1px); }
+    90%  { transform: translateY(-8px) rotate(1180deg) scale(0.98); }
+    100% { transform: translateY(0) rotate(1260deg) scale(1); filter: blur(0); }
 }
 
-/* NUMBER OVERLAY */
+/* ================= NUMBER ================= */
 #dice-number {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%,-50%);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    font-size:2em;
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    font-size:1.9em;
     font-weight:800;
-    color: rgba(255,255,255,1);
-    text-shadow:0 0 8px rgba(255,255,255,0.9),0 0 16px rgba(255,255,255,0.7);
-    pointer-events:none;
+    color:rgba(255,255,255,0.9);
+    text-shadow:
+        0 0 6px rgba(255,255,255,0.8),
+        0 0 12px rgba(255,200,120,0.6);
     opacity:0;
-    z-index:2;
-    mix-blend-mode: normal;
-    transition: opacity 0.5s ease;
+    pointer-events:none;
+    z-index:5;
 }
 
-/* QR */
-#qr { margin-top:6px; width:160px; max-width:90%; display:none; }
+/* ================= QR ================= */
+#qr {
+    margin-top:12px;
+    width:160px;
+    max-width:90%;
+    display:none;
+}
 
+/* ================= MOBILE ================= */
 @media(max-width:700px){
-    #dice-container { width:140px; height:140px; }
-    #dice-number { font-size:1.4em; }
-    #qr { width:200px; }
+    #dice-container { width:200px; height:200px; }
+    #dice-number { font-size:1.5em; }
 }
 </style>
 </head>
 
-<body class="grain">
+<body>
 
 <div class="symbol-overlay"></div>
+
 <div id="embers">
     <div class="ember" style="left:10%; animation-delay:0s;"></div>
-    <div class="ember" style="left:20%; animation-delay:1s;"></div>
-    <div class="ember" style="left:30%; animation-delay:2s;"></div>
-    <div class="ember" style="left:50%; animation-delay:0.5s;"></div>
-    <div class="ember" style="left:60%; animation-delay:1.5s;"></div>
-    <div class="ember" style="left:70%; animation-delay:2.5s;"></div>
+    <div class="ember" style="left:25%; animation-delay:1s;"></div>
+    <div class="ember" style="left:40%; animation-delay:2s;"></div>
+    <div class="ember" style="left:60%; animation-delay:0.5s;"></div>
+    <div class="ember" style="left:75%; animation-delay:1.5s;"></div>
 </div>
 
 <div id="container">
     <img id="logo" src="images/logo.png" alt="Logo">
-    <div id="heading">One last roll of the dice...</div>
+    <div id="heading">Is luck on your side?</div>
 
     <div id="dice-container">
-        <img id="dice" src="images/dice.png" alt="Dice" class="glow">
+        <img id="dice" src="images/dice.png" class="glow" alt="Dice">
         <div id="dice-number"></div>
     </div>
 
-    <img id="qr" src="">
+    <img id="qr" src="" alt="QR Code">
 
     <audio id="fire" loop>
         <source src="sounds/fire-crackle.mp3" type="audio/mpeg">
     </audio>
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded',()=>{
-    const dice = document.getElementById('dice');
-    const diceNumber = document.getElementById('dice-number');
-    const qr = document.getElementById('qr');
-    const fire = document.getElementById('fire');
-
-    let rolled = false;
-
-    dice.addEventListener('click', () => {
-        if(rolled) return;
-        rolled = true;
-
-        fire.play().catch(()=>console.log("Autoplay blocked"));
-
-        // Add rolling class
-        dice.classList.add('rolling');
-
-        const result = Math.floor(Math.random()*20)+1;
-
-        setTimeout(()=>{
-            dice.classList.remove('rolling');
-            diceNumber.textContent = result;
-            diceNumber.style.opacity = "1";
-
-            if(result<=10){
-                qr.src = "qr/prize1.png";
-            } else {
-                qr.src = "qr/prize2.png";
-            }
-            qr.style.display = "block";
-        },1000);
-    });
-});
-</script>
-
+<script src="script.js"></script>
 </body>
 </html>
