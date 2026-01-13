@@ -3,14 +3,17 @@ const reveal = document.getElementById('reveal');
 const resultText = document.getElementById('result');
 const qr = document.getElementById('qr');
 const fire = document.getElementById('fire');
+const emberContainer = document.getElementById('embers');
 
 let locked = false;
 
 // Random imposter
 const imposterIndex = Math.floor(Math.random() * 3);
 
-fire.play().catch(()=>{});
+// Start fire sound
+fire.play().catch(() => {});
 
+// Character click handler
 characters.forEach(char => {
     char.addEventListener('click', () => {
         if (locked) return;
@@ -18,28 +21,40 @@ characters.forEach(char => {
 
         const chosen = Number(char.dataset.id);
 
-        // Fade others
+        // Fade out unselected characters
         characters.forEach(c => {
             if (c !== char) c.classList.add('fade');
         });
 
+        // Scale selected
         char.classList.add('selected');
 
-        typeText("I am, and always have been a...", () => {
-            setTimeout(() => {
-                const isImposter = chosen === imposterIndex;
-                resultText.textContent = isImposter ? "IMPOSTER" : "LOYAL";
-                resultText.style.display = "block";
+        const isImposter = chosen === imposterIndex;
 
-                if (isImposter) {
-                    qr.style.display = "block";
-                }
-            }, 600);
+        // Speech line
+        const article = isImposter ? "an" : "a";
+        typeText(`I am, and always have been ${article}...`, () => {
+            revealResult(isImposter);
         });
     });
 });
 
-// Typewriter
+// Reveal result text and QR if needed
+function revealResult(isImposter) {
+    setTimeout(() => {
+        const text = isImposter ? "IMPOSTER" : "LOYAL";
+        resultText.textContent = text;
+        resultText.style.display = "block";
+
+        // Ember burst on result
+        createEmberBurst(resultText);
+
+        // Show QR if Imposter
+        if (isImposter) qr.style.display = "block";
+    }, 600);
+}
+
+// Simple typewriter effect
 function typeText(text, callback) {
     reveal.textContent = "";
     let i = 0;
@@ -53,13 +68,28 @@ function typeText(text, callback) {
     }, 50);
 }
 
-// Embers
-const emberContainer = document.getElementById('embers');
-for (let i=0;i<20;i++){
-    const e=document.createElement('div');
-    e.className='ember';
-    e.style.left=Math.random()*100+'%';
-    e.style.animationDelay=Math.random()*6+'s';
-    emberContainer.appendChild(e);
+// Create small ember burst at element
+function createEmberBurst(element) {
+    for (let i = 0; i < 12; i++) {
+        const e = document.createElement('div');
+        e.className = 'ember';
+        // Position around element
+        const rect = element.getBoundingClientRect();
+        e.style.left = rect.left + Math.random() * rect.width + 'px';
+        e.style.top = rect.top + Math.random() * rect.height + 'px';
+        e.style.animationDuration = 2 + Math.random() * 2 + 's';
+        document.body.appendChild(e);
+
+        // Remove after animation
+        setTimeout(() => e.remove(), 4000);
+    }
 }
 
+// Generate ambient background embers (keep original)
+for (let i = 0; i < 20; i++) {
+    const e = document.createElement('div');
+    e.className = 'ember';
+    e.style.left = Math.random() * 100 + '%';
+    e.style.animationDelay = Math.random() * 6 + 's';
+    emberContainer.appendChild(e);
+}
