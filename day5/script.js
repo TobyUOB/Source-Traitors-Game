@@ -1,7 +1,6 @@
 // Day 5 Dice Roll Script
 const dice = document.getElementById('dice');
 const diceNumber = document.getElementById('dice-number');
-const prizeEl = document.getElementById('prize');
 const qr = document.getElementById('qr');
 const fire = document.getElementById('fire');
 const emberContainer = document.getElementById('embers');
@@ -27,20 +26,17 @@ dice.addEventListener('click', () => {
         // Random dice roll 1-20
         const roll = Math.floor(Math.random() * 20) + 1;
 
-        // Show number overlay
+        // Show number overlay (black text)
         diceNumber.textContent = roll;
+        diceNumber.style.color = '#000';
         diceNumber.style.opacity = 1;
 
-        // Determine prize
-        const prize = roll <= 10 ? 'Prize 1' : 'Prize 2';
-        prizeEl.textContent = prize;
-
         // Show corresponding QR code
-        qr.src = prize === 'Prize 1' ? 'qr/prize1.png' : 'qr/prize2.png';
+        qr.src = roll <= 10 ? 'qr/prize1.png' : 'qr/prize2.png';
         qr.style.display = 'block';
 
         // Ember burst on reveal
-        createEmberBurst(prizeEl, 15);
+        createEmberBurst(diceNumber, 15);
 
     }, 2000); // match dice roll animation duration
 });
