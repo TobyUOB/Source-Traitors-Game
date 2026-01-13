@@ -1,4 +1,3 @@
-// Day 5 Dice Roll Script
 const dice = document.getElementById('dice');
 const diceNumber = document.getElementById('dice-number');
 const qr = document.getElementById('qr');
@@ -7,61 +6,62 @@ const emberContainer = document.getElementById('embers');
 
 let rolled = false;
 
-// Start fire sound on page load
-fire.play().catch(() => {
-    console.log("Autoplay prevented; will start on user interaction");
-});
+// Start fire sound
+fire.play().catch(()=>console.log("Autoplay prevented; will start on tap"));
 
-// Dice click handler
+// Start pulsing glow
+dice.classList.add('glow');
+
 dice.addEventListener('click', () => {
     if (rolled) return;
     rolled = true;
 
-    // Start roll animation
+    // Remove glow, add rolling class
+    dice.classList.remove('glow');
     dice.classList.add('rolling');
 
     // Random dice roll 1-20
     const roll = Math.floor(Math.random() * 20) + 1;
 
-    // Show number overlay (white with overlay blend)
+    // Show number overlay
     diceNumber.textContent = roll;
     diceNumber.style.color = '#fff';
     diceNumber.style.mixBlendMode = 'overlay';
     diceNumber.style.opacity = 1;
 
-    // Remove roll class after 1s (animation duration)
+    // After animation, remove rolling & restore glow
     setTimeout(() => {
         dice.classList.remove('rolling');
+        dice.classList.add('glow');
 
-        // Show QR code
+        // Show corresponding QR code
         qr.src = roll <= 10 ? 'qr/prize1.png' : 'qr/prize2.png';
         qr.style.display = 'block';
 
-        // Ember burst on reveal
+        // Ember burst
         createEmberBurst(diceNumber, 15);
-
-    }, 1000); // matches diceRoll animation
+    }, 1000);
 });
 
-// Create small ember burst at element
-function createEmberBurst(element, count = 12) {
-    for (let i = 0; i < count; i++) {
+// Ember burst helper
+function createEmberBurst(element,count=12){
+    for(let i=0;i<count;i++){
         const e = document.createElement('div');
-        e.className = 'ember';
-        const rect = element.getBoundingClientRect();
-        e.style.left = rect.left + Math.random() * rect.width + 'px';
-        e.style.top = rect.top + Math.random() * rect.height + 'px';
-        e.style.animationDuration = 2 + Math.random() * 2 + 's';
+        e.className='ember';
+        const rect=element.getBoundingClientRect();
+        e.style.left=rect.left+Math.random()*rect.width+'px';
+        e.style.top=rect.top+Math.random()*rect.height+'px';
+        e.style.animationDuration=2+Math.random()*2+'s';
         document.body.appendChild(e);
-        setTimeout(() => e.remove(), 4000);
+        setTimeout(()=>e.remove(),4000);
     }
 }
 
-// Generate ambient background embers
-for (let i = 0; i < 20; i++) {
-    const e = document.createElement('div');
-    e.className = 'ember';
-    e.style.left = Math.random() * 100 + '%';
-    e.style.animationDelay = Math.random() * 6 + 's';
+// Ambient embers
+for(let i=0;i<20;i++){
+    const e=document.createElement('div');
+    e.className='ember';
+    e.style.left=Math.random()*100+'%';
+    e.style.animationDelay=Math.random()*6+'s';
     emberContainer.appendChild(e);
 }
