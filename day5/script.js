@@ -12,34 +12,34 @@ fire.play().catch(()=>console.log("Autoplay prevented; will start on tap"));
 // Start pulsing glow
 dice.classList.add('glow');
 
+// Dice click event
 dice.addEventListener('click', () => {
     if (rolled) return;
     rolled = true;
 
-    // Remove glow, add rolling class
     dice.classList.remove('glow');
     dice.classList.add('rolling');
 
-    // Random dice roll 1-20
     const roll = Math.floor(Math.random() * 20) + 1;
 
-    // Show number overlay
-    diceNumber.textContent = roll;
-    diceNumber.style.color = '#fff';
-    diceNumber.style.mixBlendMode = 'overlay';
-    diceNumber.style.opacity = 1;
-
-    // After animation, remove rolling & restore glow
+    // Wait for dice animation to finish (1s)
     setTimeout(() => {
         dice.classList.remove('rolling');
         dice.classList.add('glow');
 
-        // Show corresponding QR code
+        // Show number overlay
+        diceNumber.textContent = roll;
+        diceNumber.style.opacity = 1;
+        diceNumber.style.color = '#fff';
+        diceNumber.style.mixBlendMode = 'overlay';
+
+        // Show QR code
         qr.src = roll <= 10 ? 'qr/prize1.png' : 'qr/prize2.png';
         qr.style.display = 'block';
 
-        // Ember burst
+        // Ember burst on reveal
         createEmberBurst(diceNumber, 15);
+
     }, 1000);
 });
 
