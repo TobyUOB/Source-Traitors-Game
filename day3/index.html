@@ -1,1 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 3 – Choose Carefully</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin:0;
+    background:#0a0805;
+    color:white;
+    font-family:'Cinzel', serif;
+    overflow:hidden;
+}
+
+/* Atmosphere reused */
+body::before {
+    content:"";
+    position:fixed;
+    inset:-30%;
+    background:radial-gradient(circle at 50% 40%, rgba(255,160,80,0.35), transparent 60%);
+    animation:flicker 6s infinite alternate;
+    pointer-events:none;
+    z-index:0;
+}
+
+@keyframes flicker {
+    from {opacity:.6;}
+    to {opacity:1;}
+}
+
+#embers {
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:1;
+}
+
+.ember {
+    position:absolute;
+    width:4px;
+    height:4px;
+    background:orange;
+    border-radius:50%;
+    box-shadow:0 0 10px orange;
+    animation:emberRise 6s linear infinite;
+}
+
+@keyframes emberRise {
+    from {transform:translateY(100vh); opacity:0;}
+    30% {opacity:1;}
+    to {transform:translateY(-50px) translateX(-40px); opacity:0;}
+}
+
+/* Layout */
+#container {
+    position:relative;
+    z-index:5;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    padding-top:20px;
+}
+
+#logo {
+    width:260px;
+    margin-bottom:10px;
+}
+
+h1 {
+    font-size:2.2em;
+    margin-bottom:20px;
+    text-align:center;
+}
+
+/* Characters */
+#characters {
+    display:flex;
+    gap:20px;
+    transition:all .6s ease;
+}
+
+.character {
+    width:200px;
+    cursor:pointer;
+    transition:all .8s ease;
+    filter:drop-shadow(0 0 12px rgba(255,120,60,.6));
+}
+
+.character.fade {
+    opacity:0;
+    transform:scale(.8);
+}
+
+.character.selected {
+    transform:scale(1.1);
+}
+
+/* Reveal text */
+#reveal {
+    margin-top:30px;
+    font-size:1.6em;
+    min-height:2em;
+    text-align:center;
+}
+
+/* Result */
+#result {
+    margin-top:10px;
+    font-size:2.4em;
+    text-shadow:0 0 20px rgba(255,80,40,.9);
+    display:none;
+}
+
+#qr {
+    margin-top:20px;
+    width:200px;
+    display:none;
+}
+
+/* Mobile */
+@media(max-width:700px) {
+    #characters {
+        flex-direction:column;
+    }
+    .character {
+        width:180px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div id="embers"></div>
+
+<div id="container">
+    <img id="logo" src="images/logo.png" alt="Logo">
+
+    <h1>Choose Carefully</h1>
+
+    <div id="characters">
+        <img src="images/character1.png" class="character" data-id="0">
+        <img src="images/character2.png" class="character" data-id="1">
+        <img src="images/character3.png" class="character" data-id="2">
+    </div>
+
+    <div id="reveal"></div>
+    <div id="result"></div>
+    <img id="qr" src="qr/win.png">
+</div>
+
+<audio id="fire" loop>
+    <source src="sounds/fire-crackle.mp3" type="audio/mpeg">
+</audio>
+
+<script src="script.js"></script>
+</body>
+</html>
 
