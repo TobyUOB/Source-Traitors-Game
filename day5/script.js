@@ -17,28 +17,30 @@ dice.addEventListener('click', () => {
     if (rolled) return;
     rolled = true;
 
-    // Add rolling animation
+    // Start roll animation
     dice.classList.add('rolling');
 
+    // Random dice roll 1-20
+    const roll = Math.floor(Math.random() * 20) + 1;
+
+    // Show number overlay (white with overlay blend)
+    diceNumber.textContent = roll;
+    diceNumber.style.color = '#fff';
+    diceNumber.style.mixBlendMode = 'overlay';
+    diceNumber.style.opacity = 1;
+
+    // Remove roll class after 1s (animation duration)
     setTimeout(() => {
         dice.classList.remove('rolling');
 
-        // Random dice roll 1-20
-        const roll = Math.floor(Math.random() * 20) + 1;
-
-        // Show number overlay (black text)
-        diceNumber.textContent = roll;
-        diceNumber.style.color = '#000';
-        diceNumber.style.opacity = 1;
-
-        // Show corresponding QR code
+        // Show QR code
         qr.src = roll <= 10 ? 'qr/prize1.png' : 'qr/prize2.png';
         qr.style.display = 'block';
 
         // Ember burst on reveal
         createEmberBurst(diceNumber, 15);
 
-    }, 2000); // match dice roll animation duration
+    }, 1000); // matches diceRoll animation
 });
 
 // Create small ember burst at element
