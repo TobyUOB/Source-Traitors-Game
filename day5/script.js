@@ -30,8 +30,6 @@ dice.addEventListener('click', () => {
         // Show number overlay
         diceNumber.textContent = roll;
         diceNumber.style.opacity = 1;
-        diceNumber.style.color = '#fff';
-        diceNumber.style.mixBlendMode = 'overlay';
 
         // Show QR code
         qr.src = roll <= 10 ? 'qr/prize1.png' : 'qr/prize2.png';
