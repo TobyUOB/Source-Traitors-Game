@@ -45,9 +45,11 @@ function revealResult(isImposter) {
         const text = isImposter ? "IMPOSTER" : "LOYAL";
         resultText.textContent = text;
         resultText.style.display = "block";
+        resultText.style.opacity = 0;
+        fadeIn(resultText, 1, 1000); // fade-in glow over 1s
 
-        // Ember burst on result
-        createEmberBurst(resultText);
+        // Bigger ember burst for Imposter, normal for Loyal
+        createEmberBurst(resultText, isImposter ? 25 : 12);
 
         // Show QR if Imposter
         if (isImposter) qr.style.display = "block";
@@ -68,24 +70,36 @@ function typeText(text, callback) {
     }, 50);
 }
 
-// Create small ember burst at element
-function createEmberBurst(element) {
-    for (let i = 0; i < 12; i++) {
+// Create ember burst at element
+function createEmberBurst(element, count=12) {
+    for (let i = 0; i < count; i++) {
         const e = document.createElement('div');
         e.className = 'ember';
-        // Position around element
         const rect = element.getBoundingClientRect();
         e.style.left = rect.left + Math.random() * rect.width + 'px';
         e.style.top = rect.top + Math.random() * rect.height + 'px';
         e.style.animationDuration = 2 + Math.random() * 2 + 's';
         document.body.appendChild(e);
-
-        // Remove after animation
         setTimeout(() => e.remove(), 4000);
     }
 }
 
-// Generate ambient background embers (keep original)
+// Fade-in utility
+function fadeIn(el, targetOpacity=1, duration=1000) {
+    let opacity = 0;
+    const interval = 20;
+    const increment = (targetOpacity / duration) * interval;
+    const fade = setInterval(() => {
+        opacity += increment;
+        if (opacity >= targetOpacity) {
+            opacity = targetOpacity;
+            clearInterval(fade);
+        }
+        el.style.opacity = opacity;
+    }, interval);
+}
+
+// Generate ambient background embers
 for (let i = 0; i < 20; i++) {
     const e = document.createElement('div');
     e.className = 'ember';
