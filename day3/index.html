@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&display=swap" rel="stylesheet">
 
 <style>
+/* BASE STYLES */
 body {
     margin:0;
     background:#0a0805;
@@ -15,6 +16,8 @@ body {
     font-family:'Cinzel', serif;
     overflow:hidden;
 }
+
+/* SYMBOLS BACKGROUND */
 .symbol-overlay {
     position: fixed;
     inset: 0;
@@ -23,23 +26,40 @@ body {
     opacity: 0.1;
     pointer-events: none;
     z-index: 1;
+    animation: symbolsGlow 8s infinite alternate ease-in-out;
 }
-/* Atmosphere reused */
-body::before {
-    content:"";
-    position:fixed;
-    inset:-30%;
-    background:radial-gradient(circle at 50% 40%, rgba(255,160,80,0.35), transparent 60%);
-    animation:flicker 6s infinite alternate;
-    pointer-events:none;
-    z-index:0;
+@keyframes symbolsGlow {
+    0% {opacity:0.08; transform:rotate(0deg);}
+    50% {opacity:0.15; transform:rotate(1deg);}
+    100% {opacity:0.08; transform:rotate(-1deg);}
 }
 
+/* TORCH FLICKER */
 @keyframes flicker {
-    from {opacity:.6;}
-    to {opacity:1;}
+    0% { opacity: 1; }
+    60% { opacity: 0.45; }
+    100% { opacity: 1; }
 }
 
+.flicker {
+    animation: flicker 1.2s infinite alternate;
+}
+
+/* LOGO */
+#logo {
+    width: 100px;
+    max-width: 90%;
+    margin-bottom: 10px;
+}
+
+/* HEADING */
+h1 {
+    font-size:2.2em;
+    margin-bottom:15px;
+    text-align:center;
+}
+
+/* EMBERS */
 #embers {
     position:fixed;
     inset:0;
@@ -63,7 +83,7 @@ body::before {
     to {transform:translateY(-50px) translateX(-40px); opacity:0;}
 }
 
-/* Layout */
+/* CONTAINER */
 #container {
     position:relative;
     z-index:5;
@@ -75,22 +95,12 @@ body::before {
     padding-top:20px;
 }
 
-#logo {
-    width:90px;
-    margin-bottom:10px;
-}
-
-h1 {
-    font-size:2.2em;
-    margin-bottom:20px;
-    text-align:center;
-}
-
-/* Characters */
+/* CHARACTERS */
 #characters {
     display:flex;
     gap:20px;
     transition:all .6s ease;
+    margin-bottom:15px;
 }
 
 .character {
@@ -109,15 +119,15 @@ h1 {
     transform:scale(1.1);
 }
 
-/* Reveal text */
+/* REVEAL TEXT */
 #reveal {
-    margin-top:30px;
+    margin-top:10px;
     font-size:1.6em;
     min-height:2em;
     text-align:center;
 }
 
-/* Result */
+/* RESULT */
 #result {
     margin-top:10px;
     font-size:2.4em;
@@ -125,13 +135,14 @@ h1 {
     display:none;
 }
 
+/* QR */
 #qr {
     margin-top:20px;
     width:200px;
     display:none;
 }
 
-/* Mobile */
+/* MOBILE */
 @media(max-width:700px) {
     #characters {
         flex-direction:column;
@@ -144,13 +155,13 @@ h1 {
 </head>
 
 <body>
-
+<div class="symbol-overlay"></div>
 <div id="embers"></div>
 
 <div id="container">
     <img id="logo" src="images/logo.png" alt="Logo">
 
-    <h1>Choose Carefully</h1>
+    <h1 class="flicker">Choose Carefully</h1>
 
     <div id="characters">
         <img src="images/character1.png" class="character" data-id="0">
@@ -170,4 +181,3 @@ h1 {
 <script src="script.js"></script>
 </body>
 </html>
-
