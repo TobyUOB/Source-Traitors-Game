@@ -66,24 +66,25 @@ h1 {font-size:2.2em; margin-bottom:10px; text-align:center;}
 #dice {
     width:100%;
     cursor:pointer;
-    transition: transform 0.2s ease;
+    transition: filter 0.2s ease;
 }
+
 #dice.rolling {
     animation: diceRoll 1s ease-in-out forwards;
-    filter: blur(1.5px); /* subtle motion blur during roll */
+    filter: blur(2px);
 }
 
 @keyframes diceRoll {
-    0%   { transform: rotate(0deg) translate(0,0); }
-    10%  { transform: rotate(180deg) translate(-5px,5px); }
-    25%  { transform: rotate(360deg) translate(3px,-3px); }
-    40%  { transform: rotate(540deg) translate(-2px,2px); }
-    60%  { transform: rotate(720deg) translate(1px,-1px); }
-    80%  { transform: rotate(900deg) translate(-3px,3px); }
-    100% { transform: rotate(1080deg) translate(0,0); }
+    0%   { transform: rotate(0deg) translate(0,0); filter: blur(2px); }
+    10%  { transform: rotate(180deg) translate(-5px,5px); filter: blur(2px); }
+    25%  { transform: rotate(360deg) translate(3px,-3px); filter: blur(1.8px); }
+    40%  { transform: rotate(540deg) translate(-2px,2px); filter: blur(1.5px); }
+    60%  { transform: rotate(720deg) translate(1px,-1px); filter: blur(1px); }
+    80%  { transform: rotate(900deg) translate(-3px,3px); filter: blur(0.5px); }
+    100% { transform: rotate(1080deg) translate(0,0); filter: blur(0); }
 }
 
-/* NUMBER OVERLAY */
+/* Dice number overlay */
 #dice-number {
     position:absolute;
     inset:0;
@@ -91,11 +92,14 @@ h1 {font-size:2.2em; margin-bottom:10px; text-align:center;}
     justify-content:center;
     align-items:center;
     font-size:3em;
-    color:#000;
-    text-shadow:0 0 8px rgba(0,0,0,0.5),0 0 16px rgba(0,0,0,0.3);
+    color:#fff;
+    mix-blend-mode:overlay;
     pointer-events:none;
     opacity:0;
     transition: opacity 0.5s ease;
+}
+@media(max-width:700px){
+    #dice-number { font-size:2em; }
 }
 
 /* PRIZE */
