@@ -8,7 +8,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&display=swap" rel="stylesheet">
 
 <style>
-/* ================= BASE ================= */
 body {
     margin:0;
     background:#0a0805;
@@ -27,7 +26,6 @@ body {
     z-index:1;
 }
 
-/* ================= CONTAINER ================= */
 #container {
     position:relative;
     z-index:5;
@@ -38,15 +36,13 @@ body {
     padding-top:30px;
 }
 
-/* ================= LOGO ================= */
 #logo {
     width:100px;
     margin-bottom:14px;
     position:relative;
-    z-index:10; /* keep above intro */
+    z-index:10;
 }
 
-/* ================= HEADING ================= */
 h1 {
     font-size:2em;
     margin:10px 0;
@@ -56,18 +52,20 @@ h1 {
     transition:opacity 1.2s ease;
 }
 
-/* ================= INTRO ================= */
+/* INTRO + SELECTION STACK */
 #introContainer {
     position:relative;
-    height:360px;
     width:100%;
+    min-height:360px;
     display:flex;
-    justify-content:center;
+    flex-direction:column;
     align-items:center;
 }
 
+/* INTRO CHALICE */
 #introChaliceWrapper {
-    position:relative;
+    position:absolute;
+    top:0;
 }
 
 #chaliceIntro {
@@ -76,7 +74,6 @@ h1 {
     transition:opacity 2s ease;
 }
 
-/* Candle glow (intro only) */
 #candleGlow {
     position:absolute;
     inset:-40px;
@@ -96,21 +93,19 @@ h1 {
     100% {opacity:0.38;}
 }
 
-/* Poison bottle */
 #poison {
     position:absolute;
     width:140px;
-    top:0;
-    left:40%; /* offset left for pour alignment */
+    top:-10px;
+    left:40%;
     opacity:0;
     transform:translateX(-50%) rotate(0deg);
     transition:opacity 2s ease, transform 3.5s ease;
 }
 
-/* ================= SELECTION ================= */
+/* SELECTION */
 #chalices {
-    position:absolute;
-    top:0;
+    margin-top:40px;
     display:flex;
     gap:30px;
     opacity:0;
@@ -133,20 +128,20 @@ h1 {
     transform:scale(1.2);
 }
 
-/* ================= RESULT ================= */
+/* RESULT (TIGHT) */
 #result {
-    margin-top:10px;
+    margin-top:12px;
     font-size:1.8em;
     text-align:center;
 }
 
 #qr {
     width:200px;
-    margin-top:10px;
+    margin-top:8px;
     display:none;
 }
 
-/* ================= MOBILE ================= */
+/* Mobile */
 @media(max-width:700px){
     #chaliceIntro { width:160px; }
     #poison { width:110px; }
@@ -160,36 +155,32 @@ h1 {
 
 <div id="container">
 
-    <!-- LOGO -->
-    <img id="logo" src="images/logo.png" alt="Logo">
+    <img id="logo" src="images/logo.png">
 
-    <!-- HEADING -->
     <h1 id="heading"></h1>
 
-    <!-- INTRO + SELECTION SHARE SAME SPACE -->
     <div id="introContainer">
 
-        <!-- INTRO CHALICE -->
+        <!-- Intro chalice -->
         <div id="introChaliceWrapper">
             <div id="candleGlow"></div>
-            <img src="images/chalice.png" id="chaliceIntro" alt="Chalice">
+            <img src="images/chalice.png" id="chaliceIntro">
         </div>
 
-        <!-- POISON -->
-        <img src="images/poison.png" id="poison" alt="Poison">
+        <img src="images/poison.png" id="poison">
 
-        <!-- SELECTION -->
+        <!-- Selection -->
         <div id="chalices">
             <img src="images/chalice.png" class="choice" data-id="0">
             <img src="images/chalice.png" class="choice" data-id="1">
             <img src="images/chalice.png" class="choice" data-id="2">
         </div>
+
+        <!-- Result lives HERE now -->
+        <div id="result"></div>
+        <img id="qr" src="qr/day4prize.png">
+
     </div>
-
-    <!-- RESULT -->
-    <div id="result"></div>
-    <img id="qr" src="qr/day4prize.png">
-
 </div>
 
 <script>
@@ -209,7 +200,6 @@ let poisonedIndex = Math.floor(Math.random() * 3);
 let pulseIndex = 0;
 let pulseTimer;
 
-/* TYPEWRITER */
 function typeText(text, cb) {
     let i = 0;
     heading.textContent = "";
@@ -219,10 +209,10 @@ function typeText(text, cb) {
             clearInterval(t);
             cb && cb();
         }
-    }, 95); // slower typing
+    }, 95);
 }
 
-/* INTRO SEQUENCE */
+/* INTRO */
 typeText("Earlier today...", () => {
 
     setTimeout(() => {
@@ -231,13 +221,8 @@ typeText("Earlier today...", () => {
         glow.style.animation = "candleFlicker 1.3s infinite";
     }, 800);
 
-    setTimeout(() => {
-        poison.style.opacity = 1;
-    }, 3000);
-
-    setTimeout(() => {
-        poison.style.transform = "translateX(-50%) rotate(65deg)";
-    }, 5600);
+    setTimeout(() => poison.style.opacity = 1, 3000);
+    setTimeout(() => poison.style.transform = "translateX(-50%) rotate(65deg)", 5600);
 
     setTimeout(() => {
         poison.style.opacity = 0;
@@ -245,12 +230,10 @@ typeText("Earlier today...", () => {
         glow.style.opacity = 0;
     }, 8600);
 
-    setTimeout(() => {
-        heading.style.opacity = 0;
-    }, 9400);
+    setTimeout(() => heading.style.opacity = 0, 9400);
 
     setTimeout(() => {
-        glow.remove(); // remove flicker completely
+        glow.remove();
         heading.textContent = "Avoid the poisoned chalice";
         heading.style.opacity = 1;
         chalicesContainer.style.opacity = 1;
@@ -260,7 +243,7 @@ typeText("Earlier today...", () => {
     }, 10800);
 });
 
-/* PULSE LOOP (selection idle animation) */
+/* Pulse loop */
 function startPulse() {
     pulseTimer = setInterval(() => {
         choices.forEach(c => c.style.transform = "scale(1)");
@@ -270,7 +253,7 @@ function startPulse() {
     }, 900);
 }
 
-/* SELECTION */
+/* Selection */
 choices.forEach(choice => {
     choice.addEventListener('click', () => {
         if (locked) return;
@@ -291,7 +274,7 @@ choices.forEach(choice => {
                 result.textContent = "You chose wisely.";
                 qr.style.display = "block";
             }
-        }, 700);
+        }, 500);
     });
 });
 
