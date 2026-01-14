@@ -8,7 +8,7 @@ const fire = document.getElementById('fire');
 const emberContainer = document.getElementById('embers');
 
 let locked = false;
-let chalicesVisible = false;  // prevent early selection
+let chalicesVisible = false;
 let candleSweepInterval;
 
 // Random poisoned chalice
@@ -28,36 +28,35 @@ for (let i = 0; i < 20; i++) {
 
 // CINEMATIC SEQUENCE (~10s)
 setTimeout(() => {
-    // Step 1: Fade in initial chalice (0–2s)
+    // 0–2s: fade in chalice
     initialChaliceWrapper.style.transition = 'opacity 2s ease';
     initialChaliceWrapper.style.opacity = 1;
 
-    // Step 2: Poison fade in (2–5s)
+    // 2–5s: fade in poison
     setTimeout(() => {
         poison.style.position = 'absolute';
         poison.style.left = '50%';
-        poison.style.top = '-70px'; // just above chalice
+        poison.style.top = '-70px';
         poison.style.transform = 'translateX(-50%) rotate(0deg)';
         poison.style.opacity = 0;
         poison.style.transition = 'opacity 3s ease, transform 3s ease';
         poison.style.opacity = 1;
     }, 2000);
 
-    // Step 3: Tilt to pour slowly (5–8s)
+    // 5–8s: tilt to pour
     setTimeout(() => {
         poison.style.transform = 'translateX(-50%) rotate(60deg)';
     }, 5000);
 
-    // Step 4: Return upright and start fade out (8–9s)
+    // 8–9s: fade out both
     setTimeout(() => {
-        poison.style.transform = 'translateX(-50%) rotate(0deg)';
         poison.style.transition = 'opacity 1s ease, transform 1s ease';
         poison.style.opacity = 0;
         initialChaliceWrapper.style.transition = 'opacity 1s ease';
         initialChaliceWrapper.style.opacity = 0;
     }, 8000);
 
-    // Step 5: Fade in 3 chalices after cinematic pause (10s)
+    // 10s: fade in 3 chalices
     setTimeout(() => {
         chalicesContainer.style.transition = 'opacity 1.5s ease';
         chalicesContainer.style.opacity = 1;
@@ -66,3 +65,12 @@ setTimeout(() => {
     }, 10000);
 
 }, 500);
+
+// Candlelight sweep over chalices
+function startCandlelightSweep() {
+    let index = 0;
+    candleSweepInterval = setInterval(() => {
+        chalices.forEach((c, i) => {
+            const wrapper = c.parentElement;
+            if(!c.classList.contains('selected')) {
+                if(i === index) wrap
