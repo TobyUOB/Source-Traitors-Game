@@ -53,20 +53,16 @@ body {
 #logo {
     width:100px;
     margin-bottom:14px;
-    position:relative;
-    z-index:10;
 }
 
 h1 {
     font-size:2em;
     margin:10px 0;
-    opacity:0;
     text-align:center;
     width:100%;
-    transition:opacity 1.2s ease;
 }
 
-/* PATHS */
+/* PATHS WRAPPER */
 #pathsWrapper {
     position:relative;
     display:flex;
@@ -75,7 +71,7 @@ h1 {
     justify-content:center;
     opacity:0;
     pointer-events:none;
-    transition:opacity 1.5s ease;
+    transition:opacity 1s ease;
 }
 
 /* Flare behind paths */
@@ -98,21 +94,18 @@ h1 {
     cursor:pointer;
     transition:transform 0.6s ease, opacity 0.6s ease, left 1.5s ease;
     position:relative;
-    z-index:5;
 }
 .path.fade { opacity:0; }
 
 /* RESULT IMAGE + TEXT + QR */
 #resultContainer {
+    position:relative;
     margin-top:12px;
     text-align:center;
-    position:relative;
-    z-index:5;
     display:flex;
     flex-direction:column;
     align-items:center;
     opacity:0;
-    transition:opacity 1.2s ease;
 }
 
 #resultText {
@@ -124,7 +117,6 @@ h1 {
     width:220px;
     margin:10px auto 0;
     opacity:0;
-    transform: scale(0.8);
     transition:opacity 1.5s ease, transform 1.5s ease;
 }
 
@@ -149,8 +141,8 @@ h1 {
 
     <img id="logo" src="images/logo.png">
 
-    <h1 id="introHeading"></h1>
-    <h1 id="chooseHeading">Choose your path</h1>
+    <h1 id="introHeading" style="opacity:1;"></h1>
+    <h1 id="chooseHeading" style="opacity:0;">Choose your path</h1>
 
     <div id="pathsWrapper">
         <div id="flare"></div>
@@ -218,6 +210,8 @@ function showFlare(path) {
 // Intro sequence
 typeText(introHeading, "After walking for some time you reach a fork in the road...", ()=>{
     setTimeout(()=>{
+        // Fade out intro, fade in choose heading and paths
+        introHeading.style.transition="opacity 1s ease";
         introHeading.style.opacity=0;
         chooseHeading.style.opacity=1;
         chooseHeading.classList.add('flicker');
@@ -239,27 +233,30 @@ paths.forEach(path=>{
         const nonSelected = [...paths].filter(p=>p!==path)[0];
         nonSelected.classList.add('fade');
 
-        // Move selected path to center and zoom slowly
-        const rect = path.getBoundingClientRect();
-        const wrapperRect = pathsWrapper.getBoundingClientRect();
-        const centerX = wrapperRect.width/2 - rect.width/2;
-        const offsetX = centerX - (rect.left - wrapperRect.left);
-        path.style.position="relative";
-        path.style.left = offsetX + 'px';
+        // Get path position relative to container
+        const containerRect = document.getElementById('container').getBoundingClientRect();
+        const pathRect = path.getBoundingClientRect();
+        const relLeft = pathRect.left - containerRect.left;
+        const relTop = pathRect.top - containerRect.top;
 
-        // Zoom + fade out
+        // Center path horizontally and zoom
+        const wrapperWidth = pathsWrapper.offsetWidth;
+        const centerX = wrapperWidth/2 - pathRect.width/2;
+        const offsetX = centerX - relLeft;
+        path.style.position="relative";
+        path.style.left=offsetX+"px";
+
         setTimeout(()=>{
             path.style.transition="transform 2.5s ease, opacity 2.5s ease";
             path.style.transform="scale(1.5)";
             path.style.opacity=0;
         },500);
 
-        // Show castle/mansion in same position
+        // Show castle/mansion in same container-relative position
         setTimeout(()=>{
-            const rect = path.getBoundingClientRect();
             resultImg.style.position="absolute";
-            resultImg.style.left = rect.left + 'px';
-            resultImg.style.top = rect.top + 'px';
+            resultImg.style.left = relLeft + 'px';
+            resultImg.style.top = relTop + 'px';
             resultImg.style.opacity=1;
             resultImg.style.transform="scale(1.2)";
             resultImg.src = id===winningIndex ? "images/castle.png" : "images/mansion.png";
