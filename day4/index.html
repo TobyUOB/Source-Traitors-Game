@@ -52,6 +52,15 @@ h1 {
     transition:opacity 1.2s ease;
 }
 
+/* Flickering heading */
+@keyframes flicker {
+    0%,100% { opacity:1; }
+    50% { opacity:0.5; }
+}
+.flicker {
+    animation: flicker 1.2s infinite alternate;
+}
+
 /* INTRO + SELECTION STACK */
 #introContainer {
     position:relative;
@@ -134,17 +143,21 @@ h1 {
     transform:scale(1.2);
 }
 
-/* RESULT */
+/* RESULT + QR aligned directly below selection */
 #result {
     margin-top:12px;
     font-size:1.8em;
     text-align:center;
+    position:relative;
+    top:-180px; /* same vertical offset as #chalices */
 }
 
 #qr {
     width:200px;
     margin-top:8px;
     display:none;
+    position:relative;
+    top:-180px; /* same vertical offset as #chalices */
 }
 
 /* MOBILE */
@@ -241,6 +254,7 @@ typeText("Earlier today...", () => {
         glow.remove();
         heading.textContent = "Avoid the poisoned chalice";
         heading.style.opacity = 1;
+        heading.classList.add("flicker"); // add flicker effect
         chalicesContainer.style.opacity = 1;
         chalicesContainer.style.pointerEvents = "auto";
         locked = false;
