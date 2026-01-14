@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Day 4 – The Poison Chalice</title>
+<title>Day 4 – The Poisoned Chalice</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&display=swap" rel="stylesheet">
 
@@ -11,8 +11,9 @@
 body {
     margin:0;
     background:#0a0805;
-    font-family:'Cinzel', serif;
     color:white;
+    font-family:'Cinzel', serif;
+    overflow:hidden;
 }
 
 .symbol-overlay {
@@ -35,21 +36,30 @@ body {
     padding-top:20px;
 }
 
-#logo { width:100px; margin-bottom:10px; }
+#logo {
+    width:100px;
+    margin-bottom:10px;
+}
 
 h1 {
     font-size:2em;
-    min-height:2em;
-    text-align:center;
-    margin-bottom:20px;
+    margin:10px 0;
+    opacity:1;
+    transition:opacity 1.2s ease;
 }
 
+/* INTRO */
 #introContainer {
     position:relative;
-    height:260px;
+    height:360px;
+    width:100%;
     display:flex;
     justify-content:center;
-    align-items:flex-end;
+    align-items:center;
+}
+
+#introChaliceWrapper {
+    position:relative;
 }
 
 #chaliceIntro {
@@ -58,55 +68,79 @@ h1 {
     transition:opacity 2s ease;
 }
 
+#candleGlow {
+    position:absolute;
+    inset:-40px;
+    border-radius:50%;
+    background:radial-gradient(circle,
+        rgba(255,190,90,0.35) 0%,
+        rgba(255,160,60,0.18) 40%,
+        transparent 70%);
+    opacity:0;
+    animation:candleFlicker 1.3s infinite;
+    pointer-events:none;
+}
+
+@keyframes candleFlicker {
+    0% {opacity:0.3;}
+    30% {opacity:0.42;}
+    60% {opacity:0.34;}
+    100% {opacity:0.38;}
+}
+
 #poison {
     position:absolute;
-    width:110px;
-    top:-60px;
-    left:50%;
-    transform:translateX(-50%) rotate(0deg);
+    width:140px;
+    top:10px;
     opacity:0;
-    transform-origin:top center;
-    transition:opacity 3s ease, transform 4s ease;
+    transform:translateX(-50%) rotate(0deg);
+    left:50%;
+    transition:opacity 2s ease, transform 3s ease;
 }
 
+/* SELECTION */
 #chalices {
     display:flex;
-    gap:20px;
+    gap:30px;
+    margin-top:-40px;
     opacity:0;
-    transition:opacity 1.5s ease;
+    pointer-events:none;
+    transition:opacity 2s ease;
 }
 
-.chalice {
+.choice {
     width:140px;
     cursor:pointer;
-    transition:all .6s ease;
+    transition:transform .6s ease, opacity .6s ease;
 }
 
-.chalice.fade { opacity:0; transform:scale(.85); }
-
-.chalice.selected {
-    animation:breath 1.4s infinite alternate;
+.choice.fade {
+    opacity:0;
+    transform:scale(0.8);
 }
 
-@keyframes breath {
-    from { transform:scale(1.15); }
-    to { transform:scale(1.22); }
+.choice.selected {
+    transform:scale(1.2);
 }
 
-@keyframes pulse {
-    0% { transform:scale(1) rotate(0deg); }
-    50% { transform:scale(1.08) rotate(2deg); }
-    100% { transform:scale(1) rotate(0deg); }
+/* RESULT */
+#result {
+    margin-top:20px;
+    font-size:1.8em;
+    text-align:center;
 }
 
-.pulsing { animation:pulse 1.4s ease-in-out infinite; }
+#qr {
+    width:200px;
+    margin-top:15px;
+    display:none;
+}
 
-#message { margin-top:20px; font-size:1.6em; text-align:center; }
-#qr { margin-top:20px; width:200px; display:none; }
-
+/* Mobile */
 @media(max-width:700px){
-    .chalice { width:100px; }
-    #chaliceIntro { width:150px; }
+    #chaliceIntro { width:160px; }
+    #poison { width:110px; }
+    .choice { width:110px; }
 }
 </style>
 </head>
@@ -116,98 +150,127 @@ h1 {
 
 <div id="container">
     <img id="logo" src="images/logo.png">
+
     <h1 id="heading"></h1>
 
     <div id="introContainer">
-        <img src="images/chalice.png" id="chaliceIntro">
+        <div id="introChaliceWrapper">
+            <div id="candleGlow"></div>
+            <img src="images/chalice.png" id="chaliceIntro">
+        </div>
         <img src="images/poison.png" id="poison">
     </div>
 
     <div id="chalices">
-        <img src="images/chalice.png" class="chalice" data-id="0">
-        <img src="images/chalice.png" class="chalice" data-id="1">
-        <img src="images/chalice.png" class="chalice" data-id="2">
+        <img src="images/chalice.png" class="choice" data-id="0">
+        <img src="images/chalice.png" class="choice" data-id="1">
+        <img src="images/chalice.png" class="choice" data-id="2">
     </div>
 
-    <div id="message"></div>
+    <div id="result"></div>
     <img id="qr" src="qr/day4prize.png">
 </div>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
-    const heading = document.getElementById('heading');
-    const chaliceIntro = document.getElementById('chaliceIntro');
-    const poison = document.getElementById('poison');
-    const chalicesContainer = document.getElementById('chalices');
-    const chalices = document.querySelectorAll('.chalice');
-    const message = document.getElementById('message');
-    const qr = document.getElementById('qr');
+const heading = document.getElementById('heading');
+const chaliceIntro = document.getElementById('chaliceIntro');
+const poison = document.getElementById('poison');
+const glow = document.getElementById('candleGlow');
+const chalicesContainer = document.getElementById('chalices');
+const choices = document.querySelectorAll('.choice');
+const result = document.getElementById('result');
+const qr = document.getElementById('qr');
 
-    let locked = false;
-    let sweepInterval;
-    const poisonedIndex = Math.floor(Math.random() * 3);
+let locked = true;
+let poisonedIndex = Math.floor(Math.random() * 3);
+let pulseIndex = 0;
+let pulseTimer;
 
-    function typeText(text, cb){
-        let i = 0;
-        heading.textContent = "";
-        const t = setInterval(() => {
-            heading.textContent += text[i++];
-            if(i >= text.length){
-                clearInterval(t);
-                cb && cb();
-            }
-        }, 80);
-    }
+/* TYPEWRITER */
+function typeText(text, cb) {
+    let i = 0;
+    heading.textContent = "";
+    const t = setInterval(() => {
+        heading.textContent += text[i++];
+        if (i === text.length) {
+            clearInterval(t);
+            cb && cb();
+        }
+    }, 60);
+}
 
-    typeText("Earlier today...", () => {
+/* INTRO SEQUENCE */
+typeText("Earlier today...", () => {
 
-        setTimeout(() => chaliceIntro.style.opacity = 1, 800);
-        setTimeout(() => poison.style.opacity = 1, 2800);
-        setTimeout(() => poison.style.transform = "translateX(-50%) rotate(65deg)", 5200);
+    setTimeout(() => {
+        chaliceIntro.style.opacity = 1;
+        glow.style.opacity = 1;
+    }, 800);
 
-        setTimeout(() => {
-            poison.style.opacity = 0;
-            chaliceIntro.style.opacity = 0;
-        }, 8200);
+    setTimeout(() => {
+        poison.style.opacity = 1;
+    }, 2600);
 
-        setTimeout(() => {
-            heading.textContent = "Avoid the poisoned chalice";
-            chalicesContainer.style.opacity = 1;
-            startSweep();
-        }, 10400);
-    });
+    setTimeout(() => {
+        poison.style.transform = "translateX(-50%) rotate(65deg)";
+    }, 5200);
 
-    function startSweep(){
-        let i = 0;
-        sweepInterval = setInterval(() => {
-            chalices.forEach(c => c.classList.remove('pulsing'));
-            chalices[i].classList.add('pulsing');
-            i = (i + 1) % chalices.length;
-        }, 900);
-    }
+    setTimeout(() => {
+        poison.style.opacity = 0;
+        chaliceIntro.style.opacity = 0;
+        glow.style.opacity = 0;
+    }, 8200);
 
-    chalices.forEach(ch => {
-        ch.addEventListener('click', () => {
-            if(locked || chalicesContainer.style.opacity === "0") return;
-            locked = true;
+    setTimeout(() => {
+        heading.style.opacity = 0;
+    }, 9000);
 
-            clearInterval(sweepInterval);
-            chalices.forEach(c => c.classList.remove('pulsing'));
+    setTimeout(() => {
+        heading.textContent = "Avoid the poisoned chalice";
+        heading.style.opacity = 1;
+        chalicesContainer.style.opacity = 1;
+        chalicesContainer.style.pointerEvents = "auto";
+        locked = false;
+        startPulse();
+    }, 10400);
+});
 
-            const chosen = Number(ch.dataset.id);
-            chalices.forEach(c => c !== ch && c.classList.add('fade'));
-            ch.classList.add('selected');
+/* PULSE LOOP */
+function startPulse() {
+    pulseTimer = setInterval(() => {
+        choices.forEach(c => c.style.transform = "scale(1)");
+        const c = choices[pulseIndex];
+        c.style.transform = "scale(1.08) rotate(1deg)";
+        pulseIndex = (pulseIndex + 1) % choices.length;
+    }, 900);
+}
 
-            setTimeout(() => {
-                if(chosen === poisonedIndex){
-                    message.textContent = "Oh no! You drank from the poisoned chalice!";
-                } else {
-                    qr.style.display = "block";
-                }
-            }, 800);
+/* SELECTION */
+choices.forEach(choice => {
+    choice.addEventListener('click', () => {
+        if (locked) return;
+        locked = true;
+        clearInterval(pulseTimer);
+
+        const id = Number(choice.dataset.id);
+
+        choices.forEach(c => {
+            if (c !== choice) c.classList.add('fade');
         });
+        choice.classList.add('selected');
+
+        setTimeout(() => {
+            if (id === poisonedIndex) {
+                result.textContent = "Oh no! You drank from the poisoned chalice!";
+            } else {
+                result.textContent = "You chose wisely.";
+                qr.style.display = "block";
+            }
+        }, 700);
     });
+});
 
 });
 </script>
