@@ -16,7 +16,6 @@ body {
     color:white;
     overflow-y:auto;
 }
-
 .symbol-overlay {
     position: fixed; inset:0;
     background: url('images/symbols.png') repeat;
@@ -31,7 +30,6 @@ body {
     50% {opacity:0.15; transform:rotate(1deg);}
     100% {opacity:0.08; transform:rotate(-1deg);}
 }
-
 .flicker { animation: flicker 1.2s infinite alternate; }
 @keyframes flicker { 0% {opacity:1;} 60%{opacity:0.45;} 100%{opacity:1;} }
 
@@ -44,9 +42,23 @@ h1 { font-size:2em; text-align:center; margin-bottom:15px; }
 
 #container { position:relative; z-index:5; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding-top:20px; }
 
-/* Initial chalice + candlelight */
-#initialChaliceWrapper { position:relative; margin-top:20px; opacity:0; transition: opacity 2s ease; }
-#candlelight { position:absolute; inset:0; border-radius:50%;
+/* Intro Container for chalice + poison */
+#introContainer {
+    position: relative;
+    margin-top:80px; /* pushes below header */
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end; /* bottom align poison over chalice */
+}
+#initialChaliceWrapper {
+    position: relative;
+    opacity: 0;
+}
+#candlelight {
+    position:absolute;
+    inset:0;
+    border-radius:50%;
     background: radial-gradient(circle, rgba(255,200,80,0.35) 0%, transparent 90%);
     opacity:0;
     pointer-events:none;
@@ -60,11 +72,19 @@ h1 { font-size:2em; text-align:center; margin-bottom:15px; }
   50% {opacity:0.4;}
   75% {opacity:0.38;}
 }
-
 #chaliceBase { width:150px; }
 
 /* Poison bottle */
-#poison { width:80px; opacity:0; transform-origin:top center; transition: all 2.5s ease; }
+#poison {
+    position:absolute;
+    width:80px;
+    left:50%;
+    top:-90px; /* directly above chalice */
+    transform: translateX(-50%) rotate(0deg);
+    opacity:0;
+    transform-origin: top center;
+    transition: opacity 3s ease, transform 3s ease;
+}
 
 /* Chalices container */
 #chalices { display:flex; gap:20px; justify-content:center; margin-top:20px; opacity:0; transition: opacity 1.5s ease; }
@@ -121,13 +141,16 @@ h1 { font-size:2em; text-align:center; margin-bottom:15px; }
     <img id="logo" src="images/logo.png" alt="Logo">
     <h1 class="flicker">Choose the Safe Chalice</h1>
 
-    <div id="initialChaliceWrapper">
-        <div id="candlelight"></div>
-        <img src="images/chalice.png" id="chaliceBase">
+    <!-- Chalice + Poison -->
+    <div id="introContainer">
+        <div id="initialChaliceWrapper">
+            <div id="candlelight"></div>
+            <img src="images/chalice.png" id="chaliceBase">
+        </div>
+        <img src="images/poison.png" id="poison">
     </div>
 
-    <img src="images/poison.png" id="poison">
-
+    <!-- 3 selectable chalices -->
     <div id="chalices">
         <div class="chalice-wrapper">
             <img src="images/chalice.png" class="chalice" data-id="0">
