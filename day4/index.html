@@ -44,15 +44,16 @@ h1 { font-size:2em; text-align:center; margin-bottom:15px; }
 /* Intro Container for chalice + poison */
 #introContainer {
     position: relative;
-    margin-top:80px; /* below header */
+    margin-top:80px;
     width: 100%;
     display: flex;
     justify-content: center;
-    align-items: flex-end; /* bottom align poison over chalice */
+    align-items: flex-end;
 }
 #initialChaliceWrapper {
     position: relative;
     opacity: 0;
+    transition: opacity 2s ease; /* ensures fade-in/out works */
 }
 #candlelight {
     position:absolute;
@@ -71,14 +72,14 @@ h1 { font-size:2em; text-align:center; margin-bottom:15px; }
   50% {opacity:0.4;}
   75% {opacity:0.38;}
 }
-#chaliceBase { width:180px; } /* bigger chalice */
+#chaliceBase { width:180px; }
 
 /* Poison bottle */
 #poison {
     position:absolute;
-    width:100px; /* bigger */
+    width:100px;
     left:50%;
-    top:-70px;   /* closer to chalice */
+    top:-70px;
     transform: translateX(-50%) rotate(0deg);
     opacity:0;
     transform-origin: top center;
@@ -92,14 +93,13 @@ h1 { font-size:2em; text-align:center; margin-bottom:15px; }
     content:'';
     position:absolute;
     top:50%; left:50%;
-    width: calc(100% * 1.2);
-    height: calc(100% * 1.2);
+    width: 160%; height:160%; /* bigger for mobile */
     transform:translate(-50%, -50%);
     border-radius:50%;
-    background: radial-gradient(circle, rgba(255,200,80,0.25) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(255,200,80,0.25) 0%, rgba(255,200,80,0.05) 80%, transparent 100%);
     opacity:0;
     pointer-events:none;
-    filter: blur(25px);
+    filter: blur(30px);
     transition: opacity 0.3s ease;
     z-index:0;
 }
@@ -123,7 +123,7 @@ h1 { font-size:2em; text-align:center; margin-bottom:15px; }
     .chalice-wrapper img.chalice { width:100px; }
     #poison { width:60px; }
     #chaliceBase { width:120px; }
-    .chalice-wrapper::before { width:120px; height:120px; }
+    .chalice-wrapper::before { width:120%; height:120%; }
 }
 </style>
 </head>
