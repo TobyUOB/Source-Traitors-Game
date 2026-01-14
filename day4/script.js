@@ -14,9 +14,6 @@ let candleSweepInterval;
 // Random poisoned chalice
 const poisonedIndex = Math.floor(Math.random() * 3);
 
-// Start fire sound
-fire.play().catch(() => {});
-
 // Generate ambient background embers
 for (let i = 0; i < 20; i++) {
     const e = document.createElement('div');
@@ -26,51 +23,56 @@ for (let i = 0; i < 20; i++) {
     emberContainer.appendChild(e);
 }
 
-// INITIAL STATE
-initialChaliceWrapper.style.opacity = 0;
-poison.style.opacity = 0;
-poison.style.transformOrigin = 'top center';
-poison.style.transform = 'translateX(-50%) rotate(0deg)';
+// Start everything on first user interaction (desktop autoplay fix)
+let started = false;
+function startSequence() {
+    if(started) return;
+    started = true;
 
-// CINEMATIC SEQUENCE (~10s)
-requestAnimationFrame(() => {
+    fire.play().catch(()=>{}); // play fire sound
+    runCinematic();
+}
+
+document.addEventListener('click', startSequence, {once:true});
+
+function runCinematic() {
+    // Initial setup
+    initialChaliceWrapper.style.opacity = 0;
+    poison.style.opacity = 0;
+    poison.style.transform = 'translateX(-50%) rotate(0deg)';
+
     // Step 1: fade in chalice
-    initialChaliceWrapper.style.transition = 'opacity 2s ease';
-    initialChaliceWrapper.style.opacity = 1;
+    setTimeout(() => initialChaliceWrapper.style.opacity = 1, 50);
 
     // Step 2: fade in poison
-    setTimeout(() => {
-        poison.style.opacity = 1;
-    }, 2000);
+    setTimeout(() => poison.style.opacity = 1, 2050);
 
     // Step 3: tilt to pour slowly
-    setTimeout(() => {
-        poison.style.transform = 'translateX(-50%) rotate(60deg)';
-    }, 5000);
+    setTimeout(() => poison.style.transform = 'translateX(-50%) rotate(60deg)', 5050);
 
     // Step 4: return upright & fade out
     setTimeout(() => {
         poison.style.transform = 'translateX(-50%) rotate(0deg)';
         poison.style.opacity = 0;
         initialChaliceWrapper.style.opacity = 0;
-    }, 8000);
+    }, 8050);
 
     // Step 5: fade in 3 chalices
     setTimeout(() => {
         chalicesContainer.style.opacity = 1;
         chalicesVisible = true;
         startCandlelightSweep();
-    }, 10000);
-});
+    }, 10050);
+}
 
 // Candlelight sweep
 function startCandlelightSweep() {
     let index = 0;
     candleSweepInterval = setInterval(() => {
-        chalices.forEach((c, i) => {
+        chalices.forEach((c,i)=>{
             const wrapper = c.parentElement;
-            if(!c.classList.contains('selected')) {
-                wrapper.classList.toggle('highlighted', i === index);
+            if(!c.classList.contains('selected')){
+                wrapper.classList.toggle('highlighted', i===index);
             }
         });
         index = (index + 1) % chalices.length;
@@ -89,9 +91,7 @@ chalices.forEach(ch => {
         const chosen = Number(ch.dataset.id);
 
         chalices.forEach(c => { if(c !== ch) c.classList.add('fade'); });
-
         ch.classList.add('selected');
-
         createEmberBurst(ch, 20);
 
         setTimeout(() => {
@@ -105,4 +105,15 @@ chalices.forEach(ch => {
 });
 
 // Ember burst
-function createEmberBurst(element,
+function createEmberBurst(element, count=12){
+    for(let i=0;i<count;i++){
+        const e = document.createElement('div');
+        e.className='ember';
+        const rect = element.getBoundingClientRect();
+        e.style.left = rect.left + Math.random()*rect.width + 'px';
+        e.style.top = rect.top + Math.random()*rect.height + 'px';
+        e.style.animationDuration = 2 + Math.random()*2 + 's';
+        document.body.appendChild(e);
+        setTimeout(()=>e.remove(),4000);
+    }
+}
