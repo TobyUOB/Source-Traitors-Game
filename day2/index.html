@@ -47,15 +47,32 @@ body {
 }
 
 #logo { width:100px; margin-bottom:14px; z-index:10; position:relative; }
-h1 { font-size:2em; margin:10px 0; opacity:1; text-align:center; width:100%; }
+
+h1, #introText {
+    font-size:2em;
+    margin:10px 0;
+    opacity:0;
+    text-align:center;
+    width:90%;
+}
+
+/* TYPING EFFECT */
+@keyframes typing { from { width:0; } to { width:100%; } }
+#introText {
+    overflow:hidden;
+    white-space:nowrap;
+    border-right:2px solid white;
+    width:0;
+}
 
 /* PATHS */
 #pathsWrapper {
     position:relative;
     display:flex;
     gap:40px;
-    margin-top:60px;
+    margin-top:40px;
     justify-content:center;
+    opacity:0;
 }
 .path-wrapper { position:relative; }
 .path {
@@ -80,17 +97,17 @@ h1 { font-size:2em; margin:10px 0; opacity:1; text-align:center; width:100%; }
     100% {transform: scale(1) rotate(0deg);}
 }
 
-/* ALTERNATING LIGHTS */
+/* Alternating lights */
 .path-light {
     position:absolute;
     top:-10px; left:-10px; right:-10px; bottom:-10px;
     border-radius:12px;
-    box-shadow:0 0 25px rgba(255,255,255,0.1);
+    box-shadow:0 0 25px rgba(0,0,0,0.3);
     pointer-events:none;
     opacity:0;
 }
-@keyframes alternateGlow {0%,100%{opacity:0.05;}50%{opacity:0.15;}}
 .path-light.animate { animation:alternateGlow 1s infinite alternate; }
+@keyframes alternateGlow {0%,100%{opacity:0.05;}50%{opacity:0.15;}}
 
 /* RESULT IMAGE + TEXT + QR */
 #resultContainer { margin-top:20px; text-align:center; position:relative; z-index:5; display:flex; flex-direction:column; align-items:center; }
@@ -110,7 +127,9 @@ h1 { font-size:2em; margin:10px 0; opacity:1; text-align:center; width:100%; }
 
 <div id="container">
     <img id="logo" src="images/logo.png">
-    <h1 class="flicker">Choose your path</h1>
+
+    <div id="introText">After walking for some time you reach a fork in the road...</div>
+    <h1 class="flicker" id="chooseText">Choose your path</h1>
 
     <div id="pathsWrapper">
         <div class="path-wrapper">
@@ -132,6 +151,9 @@ h1 { font-size:2em; margin:10px 0; opacity:1; text-align:center; width:100%; }
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+    const introText = document.getElementById('introText');
+    const chooseText = document.getElementById('chooseText');
+    const pathsWrapper = document.getElementById('pathsWrapper');
     const paths = document.querySelectorAll('.path');
     const resultText = document.getElementById('resultText');
     const resultImg = document.getElementById('resultImg');
@@ -140,17 +162,45 @@ document.addEventListener("DOMContentLoaded", () => {
     let locked = false;
     const winningIndex = Math.floor(Math.random()*2);
 
+    // Typing effect for intro
+    const text = introText.textContent;
+    introText.textContent = '';
+    let i=0;
+    const typingSpeed = 50;
+    const typeInterval = setInterval(()=>{
+        introText.textContent += text[i];
+        i++;
+        if(i>=text.length){
+            clearInterval(typeInterval);
+            setTimeout(()=>{
+                // Fade out intro text
+                introText.style.transition = "opacity 1.5s ease";
+                introText.style.opacity = 0;
+                // Fade in choose text & paths
+                setTimeout(()=>{
+                    chooseText.style.transition = "opacity 1s ease";
+                    pathsWrapper.style.transition = "opacity 1s ease";
+                    chooseText.style.opacity = 1;
+                    pathsWrapper.style.opacity = 1;
+                },500);
+            },1000);
+        }
+    }, typingSpeed);
+
+    // Alternating pre-selection movement
+    paths.forEach((path,index)=>{
+        path.style.animationDelay = (index*0.5)+'s';
+    });
+
     paths.forEach(path=>{
         const light = path.parentElement.querySelector('.path-light');
 
-        path.addEventListener('click', () => {
+        path.addEventListener('click', ()=>{
             if(locked) return;
             locked = true;
 
-            // Remove atmosphere & alternating lights
-            document.querySelectorAll('.path').forEach(p=>{
-                p.classList.remove('atmosphere');
-            });
+            // Remove atmosphere & lights
+            document.querySelectorAll('.path').forEach(p=>p.classList.remove('atmosphere'));
             document.querySelectorAll('.path-light').forEach(l => l.style.display='none');
 
             const id = Number(path.dataset.id);
@@ -161,25 +211,24 @@ document.addEventListener("DOMContentLoaded", () => {
             nonSelected.style.transition = "opacity 2s ease";
             nonSelected.style.opacity = 0;
 
-            // Get original position of selected path
+            // Save position for castle/mansion
             const rect = selected.getBoundingClientRect();
 
             // Pulse for 2s
             selected.style.transition = "transform 1.5s ease";
             selected.style.transform = "scale(1.05)";
             setTimeout(()=>{
-                // Drift to horizontal center smoothly
+                // Drift to horizontal center
                 const wrapperRect = selected.parentElement.getBoundingClientRect();
                 const centerX = wrapperRect.width/2 - rect.width/2;
                 const offsetX = centerX - (rect.left - wrapperRect.left);
-
                 selected.style.transition = "left 1.5s ease, transform 2.5s ease, opacity 2.5s ease";
                 selected.style.left = offsetX + "px";
                 selected.style.transform = "scale(1.3)";
                 selected.style.opacity = 0;
-            },2000); // pulse duration
+            },2000);
 
-            // Castle/Mansion reveal after zoom/fade (2.5s)
+            // Castle/Mansion reveal
             setTimeout(()=>{
                 resultImg.style.position = 'absolute';
                 resultImg.style.left = '50%';
@@ -202,13 +251,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     resultImg.style.transition = "transform 1.5s ease";
                     resultImg.style.transform = 'translateX(-50%) scale(1)';
                     // Fade in text/QR after castle/mansion reveal
-                    setTimeout(()=>{
-                        resultText.style.opacity = 1;
-                    },500);
+                    setTimeout(()=>{ resultText.style.opacity = 1; },500);
                 },50);
 
-            }, 5500); // pulse + drift + zoom/fade
-
+            },5500); // pulse + drift + zoom/fade
         });
     });
 });
