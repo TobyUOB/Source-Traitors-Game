@@ -4,7 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Day 2 – Choose a Path</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&display=swap" rel="stylesheet">
+
 <style>
 body {
     margin:0;
@@ -12,9 +14,9 @@ body {
     color:white;
     font-family:'Cinzel', serif;
     overflow-x:hidden;
+    overflow-y:auto;
 }
 
-/* SYMBOLS OVERLAY */
 .symbol-overlay {
     position:fixed;
     inset:0;
@@ -31,9 +33,8 @@ body {
     100% {opacity:0.08; transform:rotate(-1deg);}
 }
 
-/* FLICKER HEADING */
-@keyframes flicker { 0%,100%{opacity:1;} 50%{opacity:0.5;} }
-.flicker { animation: flicker 1.2s infinite alternate; }
+.flicker {animation: flicker 1.2s infinite alternate;}
+@keyframes flicker {0%,100%{opacity:1;}50%{opacity:0.5;}}
 
 #container {
     position:relative;
@@ -48,115 +49,89 @@ body {
 #logo {
     width:100px;
     margin-bottom:14px;
+    position:relative;
     z-index:10;
 }
 
-h1 {
-    font-size:2em;
-    margin:10px 0;
-    opacity:0;
+h1 {font-size:2em; margin:10px 0; text-align:center; width:100%;}
+
+#introHeading {
+    font-size:1.8em;
+    margin-top:30px;
     text-align:center;
-    width:100%;
-    transition:opacity 1s ease;
+    opacity:1;
 }
 
-/* AMBIENT EMBERS */
-#embers {
-    position:fixed;
-    inset:0;
-    pointer-events:none;
-    z-index:1;
-}
-.ember {
-    position:absolute;
-    width:4px;
-    height:4px;
-    background:orange;
-    border-radius:50%;
-    box-shadow:0 0 10px orange;
-    animation:emberRise 6s linear infinite;
-}
-@keyframes emberRise {
-    from {transform:translateY(100vh); opacity:0;}
-    30% {opacity:1;}
-    to {transform:translateY(-50px) translateX(-40px); opacity:0;}
-}
-
-/* PATHS */
 #pathsWrapper {
     position:relative;
     display:flex;
     gap:40px;
     justify-content:center;
+    margin-top:30px;
     opacity:0;
+}
+
+.pathContainer {
+    position:relative;
+}
+
+.pathGlow {
+    position:absolute;
+    inset: -20px;
+    border-radius:50%;
+    background: radial-gradient(circle, rgba(30,30,30,0.35) 0%, transparent 70%);
+    opacity:0.6;
     pointer-events:none;
-    margin-top:40px;
+    z-index:0;
 }
 
 .path {
     width:200px;
     cursor:pointer;
     position:relative;
-    z-index:5;
-    transition:transform .6s ease, opacity .6s ease, left 1.5s ease;
+    z-index:1;
+    transition:transform 0.6s ease, opacity 1s ease, left 1.5s ease;
 }
 
-.path.fade { opacity:0; }
+.path.fade {opacity:0;}
 
-.path-glow {
-    box-shadow:0 0 20px 6px rgba(50,50,50,0.6);
-    border-radius:10px;
-}
-
-/* RESULT IMAGE + TEXT + QR */
 #resultContainer {
-    text-align:center;
     margin-top:12px;
+    text-align:center;
+    position:relative;
     display:flex;
     flex-direction:column;
     align-items:center;
-}
-
-#resultText {
-    font-size:1.8em;
-    margin-top:8px;
     opacity:0;
-    transition:opacity 1s ease;
 }
 
-#resultImg {
-    width:220px;
-    margin-bottom:8px;
-    opacity:0;
-    transition:opacity 1.5s ease, transform 1.5s ease;
-}
+#resultText {font-size:1.8em; margin-bottom:8px;}
+#resultImg {width:220px; margin-bottom:8px; opacity:0; transition: transform 1.2s ease, opacity 1.2s ease;}
+#qr {width:200px; display:none;}
 
-#qr {
-    width:200px;
-    margin-top:8px;
-    display:none;
-}
-
-/* MOBILE */
 @media(max-width:700px){
     .path { width:140px; }
     #resultImg { width:160px; }
 }
 </style>
 </head>
+
 <body>
 <div class="symbol-overlay"></div>
-<div id="embers"></div>
 
 <div id="container">
     <img id="logo" src="images/logo.png">
-
     <h1 id="introHeading"></h1>
-    <h1 id="mainHeading">Choose your path</h1>
 
     <div id="pathsWrapper">
-        <img src="images/path1.png" class="path" data-id="0">
-        <img src="images/path2.png" class="path" data-id="1">
+        <div class="pathContainer">
+            <div class="pathGlow"></div>
+            <img src="images/path1.png" class="path" data-id="0">
+        </div>
+        <div class="pathContainer">
+            <div class="pathGlow"></div>
+            <img src="images/path2.png" class="path" data-id="1">
+        </div>
     </div>
 
     <div id="resultContainer">
@@ -167,117 +142,121 @@ h1 {
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded",()=>{
 
 const introHeading = document.getElementById('introHeading');
-const mainHeading = document.getElementById('mainHeading');
 const pathsWrapper = document.getElementById('pathsWrapper');
+const pathContainers = document.querySelectorAll('.pathContainer');
 const paths = document.querySelectorAll('.path');
+const glows = document.querySelectorAll('.pathGlow');
+const resultContainer = document.getElementById('resultContainer');
 const resultImg = document.getElementById('resultImg');
 const resultText = document.getElementById('resultText');
 const qr = document.getElementById('qr');
 
-let locked = true;
-let winningIndex = Math.floor(Math.random()*2);
-let pulseIndex = 0;
+let locked=true;
+let pulseIndex=0;
 let pulseTimer;
 
+// Random winning path
+const winningIndex = Math.floor(Math.random()*2);
+
 // Intro typing
-function typeText(el, text, cb){
+function typeText(text, cb){
     let i=0;
-    el.textContent = "";
-    const t = setInterval(()=>{
-        el.textContent += text[i++];
-        if(i===text.length){
-            clearInterval(t);
-            cb && cb();
-        }
-    },90);
+    introHeading.textContent="";
+    const t=setInterval(()=>{
+        introHeading.textContent+=text[i++];
+        if(i===text.length){clearInterval(t);cb&&cb();}
+    },95);
 }
 
-// Show main heading + paths after intro
-function showPaths(){
-    mainHeading.style.opacity = 1;
-    pathsWrapper.style.opacity = 1;
-    pathsWrapper.style.pointerEvents = "auto";
+typeText("After walking for sometime you reach a fork in the road...",()=>{
+    setTimeout(()=>{
+        introHeading.style.transition="opacity 1s ease";
+        introHeading.style.opacity=0;
+    },2000);
 
-    // Add glow
-    paths.forEach(p=>p.classList.add('path-glow'));
+    // Fade in choose your path + paths after intro
+    setTimeout(()=>{
+        introHeading.textContent="Choose your path";
+        introHeading.style.opacity=1;
+        introHeading.classList.add("flicker");
+        pathsWrapper.style.transition="opacity 1.5s ease";
+        pathsWrapper.style.opacity=1;
+        locked=false;
+        startPulse();
+    },3500);
+});
 
-    startPulse();
-    locked = false;
-}
-
-// Pulse loop for idle paths (one at a time)
+// Pulse each path one at a time
 function startPulse(){
-    pulseTimer = setInterval(()=>{
-        paths.forEach(p=>p.style.transform='scale(1) rotate(0deg)');
-        const p = paths[pulseIndex];
-        p.style.transform='scale(1.05) rotate(1deg)';
-        pulseIndex = (pulseIndex+1)%paths.length;
+    pulseTimer=setInterval(()=>{
+        paths.forEach(p=>p.style.transform="scale(1)");
+        glows.forEach(g=>g.style.opacity=0.6);
+        const idx=pulseIndex%paths.length;
+        paths[idx].style.transform="scale(1.08) rotate(1deg)";
+        pulseIndex=(pulseIndex+1)%paths.length;
     },900);
 }
 
-// Handle selection
+// Path selection
 paths.forEach(path=>{
-    path.addEventListener('click', ()=>{
-        if(locked) return;
+    path.addEventListener('click',()=>{
+        if(locked)return;
         locked=true;
         clearInterval(pulseTimer);
 
         const id = Number(path.dataset.id);
+        const selectedContainer = path.parentElement;
         const nonSelected = [...paths].filter(p=>p!==path)[0];
 
-        // Remove glow
-        paths.forEach(p=>p.classList.remove('path-glow'));
-
-        // Fade out non-selected path
-        nonSelected.style.transition = "opacity 1.5s ease";
+        // Fade out non-selected path + glow
         nonSelected.style.opacity=0;
+        nonSelected.parentElement.querySelector('.pathGlow').style.opacity=0;
 
-        // After fade out, move selected path to center
+        // Wait 1.5s then move selected to center and zoom
         setTimeout(()=>{
-            const rect = path.getBoundingClientRect();
-            const parentRect = pathsWrapper.getBoundingClientRect();
-            const centerX = parentRect.width/2 - rect.width/2;
-            const offsetX = centerX - (rect.left - parentRect.left);
-            path.style.left = offsetX+'px';
+            const rect = selectedContainer.getBoundingClientRect();
+            const wrapperRect = pathsWrapper.getBoundingClientRect();
+            const centerX = wrapperRect.width/2 - rect.width/2;
+            const offsetX = centerX - (rect.left - wrapperRect.left);
+            selectedContainer.style.position='relative';
+            selectedContainer.style.left = offsetX+'px';
 
-            // Keep pulse a bit before zoom out
+            // Zoom/fade for 2s
+            path.style.transition="transform 2s ease, opacity 2s ease";
+            path.style.transform="scale(1.5)";
+            path.style.opacity=0;
+        },1500);
+
+        // After zoom/fade + 1s pause, show castle/mansion
+        setTimeout(()=>{
+            const rect = selectedContainer.getBoundingClientRect();
+            resultContainer.style.position='absolute';
+            resultContainer.style.left = rect.left + 'px';
+            resultContainer.style.top = rect.top + 'px';
+            resultContainer.style.opacity=1;
+
+            if(id===winningIndex){
+                resultImg.src="images/castle.png";
+                resultText.textContent="You reached the magical castle!";
+                qr.style.display="block";
+            } else {
+                resultImg.src="images/mansion.png";
+                resultText.textContent="Oh no! You ended up in the haunted mansion!";
+            }
+
+            // Reverse zoom fade-in effect
+            resultImg.style.transform="scale(1.5)";
+            resultImg.style.opacity=0;
             setTimeout(()=>{
-                path.style.transition = "transform 2s ease, opacity 2s ease";
-                path.style.transform="scale(1.3)";
-                path.style.opacity=0;
-
-                // After path zoom fade, show castle/mansion
-                setTimeout(()=>{
-                    resultImg.src = id===winningIndex ? 'images/castle.png' : 'images/mansion.png';
-                    resultImg.style.opacity=1;
-                    resultImg.style.transform="scale(1.3)";
-                    setTimeout(()=>{
-                        resultImg.style.transition="transform 1.2s ease, opacity 1.2s ease";
-                        resultImg.style.transform="scale(1)";
-                    },50);
-
-                    // Show text & qr after reverse zoom
-                    setTimeout(()=>{
-                        if(id===winningIndex){ qr.style.display='block'; resultText.textContent="You reached the magical castle!"; }
-                        else { resultText.textContent="Oh no! You ended up in the haunted mansion!"; }
-                        resultText.style.opacity=1;
-                    },1300);
-
-                },2100); // pause after zoom out
-            },600); // pulse time before zoom
-        },1600); // non-selected fade
+                resultImg.style.transition="transform 1.5s ease, opacity 1.5s ease";
+                resultImg.style.transform="scale(1)";
+                resultImg.style.opacity=1;
+            },50);
+        },3500);
     });
-});
-
-// Start typing intro
-typeText(introHeading,"After walking for some time you reach a fork in the road...",()=>{
-    setTimeout(()=>{
-        introHeading.style.opacity=0;
-        showPaths();
-    },800);
 });
 });
 </script>
