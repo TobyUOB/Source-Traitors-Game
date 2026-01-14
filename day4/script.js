@@ -3,7 +3,6 @@ const chaliceBase = document.getElementById('chaliceBase');
 const chalicesContainer = document.getElementById('chalices');
 const chalices = document.querySelectorAll('.chalice');
 const poison = document.getElementById('poison');
-const poisonStream = document.getElementById('poison-stream');
 const candlelight = document.getElementById('candlelight');
 const qr = document.getElementById('qr');
 const message = document.getElementById('message');
@@ -11,6 +10,7 @@ const fire = document.getElementById('fire');
 const emberContainer = document.getElementById('embers');
 
 let locked = false;
+let candleSweepInterval;
 
 // Random poisoned chalice
 const poisonedIndex = Math.floor(Math.random() * 3);
@@ -32,50 +32,40 @@ setTimeout(() => {
     initialChaliceWrapper.style.opacity = 1;
 }, 500);
 
-// Step 2: Poison fade-in and animated stream
+// Step 2: Poison fade-in and tilt (no stream)
 setTimeout(() => {
-    const rect = chaliceBase.getBoundingClientRect();
+    const wrapperRect = initialChaliceWrapper.getBoundingClientRect();
 
-    // Position poison bottle above chalice
-    poison.style.left = rect.left + rect.width/2 - 40 + 'px';
-    poison.style.top = rect.top - 80 + 'px';
+    poison.style.left = (wrapperRect.left + wrapperRect.width/2 - poison.offsetWidth/2) + 'px';
+    poison.style.top = (wrapperRect.top - poison.offsetHeight + window.scrollY) + 'px';
     poison.style.opacity = 1;
 
-    // Position and reset poison stream
-    poisonStream.style.left = rect.left + rect.width/2 - 4 + 'px'; // center of chalice
-    poisonStream.style.top = rect.top - 10 + 'px';
-    poisonStream.style.height = '0px';
-    poisonStream.style.opacity = 1;
-
-    // Rotate bottle and pour stream slowly
+    // Tilt the bottle to suggest pouring
     setTimeout(() => {
         poison.style.transform = 'rotate(60deg)';
-        poisonStream.style.height = rect.height * 0.6 + 'px';
     }, 50);
 
-    // Step 3: Fade out poison, chalice, and stream after pour
+    // Step 3: Fade out poison & initial chalice after pouring (~3s)
     setTimeout(() => {
         poison.style.opacity = 0;
         initialChaliceWrapper.style.opacity = 0;
-        poisonStream.style.opacity = 0;
-        poisonStream.style.height = '0px';
-    }, 2800);
+    }, 3000);
 
 }, 2000);
 
-// Step 4: Fade in 3 chalices after initial sequence
+// Step 4: Fade in 3 chalices after longer delay
 setTimeout(() => {
     chalicesContainer.style.opacity = 1;
     startCandlelightSweep();
-}, 5200);
+}, 5500);
 
 // Continuous candlelight sweep over 3 chalices
 function startCandlelightSweep() {
     let index = 0;
-    setInterval(() => {
+    candleSweepInterval = setInterval(() => {
         chalices.forEach((c, i) => {
             const wrapper = c.parentElement;
-            if(!c.classList.contains('selected')) { // don't override selected
+            if(!c.classList.contains('selected')) {
                 if(i === index) wrapper.classList.add('highlighted');
                 else wrapper.classList.remove('highlighted');
             }
@@ -90,38 +80,6 @@ chalices.forEach(ch => {
         if(locked) return;
         locked = true;
 
-        const chosen = Number(ch.dataset.id);
-
-        // Fade out unselected
-        chalices.forEach(c => { if(c !== ch) c.classList.add('fade'); });
-
-        // Scale & breathing glow on selected
-        ch.classList.add('selected');
-
-        // Ember burst
-        createEmberBurst(ch, 20);
-
-        // Reveal message or QR
-        setTimeout(() => {
-            if(chosen === poisonedIndex){
-                message.textContent = "Oh no! You drank from the poisoned chalice!";
-            } else {
-                qr.style.display = 'block';
-            }
-        }, 800);
-    });
-});
-
-// Create ember burst at element
-function createEmberBurst(element, count=12){
-    for(let i=0;i<count;i++){
-        const e = document.createElement('div');
-        e.className='ember';
-        const rect = element.getBoundingClientRect();
-        e.style.left = rect.left + Math.random()*rect.width + 'px';
-        e.style.top = rect.top + Math.random()*rect.height + 'px';
-        e.style.animationDuration = 2 + Math.random()*2 + 's';
-        document.body.appendChild(e);
-        setTimeout(()=>e.remove(),4000);
-    }
-}
+        // Stop candle sweep
+        clearInterval(candleSweepInterval);
+        chalice
