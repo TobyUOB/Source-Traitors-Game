@@ -4,9 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Day 2 – Choose a Path</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&display=swap" rel="stylesheet">
-
 <style>
 body {
     margin:0;
@@ -17,7 +15,7 @@ body {
     overflow-y:auto;
 }
 
-/* SYMBOLS OVERLAY */
+/* SYMBOLS BACKGROUND */
 .symbol-overlay {
     position:fixed;
     inset:0;
@@ -35,13 +33,8 @@ body {
 }
 
 /* FLICKER HEADING */
-@keyframes flicker {
-    0%,100% { opacity:1; }
-    50% { opacity:0.5; }
-}
-.flicker {
-    animation: flicker 1.2s infinite alternate;
-}
+@keyframes flicker {0%,100%{opacity:1;}50%{opacity:0.5;}}
+.flicker {animation:flicker 1.2s infinite alternate;}
 
 #container {
     position:relative;
@@ -53,42 +46,8 @@ body {
     padding-top:30px;
 }
 
-#logo {
-    width:100px;
-    margin-bottom:14px;
-    position:relative;
-    z-index:10;
-}
-
-h1 {
-    font-size:2em;
-    margin:10px 0;
-    opacity:1;
-    text-align:center;
-    width:100%;
-}
-
-/* AMBIENT EMBERS */
-#embers {
-    position:fixed;
-    inset:0;
-    pointer-events:none;
-    z-index:1;
-}
-.ember {
-    position:absolute;
-    width:4px;
-    height:4px;
-    background:orange;
-    border-radius:50%;
-    box-shadow:0 0 10px orange;
-    animation:emberRise 6s linear infinite;
-}
-@keyframes emberRise {
-    from {transform:translateY(100vh); opacity:0;}
-    30% {opacity:1;}
-    to {transform:translateY(-50px) translateX(-40px); opacity:0;}
-}
+#logo { width:100px; margin-bottom:14px; z-index:10; position:relative; }
+h1 { font-size:2em; margin:10px 0; opacity:1; text-align:center; width:100%; }
 
 /* PATHS */
 #pathsWrapper {
@@ -98,82 +57,58 @@ h1 {
     margin-top:60px;
     justify-content:center;
 }
-
-#flare {
-    position:absolute;
-    width:220px;
-    height:220px;
-    border-radius:50%;
-    background:radial-gradient(circle, rgba(255,180,80,0.25) 0%, transparent 70%);
-    top:50%;
-    left:0;
-    transform:translate(-50%, -50%);
-    pointer-events:none;
-    opacity:0;
-}
-
 .path {
     width:200px;
     cursor:pointer;
-    transition:transform 1s ease, opacity 1s ease, left 1.5s ease;
     position:relative;
     z-index:5;
+    transition:transform 1s ease, opacity 1s ease;
 }
+.path.fade { opacity:0; }
+.path.pulse { animation:pulse 1.5s infinite ease-in-out alternate; }
+@keyframes pulse {0%{transform:scale(1);}50%{transform:scale(1.05);}100%{transform:scale(1);}}
 
-.path.fade {
+/* ALTERNATING LIGHTS */
+.path-light {
+    position:absolute;
+    top:-10px; left:-10px; right:-10px; bottom:-10px;
+    border-radius:12px;
+    box-shadow:0 0 20px rgba(255,255,255,0.1);
+    pointer-events:none;
     opacity:0;
 }
+@keyframes alternateGlow {0%,100%{opacity:0.05;}50%{opacity:0.15;}}
+.path-light.animate { animation:alternateGlow 1s infinite alternate; }
 
 /* RESULT IMAGE + TEXT + QR */
-#resultContainer {
-    margin-top:12px;
-    text-align:center;
-    position:relative;
-    z-index:5;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-}
-
-#resultText {
-    font-size:1.8em;
-    margin-bottom:8px;
-}
-
-#resultImg {
-    width:220px;
-    margin:10px auto 0;
-    opacity:0;
-    transition:opacity 1.5s ease;
-}
-
-#qr {
-    width:200px;
-    margin-top:8px;
-    display:none;
-}
+#resultContainer { margin-top:12px; text-align:center; position:relative; z-index:5; display:flex; flex-direction:column; align-items:center; }
+#resultText { font-size:1.8em; margin-bottom:8px; }
+#resultImg { width:220px; margin:10px auto 0; opacity:0; transform:scale(1.5); transition:opacity 1.5s ease, transform 1.5s ease; }
+#qr { width:200px; margin-top:8px; display:none; }
 
 /* MOBILE */
 @media(max-width:700px){
     .path { width:140px; }
-    #flare { width:160px; height:160px; }
     #resultImg { width:160px; }
 }
 </style>
 </head>
 <body>
 <div class="symbol-overlay"></div>
-<div id="embers"></div>
 
 <div id="container">
     <img id="logo" src="images/logo.png">
-
     <h1 class="flicker">Choose your path</h1>
 
     <div id="pathsWrapper">
-        <div id="flare"></div>
-        <img src="images/path1.png" class="path" data-id="0">
-        <img src="images/path2.png" class="path" data-id="1">
+        <div class="path-wrapper" style="position:relative;">
+            <div class="path-light animate"></div>
+            <img src="images/path1.png" class="path" data-id="0">
+        </div>
+        <div class="path-wrapper" style="position:relative;">
+            <div class="path-light animate"></div>
+            <img src="images/path2.png" class="path" data-id="1">
+        </div>
     </div>
 
     <div id="resultContainer">
@@ -185,98 +120,76 @@ h1 {
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-const paths = document.querySelectorAll('.path');
-const resultText = document.getElementById('resultText');
-const resultImg = document.getElementById('resultImg');
-const qr = document.getElementById('qr');
-const flare = document.getElementById('flare');
-const emberContainer = document.getElementById('embers');
+    const paths = document.querySelectorAll('.path');
+    const resultText = document.getElementById('resultText');
+    const resultImg = document.getElementById('resultImg');
+    const qr = document.getElementById('qr');
 
-let locked = false;
+    let locked = false;
+    const winningIndex = Math.floor(Math.random()*2);
 
-// Random winning path
-const winningIndex = Math.floor(Math.random()*2);
+    paths.forEach(path=>{
+        const light = path.parentElement.querySelector('.path-light');
+        path.addEventListener('click', () => {
+            if(locked) return;
+            locked = true;
 
-// Create ambient embers
-for(let i=0;i<20;i++){
-    const e = document.createElement('div');
-    e.className='ember';
-    e.style.left = Math.random()*100+'%';
-    e.style.animationDelay = Math.random()*6+'s';
-    emberContainer.appendChild(e);
-}
+            // Remove alternating lights
+            document.querySelectorAll('.path-light').forEach(l => l.style.display='none');
 
-// Flare animation loop
-let flareIndex = 0;
-let flareTimer = setInterval(()=>{
-    paths.forEach((p,i)=> p.style.zIndex = 5);
-    const p = paths[flareIndex];
-    const rect = p.getBoundingClientRect();
-    flare.style.left = rect.left + rect.width/2 + 'px';
-    flare.style.top = rect.top + rect.height/2 + 'px';
-    flare.style.opacity = 0.25;
-    setTimeout(()=>flare.style.opacity=0,500);
-    flareIndex = (flareIndex +1)%paths.length;
-},900);
+            const id = Number(path.dataset.id);
+            const selected = path;
+            const nonSelected = [...paths].filter(p=>p!==selected)[0];
 
-// Path selection
-paths.forEach(path=>{
-    path.addEventListener('click',()=>{
-        if(locked) return;
-        locked = true;
-        clearInterval(flareTimer);
+            // Fade out non-selected path
+            nonSelected.style.transition = "opacity 2s ease";
+            nonSelected.style.opacity = 0;
 
-        const id = Number(path.dataset.id);
-
-        const selectedPath = path;
-        const nonSelected = [...paths].filter(p=>p!==selectedPath)[0];
-
-        // 1. Slowly fade out non-selected path
-        nonSelected.style.transition = "opacity 2s ease";
-        nonSelected.style.opacity = 0;
-
-        // 2. After non-selected path is fully faded
-        setTimeout(()=>{
-            // Move selected path to center horizontally
-            const rect = selectedPath.getBoundingClientRect();
-            const wrapperRect = selectedPath.parentElement.getBoundingClientRect();
+            // Get position of selected path
+            const rect = selected.getBoundingClientRect();
+            const wrapperRect = selected.parentElement.getBoundingClientRect();
             const centerX = wrapperRect.width/2 - rect.width/2;
             const offsetX = centerX - (rect.left - wrapperRect.left);
-            selectedPath.style.position = 'relative';
-            selectedPath.style.left = offsetX + 'px';
 
-            // Zoom and fade out slowly
-            selectedPath.style.transition = "transform 2s ease, opacity 2s ease";
-            selectedPath.style.transform = "scale(1.2)";
-            selectedPath.style.opacity = 0;
-        }, 2000);
+            // Apply pulse before zoom
+            selected.classList.add('pulse');
 
-        // 3. Show castle/mansion after path fade (2s zoom + 2s fade)
-        setTimeout(()=>{
-            if(id===winningIndex){
-                resultImg.src = "images/castle.png";
-                resultText.textContent = "You reached the magical castle!";
-                qr.style.display="block";
-            }else{
-                resultImg.src = "images/mansion.png";
-                resultText.textContent = "Oh no! You ended up in the haunted mansion!";
-            }
-            resultImg.style.opacity = 1;
-        }, 4000);
+            setTimeout(()=>{
+                selected.classList.remove('pulse');
+                selected.style.transition="transform 2s ease, opacity 2s ease, left 2s ease";
+                selected.style.left = offsetX + "px";
+                selected.style.transform="scale(1.3)";
+                selected.style.opacity=0;
+            }, 2000); // 2s pulse
 
-        // Ember burst at selected path immediately on click
-        for(let i=0;i<15;i++){
-            const e = document.createElement('div');
-            e.className='ember';
-            const rect = selectedPath.getBoundingClientRect();
-            e.style.left = rect.left + Math.random()*rect.width + 'px';
-            e.style.top = rect.top + Math.random()*rect.height + 'px';
-            e.style.animationDuration = 2 + Math.random()*2 + 's';
-            document.body.appendChild(e);
-            setTimeout(()=>e.remove(),4000);
-        }
+            // Show castle/mansion after fade
+            setTimeout(()=>{
+                resultImg.style.position='absolute';
+                resultImg.style.left = rect.left + window.scrollX + "px";
+                resultImg.style.top = rect.top + window.scrollY + "px";
+                resultImg.style.opacity = 1;
+                resultImg.style.transform = "scale(3)";
+
+                if(id === winningIndex){
+                    resultImg.src = "images/castle.png";
+                    resultText.textContent = "You reached the magical castle!";
+                    qr.style.display = "block";
+                } else {
+                    resultImg.src = "images/mansion.png";
+                    resultText.textContent = "Oh no! You ended up in the haunted mansion!";
+                    qr.style.display = "none";
+                }
+
+                // Reverse fade (scale down) to normal
+                setTimeout(()=>{
+                    resultImg.style.transition="transform 1.5s ease";
+                    resultImg.style.transform="scale(1)";
+                },50);
+
+            }, 4500); // 2s pulse + 2s zoom/fade
+
+        });
     });
-});
 });
 </script>
 </body>
