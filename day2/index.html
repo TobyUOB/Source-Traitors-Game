@@ -134,9 +134,9 @@ h1 {
 .path {
     width:200px;
     cursor:pointer;
-    transition:transform 1s ease, opacity 1s ease, left 2s ease;
     position:relative;
     z-index:5;
+    transition: transform 1s ease, opacity 1s ease;
 }
 
 .path.fade {
@@ -173,8 +173,8 @@ h1 {
     width:220px;
     margin:10px auto 0;
     opacity:0;
-    transform: scale(1.2);
-    transition:opacity 1.5s ease, transform 1.5s ease;
+    transform: scale(1.5);
+    transition: opacity 1.5s ease, transform 1.5s ease;
 }
 
 #qr {
@@ -229,11 +229,9 @@ const flare = document.getElementById('flare');
 const emberContainer = document.getElementById('embers');
 
 let locked = false;
-
-// Random winning path
 const winningIndex = Math.floor(Math.random()*2);
 
-// Create ambient embers
+// Ambient embers
 for(let i=0;i<20;i++){
     const e = document.createElement('div');
     e.className='ember';
@@ -245,7 +243,7 @@ for(let i=0;i<20;i++){
 // Flare animation loop
 let flareIndex = 0;
 let flareTimer = setInterval(()=>{
-    paths.forEach((p,i)=> p.style.zIndex = 5);
+    paths.forEach(p=> p.style.zIndex = 5);
     const p = paths[flareIndex];
     const rect = p.getBoundingClientRect();
     flare.style.left = rect.left + rect.width/2 + 'px';
@@ -255,7 +253,7 @@ let flareTimer = setInterval(()=>{
     flareIndex = (flareIndex +1)%paths.length;
 },900);
 
-// Path selection
+// Path click
 paths.forEach(path=>{
     path.addEventListener('click',()=>{
         if(locked) return;
@@ -263,65 +261,71 @@ paths.forEach(path=>{
         clearInterval(flareTimer);
 
         const id = Number(path.dataset.id);
+        const selected = path;
+        const nonSelected = [...paths].filter(p=>p!==selected)[0];
 
-        const selectedPath = path;
-        const nonSelected = [...paths].filter(p=>p!==selectedPath)[0];
-
-        // 1. Slowly fade out non-selected path
+        // 1. Fade out non-selected
         nonSelected.style.transition = "opacity 2s ease";
         nonSelected.style.opacity = 0;
 
-        // 2. After non-selected path fully faded
+        // 2. After non-selected faded (2s)
         setTimeout(()=>{
-            // Add pulse to selected path
-            selectedPath.classList.add('pulse');
+            selected.classList.add('pulse');
 
-            // Move selected path to horizontal center slowly
-            const rect = selectedPath.getBoundingClientRect();
-            const wrapperRect = selectedPath.parentElement.getBoundingClientRect();
-            const centerX = wrapperRect.width/2 - rect.width/2;
-            const offsetX = centerX - (rect.left - wrapperRect.left);
-            selectedPath.style.transition = "left 2s ease";
-            selectedPath.style.left = offsetX + 'px';
+            // Move to horizontal center of page
+            const pageWidth = window.innerWidth;
+            const rect = selected.getBoundingClientRect();
+            const currentLeft = rect.left;
+            const targetLeft = (pageWidth - rect.width)/2;
+            const delta = targetLeft - currentLeft;
+
+            selected.style.transition = "left 2s ease";
+            selected.style.position = "relative";
+            selected.style.left = delta + 'px';
         },2000);
 
-        // 3. After move (~2s), big zoom as if entering (~2s)
+        // 3. After drift (2s), big zoom enter (~2s)
         setTimeout(()=>{
-            selectedPath.style.transition = "transform 2s ease, opacity 2s ease";
-            selectedPath.style.transform = "scale(2)";
-            selectedPath.style.opacity = 0;
+            selected.style.transition = "transform 2s ease, opacity 2s ease";
+            selected.style.transform = "scale(3)";
+            selected.style.opacity = 0;
         },4000);
 
-        // 4. After fade (~2s), show castle/mansion in original horizontal position with reverse zoom
+        // 4. After fade (~2s), show castle/mansion at same location with reverse zoom
         setTimeout(()=>{
             if(id===winningIndex){
-                resultImg.src = "images/castle.png";
-                resultText.textContent = "You reached the magical castle!";
+                resultImg.src="images/castle.png";
+                resultText.textContent="You reached the magical castle!";
                 qr.style.display="block";
             }else{
-                resultImg.src = "images/mansion.png";
-                resultText.textContent = "Oh no! You ended up in the haunted mansion!";
+                resultImg.src="images/mansion.png";
+                resultText.textContent="Oh no! You ended up in the haunted mansion!";
             }
-            // Reset scale for reverse zoom
-            resultImg.style.transform = "scale(1.5)";
-            resultImg.style.opacity = 1;
+
+            // Set initial scale large
+            resultImg.style.transform="scale(3)";
+            resultImg.style.opacity=1;
+
+            // Animate scale down to normal
             setTimeout(()=>{
-                resultImg.style.transition = "transform 1.5s ease";
-                resultImg.style.transform = "scale(1)";
+                resultImg.style.transition="transform 1.5s ease";
+                resultImg.style.transform="scale(1)";
             },50);
+
         },6000);
 
-        // Ember burst at selected path
+        // Ember burst
         for(let i=0;i<15;i++){
-            const e = document.createElement('div');
+            const e=document.createElement('div');
             e.className='ember';
-            const rect = selectedPath.getBoundingClientRect();
+            const rect = selected.getBoundingClientRect();
             e.style.left = rect.left + Math.random()*rect.width + 'px';
             e.style.top = rect.top + Math.random()*rect.height + 'px';
             e.style.animationDuration = 2 + Math.random()*2 + 's';
             document.body.appendChild(e);
             setTimeout(()=>e.remove(),4000);
         }
+
     });
 });
 });
