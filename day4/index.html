@@ -66,7 +66,7 @@ h1 {
 #introChaliceWrapper {
     position:relative;
     display:inline-block;
-    top:60px; /* moved down to create more space under "Earlier today..." */
+    top:60px; /* moves intro chalice + poison down for header spacing */
 }
 
 #chaliceIntro {
@@ -110,7 +110,8 @@ h1 {
 
 /* SELECTION */
 #chalices {
-    margin-top:40px; /* keep vertical placement from before */
+    position:relative; /* aligned vertically with intro chalice */
+    top:-180px; /* adjust to match vertical spot of intro chalice */
     display:flex;
     gap:30px;
     opacity:0;
