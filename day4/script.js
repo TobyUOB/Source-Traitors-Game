@@ -22,8 +22,8 @@ for (let i = 0; i < 20; i++) {
     emberContainer.appendChild(e);
 }
 
-// Immediately run cinematic sequence on page load
-window.addEventListener('load', () => runCinematic());
+// Run cinematic after short delay (browser paints first)
+setTimeout(() => runCinematic(), 50);
 
 function runCinematic() {
     initialChaliceWrapper.style.opacity = 0;
