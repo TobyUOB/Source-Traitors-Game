@@ -23,13 +23,19 @@ dice.addEventListener('click', () => {
     const roll = Math.floor(Math.random() * 20) + 1;
 
     setTimeout(() => {
-        dice.classList.remove('rolling');
-        dice.classList.add('glow');
+    dice.classList.remove('rolling');
 
-        diceNumber.textContent = roll;
-        diceNumber.style.opacity = "1";
+    // 🔥 HARD RESET (fixes mobile blur bug)
+    dice.style.filter = 'none';
+    dice.style.transform = 'translateY(0) rotate(0deg) scale(1)';
 
-        qr.src = roll <= 10 ? "qr/prize1.png" : "qr/prize2.png";
-        qr.style.display = "block";
-    }, 1000);
+    // Restore glow
+    dice.classList.add('glow');
+
+    diceNumber.textContent = roll;
+    diceNumber.style.opacity = "1";
+
+    qr.src = roll <= 10 ? "qr/prize1.png" : "qr/prize2.png";
+    qr.style.display = "block";
+}, 1000);
 });
