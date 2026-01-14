@@ -141,6 +141,12 @@ body.grain::before {
     height:auto;
     cursor:pointer;
     display:block;
+    margin:0 auto;
+
+    /* 🔒 Mobile blur bug fix */
+    backface-visibility: hidden;
+    transform: translateZ(0);
+    will-change: transform, filter;
 }
 
 /* Glow before roll */
