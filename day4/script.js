@@ -22,7 +22,7 @@ for (let i = 0; i < 20; i++) {
     emberContainer.appendChild(e);
 }
 
-// Run cinematic after short delay (browser paints first)
+// Start cinematic after short delay
 setTimeout(() => runCinematic(), 50);
 
 function runCinematic() {
@@ -30,23 +30,23 @@ function runCinematic() {
     poison.style.opacity = 0;
     poison.style.transform = 'translateX(-50%) rotate(0deg)';
 
-    // Step 1: fade in chalice
+    // fade in chalice
     setTimeout(() => initialChaliceWrapper.style.opacity = 1, 50);
 
-    // Step 2: fade in poison
+    // fade in poison
     setTimeout(() => poison.style.opacity = 1, 2050);
 
-    // Step 3: tilt to pour slowly
+    // tilt to pour slowly
     setTimeout(() => poison.style.transform = 'translateX(-50%) rotate(60deg)', 5050);
 
-    // Step 4: return upright & fade out
+    // fade out poison & chalice
     setTimeout(() => {
         poison.style.transform = 'translateX(-50%) rotate(0deg)';
         poison.style.opacity = 0;
         initialChaliceWrapper.style.opacity = 0;
     }, 8050);
 
-    // Step 5: fade in 3 chalices
+    // fade in 3 chalices
     setTimeout(() => {
         chalicesContainer.style.opacity = 1;
         chalicesVisible = true;
@@ -54,7 +54,7 @@ function runCinematic() {
     }, 10050);
 }
 
-// Candlelight sweep
+// Candlelight sweep - only one glow at a time
 function startCandlelightSweep() {
     let index = 0;
     candleSweepInterval = setInterval(() => {
@@ -68,7 +68,7 @@ function startCandlelightSweep() {
     }, 600);
 }
 
-// Chalice click handler
+// Chalice selection
 chalices.forEach(ch => {
     ch.addEventListener('click', () => {
         if(locked || !chalicesVisible) return;
