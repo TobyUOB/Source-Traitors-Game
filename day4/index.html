@@ -62,11 +62,11 @@ h1 {
     align-items:center;
 }
 
-/* INTRO CHALICE WRAPPER (moved down for spacing) */
+/* Intro chalice wrapper ONLY */
 #introChaliceWrapper {
     position:relative;
     display:inline-block;
-    top:40px; /* moves chalice + poison down */
+    top:60px; /* moved down to create more space under "Earlier today..." */
 }
 
 #chaliceIntro {
@@ -96,7 +96,7 @@ h1 {
     100% {opacity:0.38;}
 }
 
-/* Poison bottle positioned relative to chalice with offset left */
+/* Poison bottle positioned relative to chalice with left offset */
 #poison {
     position:absolute;
     width:140px;
@@ -110,7 +110,7 @@ h1 {
 
 /* SELECTION */
 #chalices {
-    margin-top:40px;
+    margin-top:40px; /* keep vertical placement from before */
     display:flex;
     gap:30px;
     opacity:0;
