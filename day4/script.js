@@ -1,82 +1,96 @@
-const heading = document.getElementById('heading');
-const chaliceIntro = document.getElementById('chaliceIntro');
-const poison = document.getElementById('poison');
-const chalicesContainer = document.getElementById('chalices');
-const chalices = document.querySelectorAll('.chalice');
-const message = document.getElementById('message');
-const qr = document.getElementById('qr');
+document.addEventListener("DOMContentLoaded", () => {
 
-let locked = false;
-let sweepInterval;
+    const heading = document.getElementById('heading');
+    const chaliceIntro = document.getElementById('chaliceIntro');
+    const poison = document.getElementById('poison');
+    const chalicesContainer = document.getElementById('chalices');
+    const chalices = document.querySelectorAll('.chalice');
+    const message = document.getElementById('message');
+    const qr = document.getElementById('qr');
 
-// Random poisoned chalice
-const poisonedIndex = Math.floor(Math.random() * 3);
+    let locked = false;
+    let sweepInterval;
 
-// Typewriter
-function typeText(text, cb){
-    heading.textContent = "";
-    let i = 0;
-    const interval = setInterval(() => {
-        heading.textContent += text[i];
-        i++;
-        if(i >= text.length){
-            clearInterval(interval);
-            cb && cb();
-        }
-    }, 80);
-}
+    // Random poisoned chalice
+    const poisonedIndex = Math.floor(Math.random() * 3);
 
-// Intro sequence
-typeText("Earlier today...", () => {
-    setTimeout(() => chaliceIntro.style.opacity = 1, 800);
+    // Typewriter effect
+    function typeText(text, cb) {
+        heading.textContent = "";
+        let i = 0;
+        const interval = setInterval(() => {
+            heading.textContent += text[i];
+            i++;
+            if (i >= text.length) {
+                clearInterval(interval);
+                cb && cb();
+            }
+        }, 80);
+    }
 
-    setTimeout(() => poison.style.opacity = 1, 2800);
+    // Start intro sequence
+    typeText("Earlier today...", () => {
 
-    setTimeout(() => {
-        poison.style.transform = "translateX(-50%) rotate(65deg)";
-    }, 5200);
-
-    setTimeout(() => {
-        poison.style.opacity = 0;
-        chaliceIntro.style.opacity = 0;
-    }, 8200);
-
-    setTimeout(() => {
-        heading.style.opacity = 0;
+        // Fade in chalice
         setTimeout(() => {
-            heading.textContent = "Avoid the poisoned chalice";
-            heading.style.opacity = 1;
-        }, 600);
+            chaliceIntro.style.opacity = 1;
+        }, 800);
 
-        chalicesContainer.style.opacity = 1;
-        startSweep();
-    }, 10400);
-});
-
-// Pulsing sweep animation
-function startSweep(){
-    let index = 0;
-    sweepInterval = setInterval(() => {
-        chalices.forEach(c => c.classList.remove('pulsing'));
-        chalices[index].classList.add('pulsing');
-        index = (index + 1) % chalices.length;
-    }, 900);
-}
-
-// Selection
-chalices.forEach(ch => {
-    ch.addEventListener('click', () => {
-        if(locked || chalicesContainer.style.opacity === "0") return;
-        locked = true;
-
-        clearInterval(sweepInterval);
-        chalices.forEach(c => c.classList.remove('pulsing'));
-
-        const chosen = Number(ch.dataset.id);
-
-        chalices.forEach(c => { if(c !== ch) c.classList.add('fade'); });
-        ch.classList.add('selected');
-
+        // Fade in poison
         setTimeout(() => {
-            if(chosen === poisonedIndex){
-                message.textContent = "Oh no! You drank from the
+            poison.style.opacity = 1;
+        }, 2800);
+
+        // Tilt poison to pour
+        setTimeout(() => {
+            poison.style.transform = "translateX(-50%) rotate(65deg)";
+        }, 5200);
+
+        // Fade both out
+        setTimeout(() => {
+            poison.style.opacity = 0;
+            chaliceIntro.style.opacity = 0;
+        }, 8200);
+
+        // Reveal choices
+        setTimeout(() => {
+            heading.style.opacity = 0;
+
+            setTimeout(() => {
+                heading.textContent = "Avoid the poisoned chalice";
+                heading.style.opacity = 1;
+            }, 600);
+
+            chalicesContainer.style.opacity = 1;
+            startSweep();
+        }, 10400);
+    });
+
+    // Pulsing sweep animation
+    function startSweep() {
+        let index = 0;
+        sweepInterval = setInterval(() => {
+            chalices.forEach(c => c.classList.remove('pulsing'));
+            chalices[index].classList.add('pulsing');
+            index = (index + 1) % chalices.length;
+        }, 900);
+    }
+
+    // Selection logic
+    chalices.forEach(ch => {
+        ch.addEventListener('click', () => {
+            if (locked || chalicesContainer.style.opacity === "0") return;
+            locked = true;
+
+            clearInterval(sweepInterval);
+            chalices.forEach(c => c.classList.remove('pulsing'));
+
+            const chosen = Number(ch.dataset.id);
+
+            chalices.forEach(c => {
+                if (c !== ch) c.classList.add('fade');
+            });
+            ch.classList.add('selected');
+
+            setTimeout(() => {
+                if
