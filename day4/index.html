@@ -62,18 +62,20 @@ h1 {
     align-items:center;
 }
 
-/* INTRO CHALICE */
+/* INTRO CHALICE WRAPPER */
 #introChaliceWrapper {
-    position:absolute;
-    top:0;
+    position:relative;
+    display:inline-block;
 }
 
 #chaliceIntro {
     width:200px;
     opacity:0;
     transition:opacity 2s ease;
+    display:block;
 }
 
+/* Candle glow for first chalice */
 #candleGlow {
     position:absolute;
     inset:-40px;
@@ -93,14 +95,14 @@ h1 {
     100% {opacity:0.38;}
 }
 
-/* Poison bottle */
+/* Poison bottle positioned relative to chalice */
 #poison {
     position:absolute;
     width:140px;
-    top:12px; /* moved down for natural pouring */
-    left:40%;
-    opacity:0;
+    bottom:80%;       /* above chalice */
+    left:50%;         /* center over chalice */
     transform:translateX(-50%) rotate(0deg);
+    opacity:0;
     transition:opacity 2s ease, transform 3.5s ease;
 }
 
@@ -129,7 +131,7 @@ h1 {
     transform:scale(1.2);
 }
 
-/* RESULT (TIGHT) */
+/* RESULT */
 #result {
     margin-top:12px;
     font-size:1.8em;
@@ -142,10 +144,10 @@ h1 {
     display:none;
 }
 
-/* Mobile */
+/* MOBILE */
 @media(max-width:700px){
     #chaliceIntro { width:160px; }
-    #poison { width:110px; }
+    #poison { width:110px; bottom:78%; }  /* slight vertical tweak for mobile */
     .choice { width:110px; }
 }
 </style>
@@ -162,13 +164,12 @@ h1 {
 
     <div id="introContainer">
 
-        <!-- Intro chalice -->
+        <!-- Intro chalice + poison inside same wrapper -->
         <div id="introChaliceWrapper">
             <div id="candleGlow"></div>
             <img src="images/chalice.png" id="chaliceIntro">
+            <img src="images/poison.png" id="poison">
         </div>
-
-        <img src="images/poison.png" id="poison">
 
         <!-- Selection -->
         <div id="chalices">
@@ -177,7 +178,7 @@ h1 {
             <img src="images/chalice.png" class="choice" data-id="2">
         </div>
 
-        <!-- Result lives HERE now -->
+        <!-- Result inline with selection -->
         <div id="result"></div>
         <img id="qr" src="qr/day4prize.png">
 
@@ -244,7 +245,7 @@ typeText("Earlier today...", () => {
     }, 10800);
 });
 
-/* Pulse loop */
+/* Pulse loop for idle chalices */
 function startPulse() {
     pulseTimer = setInterval(() => {
         choices.forEach(c => c.style.transform = "scale(1)");
