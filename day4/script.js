@@ -44,26 +44,28 @@ setTimeout(() => {
 
         // Step 4: Fade in 3 chalices
         chalicesContainer.style.opacity = 1;
-        torchHighlightChalice(0);
+        candlelightHighlight(0);
     }, 1500);
 
 }, 500);
 
-// Torchlight highlight sequence
-function torchHighlightChalice(index) {
-    if (index >= chalices.length) return;
-    const chalice = chalices[index];
-    chalice.style.filter = 'drop-shadow(0 0 20px yellow)';
-    setTimeout(() => {
-        chalice.style.filter = 'drop-shadow(0 0 12px rgba(255,120,60,.6))';
-        torchHighlightChalice(index + 1);
+// Candlelight “torch” highlight sequence
+function candlelightHighlight(index){
+    if(index >= chalices.length) return;
+
+    const wrapper = chalices[index].parentElement;
+    wrapper.classList.add('highlighted');
+
+    setTimeout(()=>{
+        wrapper.classList.remove('highlighted');
+        candlelightHighlight(index + 1);
     }, 600);
 }
 
 // Chalice click handler
 chalices.forEach(ch => {
     ch.addEventListener('click', () => {
-        if (locked) return;
+        if(locked) return;
         locked = true;
 
         const chosen = Number(ch.dataset.id);
@@ -95,5 +97,9 @@ function createEmberBurst(element, count=12){
         e.className='ember';
         const rect = element.getBoundingClientRect();
         e.style.left = rect.left + Math.random()*rect.width + 'px';
-        e.style.top = rect.top + Math.random()*rect.height + 'px';*
-
+        e.style.top = rect.top + Math.random()*rect.height + 'px';
+        e.style.animationDuration = 2 + Math.random()*2 + 's';
+        document.body.appendChild(e);
+        setTimeout(()=>e.remove(),4000);
+    }
+}
