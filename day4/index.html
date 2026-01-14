@@ -13,7 +13,7 @@ body {
     background:#0a0805;
     color:white;
     font-family:'Cinzel', serif;
-    overflow:hidden;
+    overflow-x:hidden;
 }
 
 .symbol-overlay {
@@ -79,7 +79,6 @@ h1 {
         rgba(255,160,60,0.18) 40%,
         transparent 70%);
     opacity:0;
-    animation:candleFlicker 1.3s infinite;
     pointer-events:none;
 }
 
@@ -94,7 +93,7 @@ h1 {
     position:absolute;
     width:140px;
     top:0;
-    left:48%; /* offset for realistic pour */
+    left:45%; /* further left */
     opacity:0;
     transform:translateX(-50%) rotate(0deg);
     transition:opacity 2s ease, transform 3.5s ease;
@@ -128,14 +127,14 @@ h1 {
 
 /* RESULT */
 #result {
-    margin-top:20px;
+    margin-top:10px;
     font-size:1.8em;
     text-align:center;
 }
 
 #qr {
     width:200px;
-    margin-top:15px;
+    margin-top:10px;
     display:none;
 }
 
@@ -201,7 +200,7 @@ function typeText(text, cb) {
             clearInterval(t);
             cb && cb();
         }
-    }, 95); // slower typing
+    }, 95);
 }
 
 /* INTRO */
@@ -210,6 +209,7 @@ typeText("Earlier today...", () => {
     setTimeout(() => {
         chaliceIntro.style.opacity = 1;
         glow.style.opacity = 1;
+        glow.style.animation = "candleFlicker 1.3s infinite";
     }, 800);
 
     setTimeout(() => {
@@ -231,7 +231,7 @@ typeText("Earlier today...", () => {
     }, 9400);
 
     setTimeout(() => {
-        glow.remove(); // ensure flicker is gone
+        glow.remove();
         heading.textContent = "Avoid the poisoned chalice";
         heading.style.opacity = 1;
         chalicesContainer.style.opacity = 1;
