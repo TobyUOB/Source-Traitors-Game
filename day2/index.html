@@ -116,14 +116,13 @@ h1 {
 .path {
     width:200px;
     cursor:pointer;
-    transition:transform .6s ease, opacity .6s ease;
+    transition:transform .6s ease, opacity .6s ease, left 1s ease;
     position:relative;
     z-index:5;
 }
 
 .path.fade {
     opacity:0;
-    transform:scale(0.8);
 }
 
 /* RESULT IMAGE + TEXT + QR */
@@ -132,6 +131,9 @@ h1 {
     text-align:center;
     position:relative;
     z-index:5;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
 }
 
 #resultText {
@@ -142,6 +144,8 @@ h1 {
 #resultImg {
     width:220px;
     margin:10px auto 0;
+    opacity:0;
+    transition:opacity 1s ease;
 }
 
 #qr {
@@ -225,10 +229,38 @@ paths.forEach(path=>{
 
         const id = Number(path.dataset.id);
 
+        // Fade out non-selected path
         paths.forEach(p=>{
             if(p!==path) p.classList.add('fade');
         });
-        path.style.transform = "scale(1.1)";
+
+        // Move selected path to center
+        const rect = path.getBoundingClientRect();
+        const wrapperRect = path.parentElement.getBoundingClientRect();
+        const centerX = wrapperRect.width/2 - rect.width/2;
+        const offsetX = centerX - (rect.left - wrapperRect.left);
+        path.style.position = 'relative';
+        path.style.left = offsetX + 'px';
+
+        // Scale up and fade out after short delay
+        setTimeout(()=>{
+            path.style.transition = 'transform 1.5s ease, opacity 1.5s ease';
+            path.style.transform = 'scale(1.2)';
+            path.style.opacity = 0;
+        }, 500);
+
+        // Show result after path "entered"
+        setTimeout(()=>{
+            if(id===winningIndex){
+                resultImg.src = "images/castle.png";
+                resultText.textContent = "You reached the magical castle!";
+                qr.style.display="block";
+            }else{
+                resultImg.src = "images/mansion.png";
+                resultText.textContent = "Oh no! You ended up in the haunted mansion!";
+            }
+            resultImg.style.opacity = 1;
+        }, 2000);
 
         // Ember burst at selected path
         for(let i=0;i<15;i++){
@@ -241,21 +273,9 @@ paths.forEach(path=>{
             document.body.appendChild(e);
             setTimeout(()=>e.remove(),4000);
         }
-
-        setTimeout(()=>{
-            if(id===winningIndex){
-                resultText.textContent = "You reached the magical castle!";
-                resultImg.src = "images/castle.png";
-                qr.style.display="block";
-            }else{
-                resultText.textContent = "Oh no! You ended up in the haunted mansion!";
-                resultImg.src = "images/mansion.png";
-            }
-        },500);
     });
 });
 });
 </script>
 </body>
 </html>
-
