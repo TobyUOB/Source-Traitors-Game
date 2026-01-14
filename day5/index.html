@@ -38,6 +38,22 @@ body::after {
 @keyframes torchA { from{transform:translate(-4%,-3%);opacity:0.6;} to{transform:translate(4%,3%);opacity:1;} }
 @keyframes torchB { from{transform:translate(3%,-3%);opacity:0.5;} to{transform:translate(-3%,4%);opacity:0.9;} }
 
+/* ================= GRAIN ================= */
+body.grain::before {
+    background-image:url('images/grain.png');
+    background-size:cover;
+    mix-blend-mode:overlay;
+    opacity:0.05;
+    animation: grainMove 12s linear infinite;
+}
+@keyframes grainMove {
+    0%{transform:translate(0,0);}
+    25%{transform:translate(-2%,1%);}
+    50%{transform:translate(1%,-1%);}
+    75%{transform:translate(-1%,2%);}
+    100%{transform:translate(0,0);}
+}
+
 /* ================= SYMBOLS ================= */
 .symbol-overlay {
     position:fixed;
@@ -47,10 +63,21 @@ body::after {
     opacity:0.1;
     pointer-events:none;
     z-index:1;
+    animation:symbolsGlow 8s infinite alternate ease-in-out;
+}
+@keyframes symbolsGlow {
+    0%{opacity:0.08;}
+    50%{opacity:0.15;}
+    100%{opacity:0.08;}
 }
 
 /* ================= EMBERS ================= */
-#embers { position:fixed; inset:0; pointer-events:none; z-index:1; }
+#embers {
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:1;
+}
 .ember {
     position:absolute;
     width:4px;
@@ -63,7 +90,7 @@ body::after {
 @keyframes emberRise {
     from{transform:translateY(100vh);opacity:0;}
     30%{opacity:1;}
-    100%{transform:translateY(-60px) translateX(-40px);opacity:0;}
+    100%{transform:translateY(-50px) translateX(-40px);opacity:0;}
 }
 
 /* ================= CONTENT ================= */
@@ -77,62 +104,69 @@ body::after {
     padding-top:20px;
 }
 
-/* ================= LOGO ================= */
+/* LOGO */
 #logo {
     width:100px;
     max-width:90%;
-    margin-bottom:8px;
+    margin-bottom:6px;
 }
 
-/* ================= HEADING ================= */
+/* HEADING */
 #heading {
     font-family:'Cinzel', serif;
-    font-size:2.3em;
+    font-size:2.4em;
     font-weight:800;
-    text-align:center;
-    margin-bottom:10px;
+    margin-bottom:6px;
     animation:flicker 1.2s infinite alternate;
+    text-align:center;
 }
-@keyframes flicker { 0%{opacity:1;}60%{opacity:0.45;}100%{opacity:1;} }
+@keyframes flicker {
+    0%{opacity:1;}
+    60%{opacity:0.45;}
+    100%{opacity:1;}
+}
 
 /* ================= DICE ================= */
 #dice-container {
     position:relative;
     width:260px;
-    height:260px;
+    max-width:90%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
 }
 
 #dice {
     width:100%;
-    display:block;
+    height:auto;
     cursor:pointer;
-    margin:0 auto;
+    display:block;
 }
 
-/* Glow around dice shape (uses transparency correctly) */
+/* Glow before roll */
 #dice.glow {
-    animation: diceGlow 2s infinite alternate;
+    animation:diceGlow 2s infinite alternate;
     filter:
-        drop-shadow(0 0 12px rgba(255,200,0,0.8))
-        drop-shadow(0 0 28px rgba(255,180,60,0.6));
+        drop-shadow(0 0 10px rgba(255,200,0,0.7))
+        drop-shadow(0 0 20px rgba(255,200,0,0.4));
 }
 @keyframes diceGlow {
-    0% { filter: drop-shadow(0 0 10px rgba(255,200,0,0.6)); }
-    100% { filter: drop-shadow(0 0 26px rgba(255,220,80,0.9)); }
+    0%{filter:drop-shadow(0 0 8px rgba(255,200,0,0.6));}
+    50%{filter:drop-shadow(0 0 20px rgba(255,220,0,0.9));}
+    100%{filter:drop-shadow(0 0 8px rgba(255,200,0,0.6));}
 }
 
 /* Roll animation */
 #dice.rolling {
-    animation: diceRoll 1s ease-in-out forwards;
+    animation:diceThrow 1s ease-in-out forwards;
 }
-@keyframes diceRoll {
-    0%   { transform: translateY(0) rotate(0deg) scale(1); filter: blur(0); }
-    15%  { transform: translateY(-120px) rotate(240deg) scale(1.15); filter: blur(3px); }
-    35%  { transform: translateY(-60px) rotate(540deg) scale(1.1); filter: blur(2px); }
-    55%  { transform: translateY(-80px) rotate(840deg) scale(1.05); filter: blur(2px); }
-    75%  { transform: translateY(-20px) rotate(1080deg) scale(1); filter: blur(1px); }
-    90%  { transform: translateY(-8px) rotate(1180deg) scale(0.98); }
-    100% { transform: translateY(0) rotate(1260deg) scale(1); filter: blur(0); }
+@keyframes diceThrow {
+    0%{transform:translateY(0) rotate(0deg) scale(1); filter:blur(0);}
+    15%{transform:translateY(-120px) rotate(360deg) scale(1.15); filter:blur(4px);}
+    40%{transform:translateY(-70px) rotate(720deg) scale(1.1); filter:blur(3px);}
+    70%{transform:translateY(-30px) rotate(1080deg) scale(1.05); filter:blur(1.5px);}
+    85%{transform:translateY(-8px) rotate(1260deg) scale(1);}
+    100%{transform:translateY(0) rotate(1440deg) scale(1); filter:blur(0);}
 }
 
 /* ================= NUMBER ================= */
@@ -141,34 +175,36 @@ body::after {
     top:50%;
     left:50%;
     transform:translate(-50%,-50%);
-    font-size:1.9em;
+    font-family:'Cinzel', serif;
+    font-size:1.8em;
     font-weight:800;
     color:rgba(255,255,255,0.9);
     text-shadow:
-        0 0 6px rgba(255,255,255,0.8),
-        0 0 12px rgba(255,200,120,0.6);
+        0 0 6px rgba(255,255,255,0.7),
+        0 0 12px rgba(255,255,255,0.5);
     opacity:0;
     pointer-events:none;
-    z-index:5;
+    z-index:999;
+    transition:opacity 0.4s ease;
 }
 
-/* ================= QR ================= */
+/* QR */
 #qr {
-    margin-top:12px;
+    margin-top:10px;
     width:160px;
     max-width:90%;
     display:none;
 }
 
-/* ================= MOBILE ================= */
+/* MOBILE */
 @media(max-width:700px){
-    #dice-container { width:200px; height:200px; }
-    #dice-number { font-size:1.5em; }
+    #dice-container{width:180px;}
+    #dice-number{font-size:1.4em;}
 }
 </style>
 </head>
 
-<body>
+<body class="grain">
 
 <div class="symbol-overlay"></div>
 
@@ -185,11 +221,11 @@ body::after {
     <div id="heading">Is luck on your side?</div>
 
     <div id="dice-container">
-        <img id="dice" src="images/dice.png" class="glow" alt="Dice">
+        <img id="dice" src="images/dice.png" alt="Dice">
         <div id="dice-number"></div>
     </div>
 
-    <img id="qr" src="" alt="QR Code">
+    <img id="qr" alt="QR Code">
 
     <audio id="fire" loop>
         <source src="sounds/fire-crackle.mp3" type="audio/mpeg">
