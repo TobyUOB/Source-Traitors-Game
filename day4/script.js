@@ -28,53 +28,49 @@ for (let i = 0; i < 20; i++) {
 
 // INITIAL STATE
 initialChaliceWrapper.style.opacity = 0;
-initialChaliceWrapper.style.transition = 'opacity 2s ease';
-
 poison.style.opacity = 0;
-poison.style.transition = 'opacity 3s ease, transform 3s ease';
 poison.style.transformOrigin = 'top center';
 poison.style.transform = 'translateX(-50%) rotate(0deg)';
 
 // CINEMATIC SEQUENCE (~10s)
 requestAnimationFrame(() => {
-    // Step 1: Fade in initial chalice (0–2s)
+    // Step 1: fade in chalice
+    initialChaliceWrapper.style.transition = 'opacity 2s ease';
     initialChaliceWrapper.style.opacity = 1;
 
-    // Step 2: Fade in poison bottle (2–5s)
+    // Step 2: fade in poison
     setTimeout(() => {
         poison.style.opacity = 1;
     }, 2000);
 
-    // Step 3: Tilt to pour slowly (5–8s)
+    // Step 3: tilt to pour slowly
     setTimeout(() => {
         poison.style.transform = 'translateX(-50%) rotate(60deg)';
     }, 5000);
 
-    // Step 4: Return upright and fade out (8–9s)
+    // Step 4: return upright & fade out
     setTimeout(() => {
         poison.style.transform = 'translateX(-50%) rotate(0deg)';
         poison.style.opacity = 0;
         initialChaliceWrapper.style.opacity = 0;
     }, 8000);
 
-    // Step 5: Fade in 3 chalices (10s)
+    // Step 5: fade in 3 chalices
     setTimeout(() => {
-        chalicesContainer.style.transition = 'opacity 1.5s ease';
         chalicesContainer.style.opacity = 1;
         chalicesVisible = true;
         startCandlelightSweep();
     }, 10000);
 });
 
-// Candlelight sweep over chalices
+// Candlelight sweep
 function startCandlelightSweep() {
     let index = 0;
     candleSweepInterval = setInterval(() => {
         chalices.forEach((c, i) => {
             const wrapper = c.parentElement;
             if(!c.classList.contains('selected')) {
-                if(i === index) wrapper.classList.add('highlighted');
-                else wrapper.classList.remove('highlighted');
+                wrapper.classList.toggle('highlighted', i === index);
             }
         });
         index = (index + 1) % chalices.length;
@@ -87,22 +83,17 @@ chalices.forEach(ch => {
         if(locked || !chalicesVisible) return;
         locked = true;
 
-        // Stop candle sweep and remove highlights
         clearInterval(candleSweepInterval);
         chalices.forEach(c => c.parentElement.classList.remove('highlighted'));
 
         const chosen = Number(ch.dataset.id);
 
-        // Fade out unselected
         chalices.forEach(c => { if(c !== ch) c.classList.add('fade'); });
 
-        // Scale & breathing glow on selected
         ch.classList.add('selected');
 
-        // Ember burst
         createEmberBurst(ch, 20);
 
-        // Reveal message or QR
         setTimeout(() => {
             if(chosen === poisonedIndex){
                 message.textContent = "Oh no! You drank from the poisoned chalice!";
@@ -114,15 +105,4 @@ chalices.forEach(ch => {
 });
 
 // Ember burst
-function createEmberBurst(element, count=12){
-    for(let i=0;i<count;i++){
-        const e = document.createElement('div');
-        e.className='ember';
-        const rect = element.getBoundingClientRect();
-        e.style.left = rect.left + Math.random()*rect.width + 'px';
-        e.style.top = rect.top + Math.random()*rect.height + 'px';
-        e.style.animationDuration = 2 + Math.random()*2 + 's';
-        document.body.appendChild(e);
-        setTimeout(()=>e.remove(),4000);
-    }
-}
+function createEmberBurst(element,
