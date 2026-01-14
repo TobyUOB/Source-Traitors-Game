@@ -15,7 +15,7 @@ body {
     overflow-y:auto;
 }
 
-/* SYMBOLS BACKGROUND */
+/* SYMBOLS OVERLAY */
 .symbol-overlay {
     position:fixed;
     inset:0;
@@ -48,21 +48,23 @@ body {
 
 #logo { width:100px; margin-bottom:14px; z-index:10; position:relative; }
 
-h1, #introText {
+#introText {
+    font-size:1.8em;
+    margin:10px 20px;
+    text-align:center;
+    opacity:1;
+    overflow:hidden;
+    white-space:nowrap;
+    border-right:2px solid white;
+    width:0;
+}
+
+h1#chooseText {
     font-size:2em;
     margin:10px 0;
     opacity:0;
     text-align:center;
     width:90%;
-}
-
-/* TYPING EFFECT */
-@keyframes typing { from { width:0; } to { width:100%; } }
-#introText {
-    overflow:hidden;
-    white-space:nowrap;
-    border-right:2px solid white;
-    width:0;
 }
 
 /* PATHS */
@@ -74,7 +76,9 @@ h1, #introText {
     justify-content:center;
     opacity:0;
 }
+
 .path-wrapper { position:relative; }
+
 .path {
     width:200px;
     cursor:pointer;
@@ -84,40 +88,64 @@ h1, #introText {
 }
 .path.fade { opacity:0; }
 
-/* Atmosphere animation (pre-selection) */
-.path.atmosphere {
-    animation:atmosphereAnim 2s infinite alternate ease-in-out;
+.path.atmosphere { 
+    animation:growRotate 2s infinite alternate ease-in-out;
     transform-origin:center bottom;
 }
-@keyframes atmosphereAnim {
-    0% {transform: scale(1) rotate(0deg);}
-    25% {transform: scale(1.03) rotate(1deg);}
-    50% {transform: scale(1.05) rotate(-1deg);}
-    75% {transform: scale(1.03) rotate(1deg);}
-    100% {transform: scale(1) rotate(0deg);}
+@keyframes growRotate {
+    0% {transform:scale(1) rotate(0deg);}
+    50% {transform:scale(1.03) rotate(1deg);}
+    100% {transform:scale(1) rotate(-1deg);}
 }
 
-/* Alternating lights */
-.path-light {
+/* Ambient flare */
+.path-flare {
     position:absolute;
-    top:-10px; left:-10px; right:-10px; bottom:-10px;
-    border-radius:12px;
-    box-shadow:0 0 25px rgba(0,0,0,0.3);
+    top:50%; left:50%;
+    width:180px; height:180px;
+    transform:translate(-50%,-50%);
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%);
     pointer-events:none;
     opacity:0;
 }
-.path-light.animate { animation:alternateGlow 1s infinite alternate; }
-@keyframes alternateGlow {0%,100%{opacity:0.05;}50%{opacity:0.15;}}
 
 /* RESULT IMAGE + TEXT + QR */
-#resultContainer { margin-top:20px; text-align:center; position:relative; z-index:5; display:flex; flex-direction:column; align-items:center; }
-#resultText { font-size:1.8em; margin-top:8px; opacity:0; transition:opacity 1s ease; }
-#resultImg { width:220px; margin:10px auto 0; opacity:0; transform:scale(1.5); transition:opacity 1.5s ease, transform 1.5s ease; }
-#qr { width:200px; margin-top:8px; display:none; }
+#resultContainer {
+    margin-top:20px;
+    text-align:center;
+    position:relative;
+    z-index:5;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+#resultText {
+    font-size:1.8em;
+    margin-top:8px;
+    opacity:0;
+    transition:opacity 1s ease;
+}
+
+#resultImg {
+    width:220px;
+    margin:10px auto 0;
+    opacity:0;
+    transform:scale(1.5);
+    transition:opacity 1.5s ease, transform 1.5s ease;
+}
+
+#qr {
+    width:200px;
+    margin-top:8px;
+    display:none;
+}
 
 /* MOBILE */
 @media(max-width:700px){
     .path { width:140px; }
+    .path-flare { width:120px; height:120px; }
     #resultImg { width:160px; }
 }
 </style>
@@ -133,11 +161,11 @@ h1, #introText {
 
     <div id="pathsWrapper">
         <div class="path-wrapper">
-            <div class="path-light animate"></div>
+            <div class="path-flare"></div>
             <img src="images/path1.png" class="path atmosphere" data-id="0">
         </div>
         <div class="path-wrapper">
-            <div class="path-light animate"></div>
+            <div class="path-flare"></div>
             <img src="images/path2.png" class="path atmosphere" data-id="1">
         </div>
     </div>
@@ -150,7 +178,7 @@ h1, #introText {
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", ()=>{
     const introText = document.getElementById('introText');
     const chooseText = document.getElementById('chooseText');
     const pathsWrapper = document.getElementById('pathsWrapper');
@@ -159,102 +187,107 @@ document.addEventListener("DOMContentLoaded", () => {
     const resultImg = document.getElementById('resultImg');
     const qr = document.getElementById('qr');
 
+    const pathFlares = document.querySelectorAll('.path-flare');
+
     let locked = false;
     const winningIndex = Math.floor(Math.random()*2);
 
-    // Typing effect for intro
+    // --- Typing intro ---
     const text = introText.textContent;
     introText.textContent = '';
     let i=0;
-    const typingSpeed = 50;
     const typeInterval = setInterval(()=>{
         introText.textContent += text[i];
         i++;
         if(i>=text.length){
             clearInterval(typeInterval);
             setTimeout(()=>{
-                // Fade out intro text
-                introText.style.transition = "opacity 1.5s ease";
-                introText.style.opacity = 0;
-                // Fade in choose text & paths
+                introText.style.transition="opacity 1.5s ease";
+                introText.style.opacity=0;
                 setTimeout(()=>{
-                    chooseText.style.transition = "opacity 1s ease";
-                    pathsWrapper.style.transition = "opacity 1s ease";
-                    chooseText.style.opacity = 1;
-                    pathsWrapper.style.opacity = 1;
+                    chooseText.style.transition="opacity 1s ease";
+                    pathsWrapper.style.transition="opacity 1s ease";
+                    chooseText.style.opacity=1;
+                    pathsWrapper.style.opacity=1;
+
+                    // Start alternating flare loop
+                    let flareIndex = 0;
+                    let flareTimer = setInterval(()=>{
+                        if(locked){ pathFlares.forEach(f=>f.style.opacity=0); clearInterval(flareTimer); return; }
+                        pathFlares.forEach((f,i)=>f.style.opacity=i===flareIndex?0.25:0);
+                        flareIndex = (flareIndex+1)%pathFlares.length;
+                    },600);
                 },500);
             },1000);
         }
-    }, typingSpeed);
+    },50);
 
-    // Alternating pre-selection movement
+    // Alternating path movement
     paths.forEach((path,index)=>{
         path.style.animationDelay = (index*0.5)+'s';
     });
 
     paths.forEach(path=>{
-        const light = path.parentElement.querySelector('.path-light');
+        const wrapper = path.parentElement;
+        const flare = wrapper.querySelector('.path-flare');
 
-        path.addEventListener('click', ()=>{
+        path.addEventListener('click',()=>{
             if(locked) return;
-            locked = true;
-
-            // Remove atmosphere & lights
-            document.querySelectorAll('.path').forEach(p=>p.classList.remove('atmosphere'));
-            document.querySelectorAll('.path-light').forEach(l => l.style.display='none');
+            locked=true;
+            paths.forEach(p=>p.classList.remove('atmosphere'));
+            pathFlares.forEach(f=>f.style.opacity=0);
 
             const id = Number(path.dataset.id);
             const selected = path;
             const nonSelected = [...paths].filter(p=>p!==selected)[0];
 
-            // Fade out non-selected path
-            nonSelected.style.transition = "opacity 2s ease";
-            nonSelected.style.opacity = 0;
+            // Fade out non-selected
+            nonSelected.style.transition="opacity 2s ease";
+            nonSelected.style.opacity=0;
 
-            // Save position for castle/mansion
+            // Get position for castle/mansion
             const rect = selected.getBoundingClientRect();
 
             // Pulse for 2s
-            selected.style.transition = "transform 1.5s ease";
-            selected.style.transform = "scale(1.05)";
+            selected.style.transition="transform 1.5s ease";
+            selected.style.transform="scale(1.05)";
             setTimeout(()=>{
-                // Drift to horizontal center
+                // Drift to horizontal center & zoom/fade
                 const wrapperRect = selected.parentElement.getBoundingClientRect();
                 const centerX = wrapperRect.width/2 - rect.width/2;
                 const offsetX = centerX - (rect.left - wrapperRect.left);
-                selected.style.transition = "left 1.5s ease, transform 2.5s ease, opacity 2.5s ease";
-                selected.style.left = offsetX + "px";
-                selected.style.transform = "scale(1.3)";
-                selected.style.opacity = 0;
+                selected.style.transition="left 2s ease, transform 2s ease, opacity 2s ease";
+                selected.style.left = offsetX+"px";
+                selected.style.transform="scale(1.3)";
+                selected.style.opacity=0;
             },2000);
 
-            // Castle/Mansion reveal
+            // Reveal castle/mansion after zoom/fade
             setTimeout(()=>{
-                resultImg.style.position = 'absolute';
-                resultImg.style.left = '50%';
-                resultImg.style.transform = 'translateX(-50%) scale(1.5)';
-                resultImg.style.top = rect.top + window.scrollY + "px";
-                resultImg.style.opacity = 1;
+                resultImg.style.position='absolute';
+                resultImg.style.left='50%';
+                resultImg.style.top=rect.top + window.scrollY + 'px';
+                resultImg.style.transform='translateX(-50%) scale(1.5)';
+                resultImg.style.opacity=1;
 
-                if(id === winningIndex){
-                    resultImg.src = "images/castle.png";
-                    qr.style.display = "block";
-                    resultText.textContent = "You reached the magical castle!";
+                if(id===winningIndex){
+                    resultImg.src="images/castle.png";
+                    qr.style.display="block";
+                    resultText.textContent="You reached the magical castle!";
                 } else {
-                    resultImg.src = "images/mansion.png";
-                    qr.style.display = "none";
-                    resultText.textContent = "Oh no! You ended up in the haunted mansion!";
+                    resultImg.src="images/mansion.png";
+                    qr.style.display="none";
+                    resultText.textContent="Oh no! You ended up in the haunted mansion!";
                 }
 
-                // Reverse scale to normal
+                // Reverse scale for "coming out of path"
                 setTimeout(()=>{
-                    resultImg.style.transition = "transform 1.5s ease";
-                    resultImg.style.transform = 'translateX(-50%) scale(1)';
-                    // Fade in text/QR after castle/mansion reveal
-                    setTimeout(()=>{ resultText.style.opacity = 1; },500);
+                    resultImg.style.transition="transform 1.5s ease";
+                    resultImg.style.transform='translateX(-50%) scale(1)';
+                    setTimeout(()=>{ resultText.style.opacity=1; },500);
                 },50);
 
-            },5500); // pulse + drift + zoom/fade
+            },4500); // pulse + drift + zoom/fade
         });
     });
 });
