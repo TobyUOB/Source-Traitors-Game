@@ -64,7 +64,7 @@ h1 { font-size:2em; text-align:center; margin-bottom:15px; }
 #chaliceBase { width:150px; }
 
 /* Poison bottle */
-#poison { width:80px; position:absolute; opacity:0; transform-origin:top center; transition: all 2.5s ease; }
+#poison { width:80px; opacity:0; transform-origin:top center; transition: all 2.5s ease; }
 
 /* Chalices container */
 #chalices { display:flex; gap:20px; justify-content:center; margin-top:20px; opacity:0; transition: opacity 1.5s ease; }
@@ -72,11 +72,15 @@ h1 { font-size:2em; text-align:center; margin-bottom:15px; }
 .chalice-wrapper { position: relative; display:inline-block; }
 .chalice-wrapper::before {
     content:'';
-    position:absolute; inset:0; border-radius:50%;
-    background: radial-gradient(circle, rgba(255,200,80,0.35) 0%, transparent 70%);
+    position:absolute;
+    top:50%; left:50%;
+    width:150px; height:150px;
+    transform:translate(-50%, -50%);
+    border-radius:50%;
+    background: radial-gradient(circle, rgba(255,200,80,0.25) 0%, transparent 70%);
     opacity:0;
     pointer-events:none;
-    filter: blur(20px);
+    filter: blur(25px);
     transition: opacity 0.3s ease;
     z-index:0;
 }
@@ -104,6 +108,7 @@ h1 { font-size:2em; text-align:center; margin-bottom:15px; }
     .chalice-wrapper img.chalice { width:100px; }
     #poison { width:50px; }
     #chaliceBase { width:100px; }
+    .chalice-wrapper::before { width:100px; height:100px; }
 }
 </style>
 </head>
