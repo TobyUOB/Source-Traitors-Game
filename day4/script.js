@@ -31,7 +31,7 @@ for (let i = 0; i < 20; i++) {
 setTimeout(() => {
     initialChaliceWrapper.style.opacity = 1;
 
-    // Step 2: Poison bottle appear inside wrapper (relative positioning)
+    // Step 2: Poison bottle appears inside wrapper (relative positioning)
     poison.style.position = 'absolute';
     poison.style.left = '50%';
     poison.style.top = '-70px'; // just above chalice
@@ -44,21 +44,25 @@ setTimeout(() => {
         poison.style.transform = 'translateX(-50%) rotate(60deg)'; // pour
     }, 200);
 
-    // Step 3: Return bottle upright and fade out after pouring
+    // Step 3: Fade out poison & initial chalice after pouring (~2.5s)
     setTimeout(() => {
-        poison.style.transform = 'translateX(-50%) rotate(0deg)';
+        // Fade out gradually
+        poison.style.transition = 'opacity 1s ease';
+        initialChaliceWrapper.style.transition = 'opacity 1s ease';
+
         poison.style.opacity = 0;
         initialChaliceWrapper.style.opacity = 0;
-    }, 2500);
+
+        // Step 4: Start fade-in of 3 chalices after 1s delay
+        setTimeout(() => {
+            chalicesContainer.style.transition = 'opacity 1.5s ease';
+            chalicesContainer.style.opacity = 1;
+            chalicesVisible = true; // allow selection
+            startCandlelightSweep();
+        }, 1000); // 1 second gap after fade-out
+    }, 2500); // allow tilt to complete before fading
 
 }, 500);
-
-// Step 4: Fade in 3 chalices after longer cinematic pause
-setTimeout(() => {
-    chalicesContainer.style.opacity = 1;
-    chalicesVisible = true; // allow selection now
-    startCandlelightSweep();
-}, 5500);
 
 // Continuous candlelight sweep over 3 chalices
 function startCandlelightSweep() {
@@ -81,7 +85,7 @@ chalices.forEach(ch => {
         if(locked || !chalicesVisible) return;
         locked = true;
 
-        // Stop candle sweep
+        // Stop candle sweep and remove highlights
         clearInterval(candleSweepInterval);
         chalices.forEach(c => c.parentElement.classList.remove('highlighted'));
 
