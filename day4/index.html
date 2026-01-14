@@ -45,7 +45,7 @@ h1 { font-size:2em; text-align:center; margin-bottom:15px; }
 #container { position:relative; z-index:5; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding-top:20px; }
 
 /* Initial chalice + candlelight */
-#initialChaliceWrapper { position:relative; margin-top:20px; }
+#initialChaliceWrapper { position:relative; margin-top:20px; transition: opacity 1s ease; }
 #candlelight { position:absolute; inset:0; background:radial-gradient(circle, rgba(255,180,50,0.4) 0%, transparent 80%); opacity:0; pointer-events:none; border-radius:50%; transition: opacity 0.5s ease; }
 #chaliceBase { width:150px; }
 
@@ -54,9 +54,22 @@ h1 { font-size:2em; text-align:center; margin-bottom:15px; }
 
 /* Chalices container */
 #chalices { display:flex; gap:20px; justify-content:center; margin-top:20px; opacity:0; transition:opacity 1s ease; }
-.chalice { width:150px; cursor:pointer; transition: all 0.8s ease; filter: drop-shadow(0 0 12px rgba(255,120,60,.6)); }
-.chalice.fade { opacity:0; transform:scale(.8); }
-.chalice.selected { transform:scale(1.2); z-index:10; }
+.chalice-wrapper { position: relative; display:inline-block; }
+.chalice-wrapper::before {
+    content:'';
+    position:absolute; inset:0; border-radius:50%;
+    background: radial-gradient(circle, rgba(255,200,80,0.4) 0%, transparent 70%);
+    opacity:0;
+    pointer-events:none;
+    filter: blur(20px);
+    transition: opacity 0.3s ease;
+    z-index:0;
+}
+.chalice-wrapper.highlighted::before { opacity:1; }
+
+.chalice-wrapper img.chalice { position:relative; z-index:1; width:150px; cursor:pointer; transition: all 0.8s ease; filter: drop-shadow(0 0 12px rgba(255,120,60,.6)); }
+.chalice-wrapper img.chalice.fade { opacity:0; transform:scale(.8); }
+.chalice-wrapper img.chalice.selected { transform:scale(1.2); z-index:10; }
 
 /* Message for poisoned chalice */
 #message { margin-top:20px; font-size:1.8em; text-align:center; }
@@ -67,7 +80,7 @@ h1 { font-size:2em; text-align:center; margin-bottom:15px; }
 /* MOBILE */
 @media(max-width:700px) {
     #chalices { flex-wrap: nowrap; overflow-x:auto; padding-bottom:10px; }
-    .chalice { width:100px; flex-shrink:0; margin:0 5px; }
+    .chalice-wrapper img.chalice { width:100px; }
     #poison { width:50px; top:40px; }
     #chaliceBase { width:100px; }
 }
@@ -90,9 +103,15 @@ h1 { font-size:2em; text-align:center; margin-bottom:15px; }
     <img src="images/poison.png" id="poison">
 
     <div id="chalices">
-        <img src="images/chalice.png" class="chalice" data-id="0">
-        <img src="images/chalice.png" class="chalice" data-id="1">
-        <img src="images/chalice.png" class="chalice" data-id="2">
+        <div class="chalice-wrapper">
+            <img src="images/chalice.png" class="chalice" data-id="0">
+        </div>
+        <div class="chalice-wrapper">
+            <img src="images/chalice.png" class="chalice" data-id="1">
+        </div>
+        <div class="chalice-wrapper">
+            <img src="images/chalice.png" class="chalice" data-id="2">
+        </div>
     </div>
 
     <div id="message"></div>
@@ -106,4 +125,3 @@ h1 { font-size:2em; text-align:center; margin-bottom:15px; }
 <script src="script.js"></script>
 </body>
 </html>
-
