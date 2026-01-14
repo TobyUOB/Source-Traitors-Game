@@ -4,7 +4,6 @@ const chalices = document.querySelectorAll('.chalice');
 const poison = document.getElementById('poison');
 const qr = document.getElementById('qr');
 const message = document.getElementById('message');
-const fire = document.getElementById('fire');
 const emberContainer = document.getElementById('embers');
 
 let locked = false;
@@ -23,20 +22,10 @@ for (let i = 0; i < 20; i++) {
     emberContainer.appendChild(e);
 }
 
-// Start everything on first user interaction (desktop autoplay fix)
-let started = false;
-function startSequence() {
-    if(started) return;
-    started = true;
-
-    fire.play().catch(()=>{}); // play fire sound
-    runCinematic();
-}
-
-document.addEventListener('click', startSequence, {once:true});
+// Immediately run cinematic sequence on page load
+window.addEventListener('load', () => runCinematic());
 
 function runCinematic() {
-    // Initial setup
     initialChaliceWrapper.style.opacity = 0;
     poison.style.opacity = 0;
     poison.style.transform = 'translateX(-50%) rotate(0deg)';
