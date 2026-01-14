@@ -16,6 +16,7 @@ body {
     overflow-x:hidden;
 }
 
+/* SYMBOLS OVERLAY */
 .symbol-overlay {
     position:fixed;
     inset:0;
@@ -30,6 +31,15 @@ body {
     0% {opacity:0.08; transform:rotate(0deg);}
     50% {opacity:0.15; transform:rotate(1deg);}
     100% {opacity:0.08; transform:rotate(-1deg);}
+}
+
+/* FLICKER HEADING */
+@keyframes flicker {
+    0%,100% { opacity:1; }
+    50% { opacity:0.5; }
+}
+.flicker {
+    animation: flicker 1.2s infinite alternate;
 }
 
 #container {
@@ -52,77 +62,10 @@ body {
 h1 {
     font-size:2em;
     margin:10px 0;
-    opacity:0;
     text-align:center;
     width:100%;
-    transition:opacity 1s ease;
-}
-
-.flicker {
-    animation: flicker 1.2s infinite alternate;
-}
-@keyframes flicker {
-    0%,100% { opacity:1; }
-    50% { opacity:0.5; }
-}
-
-/* PATHS */
-#pathsWrapper {
-    position:relative;
-    display:flex;
-    gap:40px;
-    margin-top:30px;
-    justify-content:center;
     opacity:0;
     transition:opacity 1s ease;
-}
-
-.path {
-    width:200px;
-    cursor:pointer;
-    transition:transform .6s ease, opacity .6s ease;
-    position:relative;
-}
-.path.fade {
-    opacity:0;
-}
-#flare {
-    position:absolute;
-    width:220px;
-    height:220px;
-    border-radius:50%;
-    background:radial-gradient(circle, rgba(255,180,80,0.25) 0%, transparent 70%);
-    pointer-events:none;
-    opacity:0;
-}
-
-/* RESULT WRAPPER */
-#resultWrapper {
-    position:absolute;
-    top:0;
-    left:50%;
-    transform:translateX(-50%);
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    pointer-events:none;
-}
-
-#resultImg {
-    width:220px;
-    opacity:0;
-    transition:opacity 1.5s ease, transform 1.5s ease;
-}
-#resultText {
-    font-size:1.8em;
-    margin-top:8px;
-    text-align:center;
-    opacity:0;
-}
-#qr {
-    width:200px;
-    margin-top:8px;
-    display:none;
 }
 
 /* AMBIENT EMBERS */
@@ -147,15 +90,103 @@ h1 {
     to {transform:translateY(-50px) translateX(-40px); opacity:0;}
 }
 
+/* PATHS */
+#pathsWrapper {
+    position:relative;
+    display:flex;
+    gap:40px;
+    margin-top:40px;
+    justify-content:center;
+    opacity:0;
+    transition:opacity 1s ease;
+}
+
+.pathWrapper {
+    position: relative;
+}
+
+.pathGlow {
+    position: absolute;
+    inset:0;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,0,0,0.6) 0%, transparent 70%);
+    opacity:0.5;
+    pointer-events:none;
+    z-index:0;
+    transform: scale(1);
+    animation: glowPulse 1.5s infinite alternate ease-in-out;
+}
+
+@keyframes glowPulse {
+    0% { opacity:0.4; transform:scale(1); }
+    50% { opacity:0.55; transform:scale(1.05); }
+    100% { opacity:0.4; transform:scale(1); }
+}
+
+.path {
+    width:200px;
+    cursor:pointer;
+    transition:transform 0.6s ease, opacity 0.6s ease, left 1.5s ease;
+    position:relative;
+    z-index:5;
+}
+
+.path.fade { opacity:0; }
+
+/* FLARE */
+#flare {
+    position:absolute;
+    width:220px;
+    height:220px;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(255,180,80,0.25) 0%, transparent 70%);
+    top:50%;
+    left:0;
+    transform:translate(-50%, -50%);
+    pointer-events:none;
+    opacity:0;
+}
+
+/* RESULT IMAGE + TEXT + QR */
+#resultContainer {
+    margin-top:12px;
+    text-align:center;
+    position:relative;
+    z-index:5;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+#resultText {
+    font-size:1.8em;
+    margin:8px 0 0 0;
+    opacity:0;
+    transition:opacity 1s ease;
+}
+
+#resultImg {
+    width:220px;
+    margin:0 auto 8px auto;
+    opacity:0;
+    transition:opacity 1.5s ease, transform 1.5s ease;
+}
+
+#qr {
+    width:200px;
+    margin-top:8px;
+    display:none;
+}
+
 /* MOBILE */
 @media(max-width:700px){
     .path { width:140px; }
     #flare { width:160px; height:160px; }
     #resultImg { width:160px; }
-    #qr { width:160px; }
 }
 </style>
 </head>
+
 <body>
 <div class="symbol-overlay"></div>
 <div id="embers"></div>
@@ -165,12 +196,18 @@ h1 {
     <h1 id="heading"></h1>
 
     <div id="pathsWrapper">
+        <div class="pathWrapper">
+            <div class="pathGlow"></div>
+            <img src="images/path1.png" class="path" data-id="0">
+        </div>
+        <div class="pathWrapper">
+            <div class="pathGlow"></div>
+            <img src="images/path2.png" class="path" data-id="1">
+        </div>
         <div id="flare"></div>
-        <img src="images/path1.png" class="path" data-id="0">
-        <img src="images/path2.png" class="path" data-id="1">
     </div>
 
-    <div id="resultWrapper">
+    <div id="resultContainer">
         <img id="resultImg" src="">
         <div id="resultText"></div>
         <img id="qr" src="qr/day2prize.png">
@@ -183,132 +220,132 @@ document.addEventListener("DOMContentLoaded", () => {
 const heading = document.getElementById('heading');
 const pathsWrapper = document.getElementById('pathsWrapper');
 const paths = document.querySelectorAll('.path');
-const flare = document.getElementById('flare');
-const resultWrapper = document.getElementById('resultWrapper');
 const resultImg = document.getElementById('resultImg');
 const resultText = document.getElementById('resultText');
 const qr = document.getElementById('qr');
+const flare = document.getElementById('flare');
 const emberContainer = document.getElementById('embers');
 
 let locked = true;
-const winningIndex = Math.floor(Math.random()*2);
 let pulseIndex = 0;
-let pulseTimer = null;
+let pulseTimer;
+
+// Random winning path
+const winningIndex = Math.floor(Math.random()*2);
 
 // Ambient embers
 for(let i=0;i<20;i++){
-    const e=document.createElement('div');
+    const e = document.createElement('div');
     e.className='ember';
-    e.style.left=Math.random()*100+'%';
-    e.style.animationDelay=Math.random()*6+'s';
+    e.style.left = Math.random()*100+'%';
+    e.style.animationDelay = Math.random()*6+'s';
     emberContainer.appendChild(e);
 }
 
 // Intro typing
 function typeText(text, cb){
-    heading.textContent="";
     let i=0;
-    const t = setInterval(()=>{
+    heading.textContent="";
+    const t=setInterval(()=>{
         heading.textContent+=text[i++];
-        if(i===text.length){clearInterval(t);cb&&cb();}
-    },95);
+        if(i===text.length){
+            clearInterval(t);
+            cb && cb();
+        }
+    },90);
 }
 
 typeText("After walking for some time you reach a fork in the road...", ()=>{
     setTimeout(()=>{
-        // Fade out intro text
-        heading.style.opacity=0;
-        setTimeout(()=>{
-            heading.textContent="Choose your path";
-            heading.style.opacity=1;
-            heading.classList.add("flicker");
-            pathsWrapper.style.opacity=1;
-            locked=false;
-
-            // Start idle pulse
-            pulseTimer = setInterval(()=>{
-                paths.forEach(p=>p.style.transform='scale(1) rotate(0deg)');
-                const p = paths[pulseIndex];
-                p.style.transform='scale(1.05) rotate(1deg)';
-                pulseIndex=(pulseIndex+1)%paths.length;
-            },900);
-
-        },500);
-    },1000);
+        // Show choose path text and paths
+        heading.textContent="Choose your path";
+        heading.classList.add("flicker");
+        heading.style.opacity=1;
+        pathsWrapper.style.opacity=1;
+        locked=false;
+        startPulse();
+    },500);
 });
+
+// Pulse loop for idle paths
+function startPulse(){
+    pulseTimer = setInterval(()=>{
+        paths.forEach(p=>p.style.transform="scale(1)");
+        const p = paths[pulseIndex];
+        p.style.transform="scale(1.05) rotate(1deg)";
+        pulseIndex=(pulseIndex+1)%paths.length;
+    },900);
+}
 
 // Path selection
 paths.forEach(path=>{
     path.addEventListener('click', ()=>{
         if(locked) return;
-        locked = true;
+        locked=true;
         clearInterval(pulseTimer);
+
+        // Remove all glows
+        document.querySelectorAll('.pathGlow').forEach(g=>g.remove());
 
         const selId = Number(path.dataset.id);
         const selected = path;
         const nonSelected = [...paths].filter(p=>p!==selected)[0];
 
-        // Fade out non-selected path
-        nonSelected.style.transition="opacity 2s ease";
+        // 1. Fade out non-selected path
+        nonSelected.style.transition="opacity 1.5s ease";
         nonSelected.style.opacity=0;
 
-        // Keep flare visible on selected path
-        flare.style.opacity=0.25;
-        const rect = selected.getBoundingClientRect();
-        flare.style.left = rect.left + rect.width/2 + "px";
-        flare.style.top = rect.top + rect.height/2 + "px";
-
-        // After non-selected fade completes
+        // 2. After non-selected path faded, move selected central
         setTimeout(()=>{
-            // Move selected path to center smoothly
+            const rect = selected.getBoundingClientRect();
             const wrapperRect = pathsWrapper.getBoundingClientRect();
-            const centerX = wrapperRect.left + wrapperRect.width/2 - rect.width/2;
-            selected.style.transition = "transform 2s ease, left 2s ease, opacity 1.5s ease";
+            const offsetX = (wrapperRect.width/2 - rect.width/2) - (rect.left - wrapperRect.left);
             selected.style.position="relative";
-            const offsetX = centerX - rect.left;
-            selected.style.left = offsetX + "px";
+            selected.style.left=offsetX+"px";
 
-            // Keep pulsing for 2s before zoom/fade
+            // Pulse for 1s before zoom/fade
             setTimeout(()=>{
-                selected.style.transform="scale(1.3)";
+                selected.style.transition="transform 2s ease, opacity 2s ease";
+                selected.style.transform="scale(1.5)";
                 selected.style.opacity=0;
-            },2000);
+            },1000);
 
-            // Show castle/mansion after 1s pause
+        },1500);
+
+        // 3. Reveal castle/mansion after 1s pause post zoom/fade
+        setTimeout(()=>{
+            if(selId===winningIndex){
+                resultImg.src="images/castle.png";
+            } else {
+                resultImg.src="images/mansion.png";
+            }
+
+            const rect = selected.getBoundingClientRect();
+            resultImg.style.position="relative";
+            resultImg.style.left="0";
+            resultImg.style.top="0";
+            resultImg.style.opacity=0;
+            resultImg.style.transform="scale(1.5)";
+            resultImg.style.transition="opacity 1.5s ease, transform 1.5s ease";
+
+            // Force reflow before animating
+            resultImg.offsetHeight;
+            resultImg.style.opacity=1;
+            resultImg.style.transform="scale(1)";
+
             setTimeout(()=>{
-                flare.style.opacity=0;
-                const selRect = selected.getBoundingClientRect();
-                resultWrapper.style.position="absolute";
-                resultWrapper.style.top=selRect.top + "px";
-                resultWrapper.style.left=selRect.left + selRect.width/2 + "px";
-                resultWrapper.style.transform="translateX(-50%)";
-                resultImg.src = selId===winningIndex?"images/castle.png":"images/mansion.png";
-                resultImg.style.width=selRect.width+"px";
-                resultImg.style.opacity=0;
-                resultImg.style.transform="scale(1.3)";
+                if(selId===winningIndex){
+                    resultText.textContent="You reached the magical castle!";
+                    qr.style.display="block";
+                } else {
+                    resultText.textContent="Oh no! You ended up in the haunted mansion!";
+                }
+                resultText.style.opacity=1;
+            },1600);
 
-                // Reverse zoom and fade in
-                resultImg.style.transition="opacity 1.5s ease, transform 1.5s ease";
-                setTimeout(()=>{
-                    resultImg.style.opacity=1;
-                    resultImg.style.transform="scale(1)";
-                },100);
+        },4600);
 
-                // Show text and QR after image animation
-                setTimeout(()=>{
-                    if(selId===winningIndex){
-                        resultText.textContent="You reached the magical castle!";
-                        qr.style.display="block";
-                    }else{
-                        resultText.textContent="Oh no! You ended up in the haunted mansion!";
-                    }
-                    resultText.style.opacity=1;
-                },1600);
-            },5500); // after fade & pause
-        },2000);
     });
-});
-
 });
 </script>
 </body>
