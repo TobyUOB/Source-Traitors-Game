@@ -51,9 +51,9 @@ body {
 
 #flare {position:absolute; width:200px; height:200px; border-radius:50%; background:radial-gradient(circle, rgba(255,180,80,0.25) 0%, transparent 70%); top:50%; left:0; transform:translate(-50%, -50%); pointer-events:none; opacity:0;}
 
-#resultContainer {margin-top:12px; text-align:center; position:relative; z-index:5; display:flex; flex-direction:column; align-items:center; opacity:1;}
-#resultText {font-size:1.8em; margin-top:180px; text-align:center;}
-#resultImg {width:220px; margin:0 auto; opacity:0; transition:opacity 1.5s ease, transform 1.5s ease;}
+#resultContainer {position:absolute; display:flex; flex-direction:column; align-items:center; top:0; left:0; width:100%; pointer-events:none;}
+#resultImg {width:220px; opacity:0; transition:opacity 1.5s ease, transform 1.5s ease;}
+#resultText {font-size:1.8em; margin-top:10px; text-align:center; opacity:0; transition:opacity 1s ease;}
 #qr {width:200px; margin-top:8px; display:none;}
 
 @media(max-width:700px){.path{width:140px;}#flare{width:160px;height:160px;}#resultImg{width:160px;}}
@@ -120,7 +120,6 @@ typeText("After walking for sometime you reach a fork in the road...",()=>{
         heading.textContent="Choose your path";
         heading.classList.add("flicker");
         heading.style.opacity=1;
-        // Fade in paths
         pathsWrapper.style.opacity=1;
         pathsWrapper.style.pointerEvents="auto";
         startPulse();
@@ -149,11 +148,11 @@ paths.forEach(path=>{
         const selected=path;
         const other=[...paths].filter(p=>p!==selected)[0];
 
-        // 1. Fade non-selected first
+        // Fade non-selected path first
         other.style.transition="opacity 1.5s ease";
         other.style.opacity=0;
 
-        // 2. Keep pulse for a few seconds on selected path before zoom
+        // Keep pulse for 1.5s then move central
         setTimeout(()=>{
             const rect=selected.getBoundingClientRect();
             const wrapperRect=pathsWrapper.getBoundingClientRect();
@@ -162,7 +161,7 @@ paths.forEach(path=>{
             selected.style.position="relative";
             selected.style.left=offsetX+"px";
 
-            // Extra pulse before zoom
+            // Slight pulse for 1s before zoom
             selected.style.transition="transform 0.8s ease";
             selected.style.transform="scale(1.08) rotate(1deg)";
 
@@ -172,16 +171,17 @@ paths.forEach(path=>{
                 selected.style.transform="scale(1.3)";
                 selected.style.opacity=0;
 
-                // Pause 1s before castle/mansion reveal
+                // 1s pause before castle/mansion reveal
                 setTimeout(()=>{
-                    const finalRect=selected.getBoundingClientRect();
+                    // Get position for castle/mansion
+                    const selRect=selected.getBoundingClientRect();
                     resultImg.src=id===winningIndex?"images/castle.png":"images/mansion.png";
                     resultImg.style.position="absolute";
-                    resultImg.style.left=finalRect.left+"px";
-                    resultImg.style.top=finalRect.top+"px";
-                    resultImg.style.width=finalRect.width+"px";
+                    resultImg.style.left=selRect.left + "px";
+                    resultImg.style.top=selRect.top + "px";
+                    resultImg.style.width=selRect.width + "px";
                     resultImg.style.opacity=0;
-                    resultImg.style.transform="scale(1.3)";
+                    resultImg.style.transform="scale(1.3)"; // reverse zoom effect
                     resultImg.style.transition="opacity 1.5s ease, transform 1.5s ease";
                     document.body.appendChild(resultImg);
 
@@ -190,16 +190,16 @@ paths.forEach(path=>{
                         resultImg.style.transform="scale(1)";
                     });
 
-                    // Show result text + QR below after castle/mansion fade
+                    // Show text & QR below castle/mansion after fade
                     setTimeout(()=>{
-                        resultContainer.style.opacity=1;
+                        resultText.style.opacity=1;
                         resultText.textContent=id===winningIndex?"You reached the magical castle!":"Oh no! You ended up in the haunted mansion!";
                         if(id===winningIndex) qr.style.display="block";
                     },1600);
 
-                },1000); // 1s pause after path zoom/fade
-            },500); // short pulse
-        },1600); // wait for non-selected fade + pulse
+                },1000);
+            },1000);
+        },1600);
     });
 });
 });
