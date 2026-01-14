@@ -62,10 +62,11 @@ h1 {
     align-items:center;
 }
 
-/* INTRO CHALICE WRAPPER */
+/* INTRO CHALICE WRAPPER (moved down for spacing) */
 #introChaliceWrapper {
     position:relative;
     display:inline-block;
+    top:40px; /* moves chalice + poison down */
 }
 
 #chaliceIntro {
@@ -95,13 +96,14 @@ h1 {
     100% {opacity:0.38;}
 }
 
-/* Poison bottle positioned relative to chalice */
+/* Poison bottle positioned relative to chalice with offset left */
 #poison {
     position:absolute;
     width:140px;
-    bottom:80%;       /* above chalice */
-    left:50%;         /* center over chalice */
+    bottom:80%;       
+    left:50%;         
     transform:translateX(-50%) rotate(0deg);
+    margin-left:-40px; /* offset left for natural pour */
     opacity:0;
     transition:opacity 2s ease, transform 3.5s ease;
 }
@@ -147,7 +149,7 @@ h1 {
 /* MOBILE */
 @media(max-width:700px){
     #chaliceIntro { width:160px; }
-    #poison { width:110px; bottom:78%; }  /* slight vertical tweak for mobile */
+    #poison { width:110px; bottom:78%; margin-left:-35px; }
     .choice { width:110px; }
 }
 </style>
