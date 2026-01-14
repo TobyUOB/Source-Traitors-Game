@@ -55,7 +55,7 @@ h1 {
     opacity:0;
     text-align:center;
     width:100%;
-    transition:opacity 1s ease;
+    transition:opacity 0.5s ease;
 }
 
 .flicker {
@@ -207,6 +207,7 @@ for(let i=0;i<20;i++){
 // Intro typing
 function typeText(text, cb){
     heading.textContent="";
+    heading.style.opacity=1; // <- ensure text is visible while typing
     let i=0;
     const t = setInterval(()=>{
         heading.textContent+=text[i++];
