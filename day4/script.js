@@ -1,10 +1,11 @@
 const initialChaliceWrapper = document.getElementById('initialChaliceWrapper');
-const chalicesContainer = document.getElementById('chalices');
+const chalicesWrapper = document.getElementById('chalicesWrapper');
 const chalices = document.querySelectorAll('.chalice');
 const poison = document.getElementById('poison');
 const qr = document.getElementById('qr');
 const message = document.getElementById('message');
 const emberContainer = document.getElementById('embers');
+const chaliceGlow = document.getElementById('chaliceGlow');
 
 let locked = false;
 let chalicesVisible = false;
@@ -48,22 +49,23 @@ function runCinematic() {
 
     // fade in 3 chalices
     setTimeout(() => {
-        chalicesContainer.style.opacity = 1;
+        chalicesWrapper.style.opacity = 1;
         chalicesVisible = true;
         startCandlelightSweep();
     }, 10050);
 }
 
-// Candlelight sweep - only one glow at a time
+// Candlelight sweep - move glow behind each chalice
 function startCandlelightSweep() {
     let index = 0;
     candleSweepInterval = setInterval(() => {
-        chalices.forEach((c,i)=>{
-            const wrapper = c.parentElement;
-            if(!c.classList.contains('selected')){
-                wrapper.classList.toggle('highlighted', i===index);
-            }
-        });
+        if (locked) return;
+        const chal = chalices[index];
+        const rect = chal.getBoundingClientRect();
+        const containerRect = chalicesWrapper.getBoundingClientRect();
+        chaliceGlow.style.left = (rect.left - containerRect.left + rect.width/2) + 'px';
+        chaliceGlow.style.top  = (rect.top - containerRect.top + rect.height/2) + 'px';
+        chaliceGlow.style.opacity = 1;
         index = (index + 1) % chalices.length;
     }, 600);
 }
@@ -75,7 +77,7 @@ chalices.forEach(ch => {
         locked = true;
 
         clearInterval(candleSweepInterval);
-        chalices.forEach(c => c.parentElement.classList.remove('highlighted'));
+        chaliceGlow.style.opacity = 0;
 
         const chosen = Number(ch.dataset.id);
 
