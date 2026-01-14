@@ -26,39 +26,46 @@ for (let i = 0; i < 20; i++) {
     emberContainer.appendChild(e);
 }
 
-// Step 1: Fade in initial chalice
+// Step 1: Fade in initial chalice slowly
 setTimeout(() => {
     initialChaliceWrapper.style.opacity = 1;
-
-    // Step 2: Show candlelight + poison pour
-    candlelight.style.opacity = 1;
-    poison.style.opacity = 1;
-    poison.style.transform = 'rotate(60deg)';
-
-    setTimeout(() => {
-        // Step 3: Fade out initial chalice + poison + candlelight
-        initialChaliceWrapper.style.opacity = 0;
-        poison.style.opacity = 0;
-        poison.style.transform = 'rotate(0deg)';
-        candlelight.style.opacity = 0;
-
-        // Step 4: Fade in 3 chalices
-        chalicesContainer.style.opacity = 1;
-        candlelightHighlight(0);
-    }, 1500);
-
 }, 500);
 
-// Candlelight “torch” highlight sequence
-function candlelightHighlight(index){
-    if(index >= chalices.length) return;
+// Step 2: Poison fade-in and pour
+setTimeout(() => {
+    const rect = chaliceBase.getBoundingClientRect();
+    poison.style.left = rect.left + rect.width/2 - 40 + 'px';
+    poison.style.top = rect.top - 80 + 'px';
+    poison.style.opacity = 1;
 
-    const wrapper = chalices[index].parentElement;
-    wrapper.classList.add('highlighted');
+    setTimeout(() => poison.style.transform = 'rotate(60deg)', 50);
 
-    setTimeout(()=>{
-        wrapper.classList.remove('highlighted');
-        candlelightHighlight(index + 1);
+    // Step 3: Fade out poison & initial chalice after pour
+    setTimeout(() => {
+        poison.style.opacity = 0;
+        initialChaliceWrapper.style.opacity = 0;
+    }, 2600);
+
+}, 2000); // delay after chalice fade-in
+
+// Step 4: Fade in 3 chalices after a short delay
+setTimeout(() => {
+    chalicesContainer.style.opacity = 1;
+    startCandlelightSweep();
+}, 5200);
+
+// Continuous candlelight sweep
+function startCandlelightSweep() {
+    let index = 0;
+    setInterval(() => {
+        chalices.forEach((c, i) => {
+            const wrapper = c.parentElement;
+            if(!c.classList.contains('selected')) { // don't override selected chalice
+                if(i === index) wrapper.classList.add('highlighted');
+                else wrapper.classList.remove('highlighted');
+            }
+        });
+        index = (index + 1) % chalices.length;
     }, 600);
 }
 
@@ -73,7 +80,7 @@ chalices.forEach(ch => {
         // Fade out unselected
         chalices.forEach(c => { if(c !== ch) c.classList.add('fade'); });
 
-        // Scale selected
+        // Scale & breathing glow on selected
         ch.classList.add('selected');
 
         // Ember burst
@@ -98,8 +105,4 @@ function createEmberBurst(element, count=12){
         const rect = element.getBoundingClientRect();
         e.style.left = rect.left + Math.random()*rect.width + 'px';
         e.style.top = rect.top + Math.random()*rect.height + 'px';
-        e.style.animationDuration = 2 + Math.random()*2 + 's';
-        document.body.appendChild(e);
-        setTimeout(()=>e.remove(),4000);
-    }
-}
+        e.style.animationDuration = 2 + Math.random()*2 +*
