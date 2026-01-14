@@ -35,10 +35,7 @@ body {
     padding-top:20px;
 }
 
-#logo {
-    width:100px;
-    margin-bottom:10px;
-}
+#logo { width:100px; margin-bottom:10px; }
 
 h1 {
     font-size:2em;
@@ -51,8 +48,8 @@ h1 {
     position:relative;
     height:260px;
     display:flex;
-    align-items:flex-end;
     justify-content:center;
+    align-items:flex-end;
 }
 
 #chaliceIntro {
@@ -85,10 +82,7 @@ h1 {
     transition:all .6s ease;
 }
 
-.chalice.fade {
-    opacity:0;
-    transform:scale(.85);
-}
+.chalice.fade { opacity:0; transform:scale(.85); }
 
 .chalice.selected {
     animation:breath 1.4s infinite alternate;
@@ -105,21 +99,10 @@ h1 {
     100% { transform:scale(1) rotate(0deg); }
 }
 
-.pulsing {
-    animation:pulse 1.4s ease-in-out infinite;
-}
+.pulsing { animation:pulse 1.4s ease-in-out infinite; }
 
-#message {
-    margin-top:20px;
-    font-size:1.6em;
-    text-align:center;
-}
-
-#qr {
-    margin-top:20px;
-    width:200px;
-    display:none;
-}
+#message { margin-top:20px; font-size:1.6em; text-align:center; }
+#qr { margin-top:20px; width:200px; display:none; }
 
 @media(max-width:700px){
     .chalice { width:100px; }
@@ -133,7 +116,6 @@ h1 {
 
 <div id="container">
     <img id="logo" src="images/logo.png">
-
     <h1 id="heading"></h1>
 
     <div id="introContainer">
@@ -151,6 +133,83 @@ h1 {
     <img id="qr" src="qr/day4prize.png">
 </div>
 
-<script src="script.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    const heading = document.getElementById('heading');
+    const chaliceIntro = document.getElementById('chaliceIntro');
+    const poison = document.getElementById('poison');
+    const chalicesContainer = document.getElementById('chalices');
+    const chalices = document.querySelectorAll('.chalice');
+    const message = document.getElementById('message');
+    const qr = document.getElementById('qr');
+
+    let locked = false;
+    let sweepInterval;
+    const poisonedIndex = Math.floor(Math.random() * 3);
+
+    function typeText(text, cb){
+        let i = 0;
+        heading.textContent = "";
+        const t = setInterval(() => {
+            heading.textContent += text[i++];
+            if(i >= text.length){
+                clearInterval(t);
+                cb && cb();
+            }
+        }, 80);
+    }
+
+    typeText("Earlier today...", () => {
+
+        setTimeout(() => chaliceIntro.style.opacity = 1, 800);
+        setTimeout(() => poison.style.opacity = 1, 2800);
+        setTimeout(() => poison.style.transform = "translateX(-50%) rotate(65deg)", 5200);
+
+        setTimeout(() => {
+            poison.style.opacity = 0;
+            chaliceIntro.style.opacity = 0;
+        }, 8200);
+
+        setTimeout(() => {
+            heading.textContent = "Avoid the poisoned chalice";
+            chalicesContainer.style.opacity = 1;
+            startSweep();
+        }, 10400);
+    });
+
+    function startSweep(){
+        let i = 0;
+        sweepInterval = setInterval(() => {
+            chalices.forEach(c => c.classList.remove('pulsing'));
+            chalices[i].classList.add('pulsing');
+            i = (i + 1) % chalices.length;
+        }, 900);
+    }
+
+    chalices.forEach(ch => {
+        ch.addEventListener('click', () => {
+            if(locked || chalicesContainer.style.opacity === "0") return;
+            locked = true;
+
+            clearInterval(sweepInterval);
+            chalices.forEach(c => c.classList.remove('pulsing'));
+
+            const chosen = Number(ch.dataset.id);
+            chalices.forEach(c => c !== ch && c.classList.add('fade'));
+            ch.classList.add('selected');
+
+            setTimeout(() => {
+                if(chosen === poisonedIndex){
+                    message.textContent = "Oh no! You drank from the poisoned chalice!";
+                } else {
+                    qr.style.display = "block";
+                }
+            }, 800);
+        });
+    });
+
+});
+</script>
 </body>
 </html>
