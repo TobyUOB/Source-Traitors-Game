@@ -76,30 +76,27 @@ h1 { font-size:2em; text-align:center; margin-bottom:15px; }
 }
 
 /* Chalices selection */
-#chalices { display:flex; gap:20px; justify-content:center; margin-top:20px; opacity:0; transition: opacity 1.5s ease; }
-
-.chalice-wrapper { position:relative; display:inline-block; width:150px; height:150px; }
-.chalice-wrapper .glow-overlay {
+#chalicesWrapper { position:relative; width:100%; display:flex; justify-content:center; margin-top:20px; opacity:0; transition: opacity 1.5s ease; }
+#chaliceGlow {
     position:absolute;
-    top:50%; left:50%;
-    width:300px; height:300px;
-    transform:translate(-50%,-50%);
+    width:300px;
+    height:300px;
     border-radius:50%;
     background: radial-gradient(circle, rgba(255,200,80,0.25) 0%, rgba(255,200,80,0.05) 70%, transparent 100%);
     filter: blur(40px);
     pointer-events:none;
     opacity:0;
-    transition: opacity 0.3s ease;
+    transition: left 0.3s, top 0.3s, opacity 0.3s;
     z-index:0;
 }
-.chalice-wrapper.highlighted .glow-overlay { opacity:1; }
 
-.chalice-wrapper img.chalice { position:relative; z-index:1; width:100%; cursor:pointer; transition: all 0.8s ease; filter: drop-shadow(0 0 12px rgba(255,120,60,.6)); }
+.chalice-wrapper { position:relative; display:inline-block; width:150px; height:150px; margin:0 10px; }
+.chalice-wrapper img.chalice { width:100%; cursor:pointer; transition: all 0.8s ease; filter: drop-shadow(0 0 12px rgba(255,120,60,.6)); }
 .chalice-wrapper img.chalice.fade { opacity:0; transform:scale(.8); }
 
 @keyframes chaliceBreath {
     0%,100% { transform: scale(1.2); filter: drop-shadow(0 0 12px rgba(255,120,60,.6)); }
-    50% { transform: scale(1.25); filter: drop-shadow(0 0 24px rgba(255,200,100,0.8)); }
+    50% { transform: scale(1.25); filter: drop-shadow(0 0 24px rgba(255,200,100,.8)); }
 }
 .chalice.selected { animation: chaliceBreath 1.2s infinite alternate; }
 
@@ -107,11 +104,10 @@ h1 { font-size:2em; text-align:center; margin-bottom:15px; }
 #qr { margin-top:20px; width:200px; display:none; }
 
 @media(max-width:700px) {
-    #chalices { flex-wrap: nowrap; overflow-x:auto; padding-bottom:10px; }
-    .chalice-wrapper { width:100px; height:100px; }
+    #chalicesWrapper { flex-wrap: nowrap; overflow-x:auto; padding-bottom:10px; }
+    .chalice-wrapper { width:100px; height:100px; margin:0 5px; }
     #poison { width:60px; }
     #chaliceBase { width:120px; }
-    .chalice-wrapper .glow-overlay { width:200px; height:200px; }
 }
 </style>
 </head>
@@ -132,23 +128,21 @@ h1 { font-size:2em; text-align:center; margin-bottom:15px; }
         <img src="images/poison.png" id="poison">
     </div>
 
-    <div id="chalices">
+    <div id="chalicesWrapper">
+        <div id="chaliceGlow"></div>
         <div class="chalice-wrapper">
-            <div class="glow-overlay"></div>
             <img src="images/chalice.png" class="chalice" data-id="0">
         </div>
         <div class="chalice-wrapper">
-            <div class="glow-overlay"></div>
             <img src="images/chalice.png" class="chalice" data-id="1">
         </div>
         <div class="chalice-wrapper">
-            <div class="glow-overlay"></div>
             <img src="images/chalice.png" class="chalice" data-id="2">
         </div>
     </div>
 
     <div id="message"></div>
-    <img id="qr" src="qr/day4prize.png">
+    <img id="qr" src="qr/prize1.png">
 </div>
 
 <script src="script.js"></script>
