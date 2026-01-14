@@ -153,7 +153,7 @@ paths.forEach(path=>{
         other.style.transition="opacity 1.5s ease";
         other.style.opacity=0;
 
-        // 2. After fade, move selected to center
+        // 2. Keep pulse for a few seconds on selected path before zoom
         setTimeout(()=>{
             const rect=selected.getBoundingClientRect();
             const wrapperRect=pathsWrapper.getBoundingClientRect();
@@ -162,8 +162,8 @@ paths.forEach(path=>{
             selected.style.position="relative";
             selected.style.left=offsetX+"px";
 
-            // Short pulse before zoom
-            selected.style.transition="transform .8s ease";
+            // Extra pulse before zoom
+            selected.style.transition="transform 0.8s ease";
             selected.style.transform="scale(1.08) rotate(1deg)";
 
             setTimeout(()=>{
@@ -172,7 +172,7 @@ paths.forEach(path=>{
                 selected.style.transform="scale(1.3)";
                 selected.style.opacity=0;
 
-                // Pause a bit before showing castle/mansion
+                // Pause 1s before castle/mansion reveal
                 setTimeout(()=>{
                     const finalRect=selected.getBoundingClientRect();
                     resultImg.src=id===winningIndex?"images/castle.png":"images/mansion.png";
@@ -197,9 +197,9 @@ paths.forEach(path=>{
                         if(id===winningIndex) qr.style.display="block";
                     },1600);
 
-                },500); // pause after zoom/fade
+                },1000); // 1s pause after path zoom/fade
             },500); // short pulse
-        },1600); // wait for non-selected fade
+        },1600); // wait for non-selected fade + pulse
     });
 });
 });
