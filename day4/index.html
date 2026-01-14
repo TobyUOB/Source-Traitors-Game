@@ -1,1 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Day 4 – The Poison Chalice</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&display=swap" rel="stylesheet">
+
+<style>
+/* BASE STYLES */
+body {
+    margin:0;
+    background:#0a0805;
+    font-family:'Cinzel', serif;
+    color:white;
+    overflow-y:auto;
+}
+
+.symbol-overlay {
+    position: fixed; inset:0;
+    background: url('images/symbols.png') repeat;
+    background-size:180px 180px;
+    opacity:0.1;
+    pointer-events:none;
+    z-index:1;
+    animation: symbolsGlow 8s infinite alternate ease-in-out;
+}
+@keyframes symbolsGlow {
+    0% {opacity:0.08; transform:rotate(0deg);}
+    50% {opacity:0.15; transform:rotate(1deg);}
+    100% {opacity:0.08; transform:rotate(-1deg);}
+}
+
+.flicker { animation: flicker 1.2s infinite alternate; }
+@keyframes flicker { 0% {opacity:1;} 60%{opacity:0.45;} 100%{opacity:1;} }
+
+#logo { width:100px; max-width:90%; margin-bottom:10px; }
+h1 { font-size:2em; text-align:center; margin-bottom:15px; }
+
+#embers { position:fixed; inset:0; pointer-events:none; z-index:1; }
+.ember { position:absolute; width:4px; height:4px; background:orange; border-radius:50%; box-shadow:0 0 10px orange; animation:emberRise 6s linear infinite; }
+@keyframes emberRise { from {transform:translateY(100vh);opacity:0;} 30%{opacity:1;} to {transform:translateY(-50px) translateX(-40px); opacity:0;} }
+
+#container { position:relative; z-index:5; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding-top:20px; }
+
+/* Initial chalice + candlelight */
+#initialChaliceWrapper { position:relative; margin-top:20px; }
+#candlelight { position:absolute; inset:0; background:radial-gradient(circle, rgba(255,180,50,0.4) 0%, transparent 80%); opacity:0; pointer-events:none; border-radius:50%; transition: opacity 0.5s ease; }
+#chaliceBase { width:150px; }
+
+/* Poison bottle */
+#poison { width:80px; position:absolute; top:50px; opacity:0; transform-origin:top center; transition: all 1s ease; }
+
+/* Chalices container */
+#chalices { display:flex; gap:20px; justify-content:center; margin-top:20px; opacity:0; transition:opacity 1s ease; }
+.chalice { width:150px; cursor:pointer; transition: all 0.8s ease; filter: drop-shadow(0 0 12px rgba(255,120,60,.6)); }
+.chalice.fade { opacity:0; transform:scale(.8); }
+.chalice.selected { transform:scale(1.2); z-index:10; }
+
+/* Message for poisoned chalice */
+#message { margin-top:20px; font-size:1.8em; text-align:center; }
+
+/* QR */
+#qr { margin-top:20px; width:200px; display:none; }
+
+/* MOBILE */
+@media(max-width:700px) {
+    #chalices { flex-wrap: nowrap; overflow-x:auto; padding-bottom:10px; }
+    .chalice { width:100px; flex-shrink:0; margin:0 5px; }
+    #poison { width:50px; top:40px; }
+    #chaliceBase { width:100px; }
+}
+</style>
+</head>
+
+<body>
+<div class="symbol-overlay"></div>
+<div id="embers"></div>
+
+<div id="container">
+    <img id="logo" src="images/logo.png" alt="Logo">
+    <h1 class="flicker">Choose the Safe Chalice</h1>
+
+    <div id="initialChaliceWrapper">
+        <div id="candlelight"></div>
+        <img src="images/chalice.png" id="chaliceBase">
+    </div>
+
+    <img src="images/poison.png" id="poison">
+
+    <div id="chalices">
+        <img src="images/chalice.png" class="chalice" data-id="0">
+        <img src="images/chalice.png" class="chalice" data-id="1">
+        <img src="images/chalice.png" class="chalice" data-id="2">
+    </div>
+
+    <div id="message"></div>
+    <img id="qr" src="qr/prize1.png">
+</div>
+
+<audio id="fire" loop>
+    <source src="sounds/fire-crackle.mp3" type="audio/mpeg">
+</audio>
+
+<script src="script.js"></script>
+</body>
+</html>
 
