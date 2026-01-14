@@ -17,7 +17,6 @@ body {
     overflow-y:auto;
 }
 
-/* SYMBOLS OVERLAY */
 .symbol-overlay {
     position:fixed;
     inset:0;
@@ -34,130 +33,30 @@ body {
     100% {opacity:0.08; transform:rotate(-1deg);}
 }
 
-/* FLICKERING HEADING */
-@keyframes flicker {
-    0%,100% { opacity:1; }
-    50% { opacity:0.5; }
-}
+@keyframes flicker {0%,100%{opacity:1;}50%{opacity:0.5;}}
 .flicker { animation: flicker 1.2s infinite alternate; }
 
-#container {
-    position:relative;
-    z-index:5;
-    min-height:100vh;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    padding-top:30px;
-}
+#container {position:relative; z-index:5; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding-top:30px;}
+#logo {width:100px; margin-bottom:14px; position:relative; z-index:10;}
+#heading {font-size:2em; margin:10px 0; opacity:1; text-align:center; width:100%; transition:opacity 1s ease;}
 
-#logo {
-    width:100px;
-    margin-bottom:14px;
-    position:relative;
-    z-index:10;
-}
-
-#heading {
-    font-size:2em;
-    margin:10px 0;
-    opacity:1;
-    text-align:center;
-    width:100%;
-    transition:opacity 1s ease;
-}
-
-/* AMBIENT EMBERS */
-#embers {
-    position:fixed;
-    inset:0;
-    pointer-events:none;
-    z-index:1;
-}
-.ember {
-    position:absolute;
-    width:4px;
-    height:4px;
-    background:orange;
-    border-radius:50%;
-    box-shadow:0 0 10px orange;
-    animation:emberRise 6s linear infinite;
-}
-@keyframes emberRise {
-    from {transform:translateY(100vh); opacity:0;}
-    30% {opacity:1;}
-    to {transform:translateY(-50px) translateX(-40px); opacity:0;}
-}
+#embers {position:fixed; inset:0; pointer-events:none; z-index:1;}
+.ember {position:absolute; width:4px; height:4px; background:orange; border-radius:50%; box-shadow:0 0 10px orange; animation:emberRise 6s linear infinite;}
+@keyframes emberRise {from{transform:translateY(100vh);opacity:0;}30%{opacity:1;}to{transform:translateY(-50px) translateX(-40px);opacity:0;}}
 
 /* PATHS */
-#pathsWrapper {
-    position:relative;
-    display:flex;
-    gap:40px;
-    margin-top:40px;
-    justify-content:center;
-}
+#pathsWrapper {position:relative; display:flex; gap:40px; margin-top:40px; justify-content:center; opacity:0; pointer-events:none; transition:opacity 1s ease;}
+.path {width:200px; cursor:pointer; transition:transform .6s ease, opacity .6s ease, left 1.5s ease; position:relative; z-index:5;}
+.path.fade {opacity:0;}
 
-.path {
-    width:200px;
-    cursor:pointer;
-    transition:transform .6s ease, opacity .6s ease, left 1.5s ease;
-    position:relative;
-    z-index:5;
-}
+#flare {position:absolute; width:200px; height:200px; border-radius:50%; background:radial-gradient(circle, rgba(255,180,80,0.25) 0%, transparent 70%); top:50%; left:0; transform:translate(-50%, -50%); pointer-events:none; opacity:0;}
 
-.path.fade { opacity:0; }
+#resultContainer {margin-top:12px; text-align:center; position:relative; z-index:5; display:flex; flex-direction:column; align-items:center; opacity:1;}
+#resultText {font-size:1.8em; margin-top:180px; text-align:center;}
+#resultImg {width:220px; margin:0 auto; opacity:0; transition:opacity 1.5s ease, transform 1.5s ease;}
+#qr {width:200px; margin-top:8px; display:none;}
 
-#flare {
-    position:absolute;
-    width:200px;
-    height:200px;
-    border-radius:50%;
-    background:radial-gradient(circle, rgba(255,180,80,0.25) 0%, transparent 70%);
-    top:50%;
-    left:0;
-    transform:translate(-50%, -50%);
-    pointer-events:none;
-    opacity:0;
-}
-
-/* RESULT IMAGE + TEXT + QR */
-#resultContainer {
-    margin-top:12px;
-    text-align:center;
-    position:relative;
-    z-index:5;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    opacity:0;
-    transition:opacity 1s ease;
-}
-
-#resultText {
-    font-size:1.8em;
-    margin-bottom:8px;
-}
-
-#resultImg {
-    width:220px;
-    margin:10px auto 0;
-    opacity:0;
-    transition:opacity 1.5s ease, transform 1.5s ease;
-}
-
-#qr {
-    width:200px;
-    margin-top:8px;
-    display:none;
-}
-
-/* MOBILE */
-@media(max-width:700px){
-    .path { width:140px; }
-    #flare { width:160px; height:160px; }
-    #resultImg { width:160px; }
-}
+@media(max-width:700px){.path{width:140px;}#flare{width:160px;height:160px;}#resultImg{width:160px;}}
 </style>
 </head>
 <body>
@@ -166,7 +65,6 @@ body {
 
 <div id="container">
     <img id="logo" src="images/logo.png">
-
     <h1 id="heading"></h1>
 
     <div id="pathsWrapper">
@@ -183,45 +81,48 @@ body {
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded",()=>{
+const heading=document.getElementById('heading');
+const pathsWrapper=document.getElementById('pathsWrapper');
+const paths=document.querySelectorAll('.path');
+const flare=document.getElementById('flare');
+const resultContainer=document.getElementById('resultContainer');
+const resultText=document.getElementById('resultText');
+const resultImg=document.getElementById('resultImg');
+const qr=document.getElementById('qr');
+const emberContainer=document.getElementById('embers');
 
-const paths = document.querySelectorAll('.path');
-const flare = document.getElementById('flare');
-const resultContainer = document.getElementById('resultContainer');
-const resultText = document.getElementById('resultText');
-const resultImg = document.getElementById('resultImg');
-const qr = document.getElementById('qr');
-const heading = document.getElementById('heading');
-const emberContainer = document.getElementById('embers');
-
-let locked = true;
-let winningIndex = Math.floor(Math.random()*2);
-let pulseIndex = 0;
+let locked=true;
+let winningIndex=Math.floor(Math.random()*2);
+let pulseIndex=0;
 let pulseTimer;
 
 // Ambient embers
 for(let i=0;i<20;i++){
-    const e = document.createElement('div');
+    const e=document.createElement('div');
     e.className='ember';
-    e.style.left = Math.random()*100+'%';
-    e.style.animationDelay = Math.random()*6+'s';
+    e.style.left=Math.random()*100+'%';
+    e.style.animationDelay=Math.random()*6+'s';
     emberContainer.appendChild(e);
 }
 
 // TYPE INTRO TEXT
-function typeText(text, cb){
-    heading.textContent = "";
+function typeText(text,cb){
+    heading.textContent="";
     let i=0;
     const t=setInterval(()=>{
-        heading.textContent += text[i++];
+        heading.textContent+=text[i++];
         if(i>=text.length){clearInterval(t); cb();}
     },90);
 }
 typeText("After walking for sometime you reach a fork in the road...",()=>{
     setTimeout(()=>{
-        heading.textContent = "Choose your path";
+        heading.textContent="Choose your path";
         heading.classList.add("flicker");
         heading.style.opacity=1;
+        // Fade in paths
+        pathsWrapper.style.opacity=1;
+        pathsWrapper.style.pointerEvents="auto";
         startPulse();
         locked=false;
     },500);
@@ -229,11 +130,11 @@ typeText("After walking for sometime you reach a fork in the road...",()=>{
 
 // PATH PULSE LOOP (one at a time)
 function startPulse(){
-    pulseTimer = setInterval(()=>{
+    pulseTimer=setInterval(()=>{
         paths.forEach(p=>p.style.transform="scale(1)");
-        const p = paths[pulseIndex];
+        const p=paths[pulseIndex];
         p.style.transform="scale(1.06) rotate(1deg)";
-        pulseIndex = (pulseIndex+1)%paths.length;
+        pulseIndex=(pulseIndex+1)%paths.length;
     },900);
 }
 
@@ -244,24 +145,24 @@ paths.forEach(path=>{
         locked=true;
         clearInterval(pulseTimer);
 
-        const id = Number(path.dataset.id);
-        const selected = path;
-        const other = [...paths].filter(p=>p!==selected)[0];
+        const id=Number(path.dataset.id);
+        const selected=path;
+        const other=[...paths].filter(p=>p!==selected)[0];
 
-        // Non-selected fades first
+        // 1. Fade non-selected first
         other.style.transition="opacity 1.5s ease";
         other.style.opacity=0;
 
-        // Move selected to center after non-selected faded
+        // 2. After fade, move selected to center
         setTimeout(()=>{
-            const rect = selected.getBoundingClientRect();
-            const wrapperRect = selected.parentElement.getBoundingClientRect();
-            const centerX = wrapperRect.width/2 - rect.width/2;
-            const offsetX = centerX - (rect.left - wrapperRect.left);
+            const rect=selected.getBoundingClientRect();
+            const wrapperRect=pathsWrapper.getBoundingClientRect();
+            const centerX=wrapperRect.width/2 - rect.width/2;
+            const offsetX=centerX - (rect.left - wrapperRect.left);
             selected.style.position="relative";
-            selected.style.left = offsetX + "px";
+            selected.style.left=offsetX+"px";
 
-            // Pulse slightly before zoom
+            // Short pulse before zoom
             selected.style.transition="transform .8s ease";
             selected.style.transform="scale(1.08) rotate(1deg)";
 
@@ -271,32 +172,32 @@ paths.forEach(path=>{
                 selected.style.transform="scale(1.3)";
                 selected.style.opacity=0;
 
-                // Place castle/mansion at path final position
-                const finalRect = selected.getBoundingClientRect();
-                resultImg.src = id===winningIndex?"images/castle.png":"images/mansion.png";
-                resultImg.style.position="absolute";
-                resultImg.style.left = finalRect.left + "px";
-                resultImg.style.top = finalRect.top + "px";
-                resultImg.style.width = finalRect.width + "px";
-                resultImg.style.opacity=0;
-                resultImg.style.transform="scale(1.3)";
-                resultImg.style.transition="opacity 1.5s ease, transform 1.5s ease";
-                document.body.appendChild(resultImg);
-
-                requestAnimationFrame(()=>{
-                    resultImg.style.opacity=1;
-                    resultImg.style.transform="scale(1)";
-                });
-
-                // Show result text + QR after castle/mansion fade
+                // Pause a bit before showing castle/mansion
                 setTimeout(()=>{
-                    resultContainer.style.opacity=1;
-                    resultText.textContent = id===winningIndex?"You reached the magical castle!":"Oh no! You ended up in the haunted mansion!";
-                    if(id===winningIndex) qr.style.display="block";
-                    // Move resultImg into flow
-                    resultImg.style.position="static";
-                },1600);
+                    const finalRect=selected.getBoundingClientRect();
+                    resultImg.src=id===winningIndex?"images/castle.png":"images/mansion.png";
+                    resultImg.style.position="absolute";
+                    resultImg.style.left=finalRect.left+"px";
+                    resultImg.style.top=finalRect.top+"px";
+                    resultImg.style.width=finalRect.width+"px";
+                    resultImg.style.opacity=0;
+                    resultImg.style.transform="scale(1.3)";
+                    resultImg.style.transition="opacity 1.5s ease, transform 1.5s ease";
+                    document.body.appendChild(resultImg);
 
+                    requestAnimationFrame(()=>{
+                        resultImg.style.opacity=1;
+                        resultImg.style.transform="scale(1)";
+                    });
+
+                    // Show result text + QR below after castle/mansion fade
+                    setTimeout(()=>{
+                        resultContainer.style.opacity=1;
+                        resultText.textContent=id===winningIndex?"You reached the magical castle!":"Oh no! You ended up in the haunted mansion!";
+                        if(id===winningIndex) qr.style.display="block";
+                    },1600);
+
+                },500); // pause after zoom/fade
             },500); // short pulse
         },1600); // wait for non-selected fade
     });
