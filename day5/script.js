@@ -2,40 +2,52 @@ const dice = document.getElementById('dice');
 const diceBlur = document.getElementById('dice-blur');
 const diceNumber = document.getElementById('dice-number');
 const qr = document.getElementById('qr');
-const fire = document.getElementById('fire');
+const embers = document.getElementById('embers');
 
 let rolled = false;
 
-// Start with glow
-dice.classList.add('glow');
+// Ambient embers
+for(let i=0;i<18;i++){
+    const e = document.createElement('div');
+    e.className='ember';
+    e.style.left=Math.random()*100+'%';
+    e.style.animationDelay=Math.random()*6+'s';
+    embers.appendChild(e);
+}
 
-dice.addEventListener('click', () => {
-    if (rolled) return;
+dice.addEventListener('click',()=>{
+    if(rolled) return;
     rolled = true;
 
-    fire.play().catch(()=>{});
-
-    // Start roll visuals
     dice.classList.remove('glow');
     dice.classList.add('rolling');
     diceBlur.classList.add('active');
 
-    const roll = Math.floor(Math.random() * 20) + 1;
+    const roll = Math.floor(Math.random()*20)+1;
 
-    setTimeout(() => {
-        // Stop roll visuals
+    setTimeout(()=>{
         dice.classList.remove('rolling');
         diceBlur.classList.remove('active');
 
-        // Restore glow
-        dice.classList.add('glow');
-
-        // Reveal number
         diceNumber.textContent = roll;
-        diceNumber.style.opacity = "1";
+        diceNumber.style.opacity = '1';
 
-        // Show QR
-        qr.src = roll <= 10 ? "qr/prize1.png" : "qr/prize2.png";
-        qr.style.display = "block";
-    }, 1000);
+        qr.src = roll<=10 ? 'qr/prize1.png' : 'qr/prize2.png';
+        qr.style.display = 'block';
+
+        burstEmbers(diceNumber,18);
+    },1000);
 });
+
+function burstEmbers(el,count){
+    const rect = el.getBoundingClientRect();
+    for(let i=0;i<count;i++){
+        const e = document.createElement('div');
+        e.className='ember';
+        e.style.left = rect.left + Math.random()*rect.width +'px';
+        e.style.top = rect.top + Math.random()*rect.height +'px';
+        e.style.animationDuration = '2s';
+        document.body.appendChild(e);
+        setTimeout(()=>e.remove(),2500);
+    }
+}
