@@ -25,12 +25,17 @@ dice.addEventListener('click', () => {
     setTimeout(() => {
     dice.classList.remove('rolling');
 
-    // 🔥 HARD RESET (fixes mobile blur bug)
+    // 🔥 FORCE MOBILE GPU RESET (critical)
     dice.style.filter = 'none';
-    dice.style.transform = 'translateY(0) rotate(0deg) scale(1)';
+    dice.style.transform = 'translateZ(0)';
+    dice.getBoundingClientRect(); // <-- forces reflow
 
-    // Restore glow
-    dice.classList.add('glow');
+    // Next frame = clean state
+    requestAnimationFrame(() => {
+        dice.style.filter = '';
+        dice.style.transform = '';
+        dice.classList.add('glow');
+    });
 
     diceNumber.textContent = roll;
     diceNumber.style.opacity = "1";
