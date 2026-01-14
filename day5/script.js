@@ -1,46 +1,41 @@
 const dice = document.getElementById('dice');
+const diceBlur = document.getElementById('dice-blur');
 const diceNumber = document.getElementById('dice-number');
 const qr = document.getElementById('qr');
 const fire = document.getElementById('fire');
 
 let rolled = false;
 
-// Start ambient fire on first interaction
-document.body.addEventListener('click', () => {
-    fire.play().catch(()=>{});
-}, { once:true });
-
-// Initial glow
+// Start with glow
 dice.classList.add('glow');
 
 dice.addEventListener('click', () => {
     if (rolled) return;
     rolled = true;
 
+    fire.play().catch(()=>{});
+
+    // Start roll visuals
     dice.classList.remove('glow');
     dice.classList.add('rolling');
+    diceBlur.classList.add('active');
 
     const roll = Math.floor(Math.random() * 20) + 1;
 
     setTimeout(() => {
-    dice.classList.remove('rolling');
+        // Stop roll visuals
+        dice.classList.remove('rolling');
+        diceBlur.classList.remove('active');
 
-    // 🔥 FORCE MOBILE GPU RESET (critical)
-    dice.style.filter = 'none';
-    dice.style.transform = 'translateZ(0)';
-    dice.getBoundingClientRect(); // <-- forces reflow
-
-    // Next frame = clean state
-    requestAnimationFrame(() => {
-        dice.style.filter = '';
-        dice.style.transform = '';
+        // Restore glow
         dice.classList.add('glow');
-    });
 
-    diceNumber.textContent = roll;
-    diceNumber.style.opacity = "1";
+        // Reveal number
+        diceNumber.textContent = roll;
+        diceNumber.style.opacity = "1";
 
-    qr.src = roll <= 10 ? "qr/prize1.png" : "qr/prize2.png";
-    qr.style.display = "block";
-}, 1000);
+        // Show QR
+        qr.src = roll <= 10 ? "qr/prize1.png" : "qr/prize2.png";
+        qr.style.display = "block";
+    }, 1000);
 });
