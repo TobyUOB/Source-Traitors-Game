@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&display=swap" rel="stylesheet">
 
 <style>
+/* ================= BASE ================= */
 body {
     margin:0;
     background:#0a0805;
@@ -26,6 +27,7 @@ body {
     z-index:1;
 }
 
+/* ================= CONTAINER ================= */
 #container {
     position:relative;
     z-index:5;
@@ -33,14 +35,18 @@ body {
     display:flex;
     flex-direction:column;
     align-items:center;
-    padding-top:20px;
+    padding-top:30px;
 }
 
+/* ================= LOGO ================= */
 #logo {
     width:100px;
-    margin-bottom:10px;
+    margin-bottom:14px;
+    position:relative;
+    z-index:10; /* keep above intro */
 }
 
+/* ================= HEADING ================= */
 h1 {
     font-size:2em;
     margin:10px 0;
@@ -50,7 +56,7 @@ h1 {
     transition:opacity 1.2s ease;
 }
 
-/* INTRO */
+/* ================= INTRO ================= */
 #introContainer {
     position:relative;
     height:360px;
@@ -70,6 +76,7 @@ h1 {
     transition:opacity 2s ease;
 }
 
+/* Candle glow (intro only) */
 #candleGlow {
     position:absolute;
     inset:-40px;
@@ -89,17 +96,18 @@ h1 {
     100% {opacity:0.38;}
 }
 
+/* Poison bottle */
 #poison {
     position:absolute;
     width:140px;
     top:0;
-    left:45%; /* further left */
+    left:45%; /* offset left for pour alignment */
     opacity:0;
     transform:translateX(-50%) rotate(0deg);
     transition:opacity 2s ease, transform 3.5s ease;
 }
 
-/* SELECTION */
+/* ================= SELECTION ================= */
 #chalices {
     position:absolute;
     top:0;
@@ -125,7 +133,7 @@ h1 {
     transform:scale(1.2);
 }
 
-/* RESULT */
+/* ================= RESULT ================= */
 #result {
     margin-top:10px;
     font-size:1.8em;
@@ -138,7 +146,7 @@ h1 {
     display:none;
 }
 
-/* Mobile */
+/* ================= MOBILE ================= */
 @media(max-width:700px){
     #chaliceIntro { width:160px; }
     #poison { width:110px; }
@@ -151,17 +159,26 @@ h1 {
 <div class="symbol-overlay"></div>
 
 <div id="container">
-    <img id="logo" src="images/logo.png">
 
+    <!-- LOGO -->
+    <img id="logo" src="images/logo.png" alt="Logo">
+
+    <!-- HEADING -->
     <h1 id="heading"></h1>
 
+    <!-- INTRO + SELECTION SHARE SAME SPACE -->
     <div id="introContainer">
+
+        <!-- INTRO CHALICE -->
         <div id="introChaliceWrapper">
             <div id="candleGlow"></div>
-            <img src="images/chalice.png" id="chaliceIntro">
+            <img src="images/chalice.png" id="chaliceIntro" alt="Chalice">
         </div>
-        <img src="images/poison.png" id="poison">
 
+        <!-- POISON -->
+        <img src="images/poison.png" id="poison" alt="Poison">
+
+        <!-- SELECTION -->
         <div id="chalices">
             <img src="images/chalice.png" class="choice" data-id="0">
             <img src="images/chalice.png" class="choice" data-id="1">
@@ -169,8 +186,10 @@ h1 {
         </div>
     </div>
 
+    <!-- RESULT -->
     <div id="result"></div>
     <img id="qr" src="qr/day4prize.png">
+
 </div>
 
 <script>
@@ -200,10 +219,10 @@ function typeText(text, cb) {
             clearInterval(t);
             cb && cb();
         }
-    }, 95);
+    }, 95); // slower typing
 }
 
-/* INTRO */
+/* INTRO SEQUENCE */
 typeText("Earlier today...", () => {
 
     setTimeout(() => {
@@ -231,7 +250,7 @@ typeText("Earlier today...", () => {
     }, 9400);
 
     setTimeout(() => {
-        glow.remove();
+        glow.remove(); // remove flicker completely
         heading.textContent = "Avoid the poisoned chalice";
         heading.style.opacity = 1;
         chalicesContainer.style.opacity = 1;
@@ -241,7 +260,7 @@ typeText("Earlier today...", () => {
     }, 10800);
 });
 
-/* PULSE LOOP */
+/* PULSE LOOP (selection idle animation) */
 function startPulse() {
     pulseTimer = setInterval(() => {
         choices.forEach(c => c.style.transform = "scale(1)");
