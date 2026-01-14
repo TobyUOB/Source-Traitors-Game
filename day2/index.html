@@ -64,48 +64,35 @@ h1 {
 
 /* PATHS WRAPPER */
 #pathsWrapper {
-    position:relative;
     display:flex;
     gap:40px;
-    margin-top:60px;
     justify-content:center;
     opacity:0;
     pointer-events:none;
     transition:opacity 1s ease;
-}
-
-/* Flare behind paths */
-#flare {
-    position:absolute;
-    width:220px;
-    height:220px;
-    border-radius:50%;
-    background:radial-gradient(circle, rgba(255,180,80,0.15) 0%, transparent 70%);
-    top:50%;
-    left:0;
-    transform:translate(-50%, -50%);
-    pointer-events:none;
-    opacity:0;
+    position:relative;
 }
 
 /* PATHS */
 .path {
     width:200px;
     cursor:pointer;
-    transition:transform 0.6s ease, opacity 0.6s ease, left 1.5s ease;
-    position:relative;
+    transition:transform 0.6s ease, opacity 0.6s ease;
 }
-.path.fade { opacity:0; }
+.path.fade {
+    opacity:0;
+    transform: scale(0.8);
+}
 
 /* RESULT IMAGE + TEXT + QR */
 #resultContainer {
-    position:relative;
-    margin-top:12px;
+    margin-top:20px;
     text-align:center;
     display:flex;
     flex-direction:column;
     align-items:center;
     opacity:0;
+    transition:opacity 1s ease;
 }
 
 #resultText {
@@ -115,7 +102,7 @@ h1 {
 
 #resultImg {
     width:220px;
-    margin:10px auto 0;
+    margin-bottom:8px;
     opacity:0;
     transition:opacity 1.5s ease, transform 1.5s ease;
 }
@@ -129,7 +116,6 @@ h1 {
 /* MOBILE */
 @media(max-width:700px){
     .path { width:140px; }
-    #flare { width:160px; height:160px; }
     #resultImg { width:160px; }
 }
 </style>
@@ -145,14 +131,13 @@ h1 {
     <h1 id="chooseHeading" style="opacity:0;">Choose your path</h1>
 
     <div id="pathsWrapper">
-        <div id="flare"></div>
         <img src="images/path1.png" class="path" data-id="0">
         <img src="images/path2.png" class="path" data-id="1">
     </div>
 
     <div id="resultContainer">
-        <div id="resultText"></div>
         <img id="resultImg" src="">
+        <div id="resultText"></div>
         <img id="qr" src="qr/day2prize.png">
     </div>
 
@@ -165,7 +150,6 @@ const introHeading = document.getElementById('introHeading');
 const chooseHeading = document.getElementById('chooseHeading');
 const pathsWrapper = document.getElementById('pathsWrapper');
 const paths = document.querySelectorAll('.path');
-const flare = document.getElementById('flare');
 const resultContainer = document.getElementById('resultContainer');
 const resultText = document.getElementById('resultText');
 const resultImg = document.getElementById('resultImg');
@@ -188,29 +172,31 @@ function typeText(el, text, callback) {
     }, 60);
 }
 
-// Alternating pulse effect for paths
+// Subtle pulse animation for paths
 function startPulse() {
     pulseTimer = setInterval(()=>{
-        paths.forEach(p=>p.style.transform="scale(1)");
+        paths.forEach(p=>p.style.transform="scale(1) rotate(0deg)");
         const p = paths[pulseIndex];
         p.style.transform = "scale(1.06) rotate(1deg)";
         pulseIndex = (pulseIndex+1)%paths.length;
     }, 900);
 }
 
-// Show flare on path
-function showFlare(path) {
+// Center a path horizontally relative to wrapper
+function centerPath(path) {
+    const wrapperWidth = pathsWrapper.offsetWidth;
+    const pathWidth = path.offsetWidth;
     const rect = path.getBoundingClientRect();
-    flare.style.left = rect.left + rect.width/2 + 'px';
-    flare.style.top = rect.top + rect.height/2 + 'px';
-    flare.style.opacity = 0.25;
-    setTimeout(()=>flare.style.opacity=0,500);
+    const wrapperRect = pathsWrapper.getBoundingClientRect();
+    const offsetX = wrapperWidth/2 - pathWidth/2 - (rect.left - wrapperRect.left);
+    path.style.position = "relative";
+    path.style.transition = "left 1.5s ease, transform 1.5s ease, opacity 1.5s ease";
+    path.style.left = offsetX+"px";
 }
 
 // Intro sequence
 typeText(introHeading, "After walking for some time you reach a fork in the road...", ()=>{
     setTimeout(()=>{
-        // Fade out intro, fade in choose heading and paths
         introHeading.style.transition="opacity 1s ease";
         introHeading.style.opacity=0;
         chooseHeading.style.opacity=1;
@@ -231,45 +217,43 @@ paths.forEach(path=>{
 
         const id = Number(path.dataset.id);
         const nonSelected = [...paths].filter(p=>p!==path)[0];
-        nonSelected.classList.add('fade');
 
-        // Get path position relative to container
-        const containerRect = document.getElementById('container').getBoundingClientRect();
-        const pathRect = path.getBoundingClientRect();
-        const relLeft = pathRect.left - containerRect.left;
-        const relTop = pathRect.top - containerRect.top;
+        // Fade out non-selected path first
+        nonSelected.style.transition="opacity 1.5s ease";
+        nonSelected.style.opacity=0;
 
-        // Center path horizontally and zoom
-        const wrapperWidth = pathsWrapper.offsetWidth;
-        const centerX = wrapperWidth/2 - pathRect.width/2;
-        const offsetX = centerX - relLeft;
-        path.style.position="relative";
-        path.style.left=offsetX+"px";
-
+        // After non-selected path faded, move selected path to center
         setTimeout(()=>{
-            path.style.transition="transform 2.5s ease, opacity 2.5s ease";
-            path.style.transform="scale(1.5)";
-            path.style.opacity=0;
-        },500);
+            centerPath(path);
 
-        // Show castle/mansion in same container-relative position
+            // Slight pulse before zoom/fade
+            path.style.transition="transform 1s ease";
+            path.style.transform="scale(1.08) rotate(1deg)";
+
+            setTimeout(()=>{
+                path.style.transition="transform 2.5s ease, opacity 2.5s ease";
+                path.style.transform="scale(1.5)";
+                path.style.opacity=0;
+            },800);
+        },1600);
+
+        // Show castle/mansion inline above text after selected path fade
         setTimeout(()=>{
-            resultImg.style.position="absolute";
-            resultImg.style.left = relLeft + 'px';
-            resultImg.style.top = relTop + 'px';
+            resultImg.style.src = "";
+            resultImg.src = id===winningIndex ? "images/castle.png" : "images/mansion.png";
             resultImg.style.opacity=1;
             resultImg.style.transform="scale(1.2)";
-            resultImg.src = id===winningIndex ? "images/castle.png" : "images/mansion.png";
 
-            // After image shown, fade in result text & QR
+            // Fade in result container
             setTimeout(()=>{
                 resultContainer.style.opacity=1;
                 resultText.textContent = id===winningIndex ? "You reached the magical castle!" : "Oh no! You ended up in the haunted mansion!";
                 if(id===winningIndex) qr.style.display="block";
-            },800);
-        },3000);
+            },500);
+        },3500);
     });
 });
+
 });
 </script>
 </body>
