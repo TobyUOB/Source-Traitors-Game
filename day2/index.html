@@ -15,7 +15,7 @@ body {
   overflow-y:auto;
 }
 
-/* SYMBOLS OVERLAY */
+/* SYMBOLS BACKGROUND */
 .symbol-overlay {
   position:fixed;
   inset:0;
@@ -31,6 +31,22 @@ body {
   50% {opacity:0.15; transform:rotate(1deg);}
   100% {opacity:0.08; transform:rotate(-1deg);}
 }
+
+/* FLARES BEHIND PATHS */
+.flare {
+  position:absolute;
+  width:220px;
+  height:220px;
+  border-radius:50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 80%);
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+  z-index:1;
+  animation: flareFlicker 1.5s infinite alternate;
+}
+@keyframes flareFlicker {0%{opacity:0.08;}50%{opacity:0.16;}100%{opacity:0.08;}}
 
 #container {
   position:relative;
@@ -72,17 +88,18 @@ h1 {
 .path-glow {
   position:absolute;
   inset:-25px;
-  background: radial-gradient(circle, rgba(30,0,50,0.5) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(30,0,50,0.6) 0%, transparent 70%);
   border-radius:25px;
   z-index:1;
   pointer-events:none;
+  opacity:1;
   transition: opacity 2s ease;
 }
 .path {
   width:200px;
   cursor:pointer;
   z-index:5;
-  transition: transform 1s ease, opacity 1s ease, left 3s ease;
+  transition: transform 1s ease, opacity 1s ease;
 }
 .path.pulse { animation:pulse 2s infinite ease-in-out; }
 @keyframes pulse {0%{transform:scale(1);}50%{transform:scale(1.05);}100%{transform:scale(1);}}
@@ -131,10 +148,12 @@ h1 {
     <div class="path-wrapper">
       <div class="path-glow"></div>
       <img src="images/path1.png" class="path" data-id="0">
+      <div class="flare"></div>
     </div>
     <div class="path-wrapper">
       <div class="path-glow"></div>
       <img src="images/path2.png" class="path" data-id="1">
+      <div class="flare"></div>
     </div>
   </div>
 
@@ -155,7 +174,6 @@ const qr = document.getElementById('qr');
 let locked=false;
 const winningIndex=Math.floor(Math.random()*2);
 
-// Path click
 paths.forEach(path=>{
   path.addEventListener('click',()=>{
     if(locked) return;
@@ -165,39 +183,67 @@ paths.forEach(path=>{
     const selected = path;
     const nonSelected = [...paths].filter(p=>p!==selected)[0];
 
+    const selectedGlow = selected.previousElementSibling;
+    const nonGlow = nonSelected.previousElementSibling;
+    const selectedFlare = selected.parentElement.querySelector('.flare');
+    const nonFlare = nonSelected.parentElement.querySelector('.flare');
+
     // Fade out non-selected path & glow
-    nonSelected.style.transition = "opacity 2s ease";
     nonSelected.style.opacity = 0;
-    const nonGlow = nonSelected.previousElementSibling; // glow
-    if(nonGlow) nonGlow.style.opacity = 0;
+    nonGlow.style.opacity = 0;
+    if(nonFlare) nonFlare.style.opacity = 0;
 
-    // After fade out, drift selected to center
-    setTimeout(()=>{
-      selected.classList.add('pulse');
-      selected.style.position='absolute';
-      const rect = selected.getBoundingClientRect();
-      const wrapperRect = selected.parentElement.getBoundingClientRect();
-      const currentLeft = rect.left - wrapperRect.left;
-      const pageCenter = (window.innerWidth - rect.width)/2;
-      const delta = pageCenter - rect.left;
-      selected.style.left = (currentLeft + delta) + "px"; // smooth drift
-    },2000);
+    // Compute starting coordinates
+    const startRect = selected.getBoundingClientRect();
+    const startTop = startRect.top + window.scrollY;
+    const startLeft = startRect.left + window.scrollX;
 
-    // Keep pulse longer before zoom/fade
+    selected.style.position='absolute';
+    selected.style.top=startTop+'px';
+    selected.style.left=startLeft+'px';
+    selected.style.zIndex=10;
+
+    selectedGlow.style.position='absolute';
+    selectedGlow.style.top=startTop+'px';
+    selectedGlow.style.left=startLeft+'px';
+    selectedGlow.style.zIndex=9;
+
+    if(selectedFlare){
+      selectedFlare.style.position='absolute';
+      selectedFlare.style.top=startTop+'px';
+      selectedFlare.style.left=startLeft+'px';
+      selectedFlare.style.zIndex=8;
+    }
+
+    // Drift to center smoothly
+    const targetLeft = (window.innerWidth - selectedRect.width)/2;
+    selectedGlow.style.transition="left 3s ease, top 3s ease";
+    selected.style.transition="left 3s ease, top 3s ease";
+    if(selectedFlare) selectedFlare.style.transition="left 3s ease, top 3s ease";
+
+    requestAnimationFrame(()=>{
+      selected.style.left = targetLeft+"px";
+      selectedGlow.style.left = targetLeft+"px";
+      if(selectedFlare) selectedFlare.style.left = targetLeft+"px";
+    });
+
+    // Keep pulse and flicker until zoom/fade
+    selected.classList.add('pulse');
+
+    // Zoom and fade out after drift
     setTimeout(()=>{
       selected.style.transition="transform 2.5s ease, opacity 2.5s ease";
       selected.style.transform="scale(3)";
       selected.style.opacity=0;
-      const selGlow = selected.previousElementSibling;
-      if(selGlow) selGlow.style.opacity = 0;
-    },5500);
+      selectedGlow.style.opacity=0;
+      if(selectedFlare) selectedFlare.style.opacity=0;
+    },3500);
 
-    // Show result in same original path position
+    // Show result (castle/mansion) in same path position
     setTimeout(()=>{
-      const rect=selected.getBoundingClientRect();
       resultImg.style.position='absolute';
-      resultImg.style.left=rect.left+'px';
-      resultImg.style.top=rect.top+'px';
+      resultImg.style.left = startLeft + "px";
+      resultImg.style.top = startTop + "px";
       resultImg.style.opacity=1;
       resultImg.style.transform='scale(3)';
 
@@ -211,12 +257,13 @@ paths.forEach(path=>{
         qr.style.display="none";
       }
 
-      // Smoothly scale result down to normal
+      // Smoothly scale down result to normal
       setTimeout(()=>{
         resultImg.style.transition="transform 1.5s ease";
         resultImg.style.transform="scale(1)";
       },50);
-    },8500);
+
+    },6500);
   });
 });
 });
