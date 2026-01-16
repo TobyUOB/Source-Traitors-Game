@@ -2,6 +2,7 @@ const scroll = document.getElementById('scroll');
 const scrollText = document.getElementById('scroll-text');
 const qr = document.getElementById('qr');
 const fire = document.getElementById('fire-sound');
+const message = document.getElementById('result-message');
 
 let revealed = false;
 
@@ -10,20 +11,24 @@ scroll.addEventListener('click', () => {
     revealed = true;
 
     // Play fire sound
-    fire.play().catch(() => console.log("Autoplay prevented; will start on user tap"));
+    fire.play().catch(() => {});
 
     // Scroll bounce animation
     scroll.classList.add('bounce');
     setTimeout(() => scroll.classList.remove('bounce'), 600);
 
-    // Randomly select result
+    // Random result
     const result = Math.random() < 0.5 ? "Loyal" : "Imposter";
 
-    // Update scroll text with burn-in effect
+    // Update scroll text
     scrollText.innerHTML = `<span>${result}</span>`;
-    scrollText.classList.add('burn');
 
-    // Show corresponding QR code
-    qr.src = result === "Loyal" ? "qr/loyal.png" : "qr/imposter.png";
-    qr.style.display = "block";
+    if (result === "Loyal") {
+        message.textContent = "Your loyalty is rewarded";
+        qr.src = "qr/day1.png";
+        qr.style.display = "block";
+    } else {
+        message.textContent = "Hiding in plain sight eh... Check your app for more games & prizes throughout the week";
+        qr.style.display = "none";
+    }
 });
